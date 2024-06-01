@@ -103,601 +103,601 @@
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.000991622 s.
+              Total duration of all mappings so far: 0.00039626 s.
 * Create mapping between meshes "fiber10" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00139528 s.
+              Total duration of all mappings so far: 0.000777324 s.
 * Create mapping between meshes "fiber20" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00176591 s.
+              Total duration of all mappings so far: 0.00115892 s.
 * Create mapping between meshes "fiber30" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00213002 s.
+              Total duration of all mappings so far: 0.00153705 s.
 * Create mapping between meshes "fiber40" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00250402 s.
+              Total duration of all mappings so far: 0.00198757 s.
 * Create mapping between meshes "fiber50" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00288284 s.
+              Total duration of all mappings so far: 0.00239847 s.
 * Create mapping between meshes "fiber60" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00325508 s.
+              Total duration of all mappings so far: 0.00277847 s.
 * Create mapping between meshes "fiber70" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00367668 s.
+              Total duration of all mappings so far: 0.00320125 s.
 * Create mapping between meshes "fiber80" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00412729 s.
+              Total duration of all mappings so far: 0.00363139 s.
 * Create mapping between meshes "fiber90" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00453917 s.
+              Total duration of all mappings so far: 0.0040473 s.
 * Create mapping between meshes "fiber1" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00491041 s.
+              Total duration of all mappings so far: 0.00443757 s.
 * Create mapping between meshes "fiber11" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00528298 s.
+              Total duration of all mappings so far: 0.00482376 s.
 * Create mapping between meshes "fiber21" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00565938 s.
+              Total duration of all mappings so far: 0.00520824 s.
 * Create mapping between meshes "fiber31" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00603208 s.
+              Total duration of all mappings so far: 0.00565351 s.
 * Create mapping between meshes "fiber41" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00641 s.
+              Total duration of all mappings so far: 0.00602565 s.
 * Create mapping between meshes "fiber51" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00678262 s.
+              Total duration of all mappings so far: 0.00641033 s.
 * Create mapping between meshes "fiber61" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00715595 s.
+              Total duration of all mappings so far: 0.00679752 s.
 * Create mapping between meshes "fiber71" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00756732 s.
+              Total duration of all mappings so far: 0.00722831 s.
 * Create mapping between meshes "fiber81" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00801315 s.
+              Total duration of all mappings so far: 0.00765625 s.
 * Create mapping between meshes "fiber91" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00843186 s.
+              Total duration of all mappings so far: 0.00808919 s.
 * Create mapping between meshes "fiber2" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00880393 s.
+              Total duration of all mappings so far: 0.00846711 s.
 * Create mapping between meshes "fiber12" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00917576 s.
+              Total duration of all mappings so far: 0.00888938 s.
 * Create mapping between meshes "fiber22" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00954788 s.
+              Total duration of all mappings so far: 0.00927012 s.
 * Create mapping between meshes "fiber32" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.00992392 s.
+              Total duration of all mappings so far: 0.00965241 s.
 * Create mapping between meshes "fiber42" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0102966 s.
+              Total duration of all mappings so far: 0.0100441 s.
 * Create mapping between meshes "fiber52" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0106672 s.
+              Total duration of all mappings so far: 0.0104281 s.
 * Create mapping between meshes "fiber62" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0110435 s.
+              Total duration of all mappings so far: 0.0108147 s.
 * Create mapping between meshes "fiber72" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0114995 s.
+              Total duration of all mappings so far: 0.0112389 s.
 * Create mapping between meshes "fiber82" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0119135 s.
+              Total duration of all mappings so far: 0.0116605 s.
 * Create mapping between meshes "fiber92" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0123273 s.
+              Total duration of all mappings so far: 0.0120929 s.
 * Create mapping between meshes "fiber3" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0126921 s.
+              Total duration of all mappings so far: 0.0124703 s.
 * Create mapping between meshes "fiber13" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0130631 s.
+              Total duration of all mappings so far: 0.0128817 s.
 * Create mapping between meshes "fiber23" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0134312 s.
+              Total duration of all mappings so far: 0.0132656 s.
 * Create mapping between meshes "fiber33" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0137966 s.
+              Total duration of all mappings so far: 0.0136411 s.
 * Create mapping between meshes "fiber43" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0141696 s.
+              Total duration of all mappings so far: 0.0140329 s.
 * Create mapping between meshes "fiber53" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0146512 s.
+              Total duration of all mappings so far: 0.0144285 s.
 * Create mapping between meshes "fiber63" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0150186 s.
+              Total duration of all mappings so far: 0.0148051 s.
 * Create mapping between meshes "fiber73" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0154287 s.
+              Total duration of all mappings so far: 0.0152267 s.
 * Create mapping between meshes "fiber83" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0158405 s.
+              Total duration of all mappings so far: 0.0156505 s.
 * Create mapping between meshes "fiber93" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0162485 s.
+              Total duration of all mappings so far: 0.0161287 s.
 * Create mapping between meshes "fiber4" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.016618 s.
+              Total duration of all mappings so far: 0.0165142 s.
 * Create mapping between meshes "fiber14" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0170258 s.
+              Total duration of all mappings so far: 0.0169022 s.
 * Create mapping between meshes "fiber24" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.017416 s.
+              Total duration of all mappings so far: 0.0172878 s.
 * Create mapping between meshes "fiber34" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0178011 s.
+              Total duration of all mappings so far: 0.0176813 s.
 * Create mapping between meshes "fiber44" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0182611 s.
+              Total duration of all mappings so far: 0.0180652 s.
 * Create mapping between meshes "fiber54" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.018645 s.
+              Total duration of all mappings so far: 0.0184539 s.
 * Create mapping between meshes "fiber64" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.019046 s.
+              Total duration of all mappings so far: 0.0188356 s.
 * Create mapping between meshes "fiber74" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0194743 s.
+              Total duration of all mappings so far: 0.0192593 s.
 * Create mapping between meshes "fiber84" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.019903 s.
+              Total duration of all mappings so far: 0.0197652 s.
 * Create mapping between meshes "fiber94" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0203284 s.
+              Total duration of all mappings so far: 0.0201949 s.
 * Create mapping between meshes "fiber5" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0207141 s.
+              Total duration of all mappings so far: 0.0205778 s.
 * Create mapping between meshes "fiber15" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0211078 s.
+              Total duration of all mappings so far: 0.0209654 s.
 * Create mapping between meshes "fiber25" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0214938 s.
+              Total duration of all mappings so far: 0.0213529 s.
 * Create mapping between meshes "fiber35" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0219215 s.
+              Total duration of all mappings so far: 0.0217439 s.
 * Create mapping between meshes "fiber45" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0223091 s.
+              Total duration of all mappings so far: 0.022138 s.
 * Create mapping between meshes "fiber55" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0226967 s.
+              Total duration of all mappings so far: 0.0225498 s.
 * Create mapping between meshes "fiber65" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0230864 s.
+              Total duration of all mappings so far: 0.022947 s.
 * Create mapping between meshes "fiber75" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0235135 s.
+              Total duration of all mappings so far: 0.0233735 s.
 * Create mapping between meshes "fiber85" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0239392 s.
+              Total duration of all mappings so far: 0.0238086 s.
 * Create mapping between meshes "fiber95" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0243678 s.
+              Total duration of all mappings so far: 0.0242288 s.
 * Create mapping between meshes "fiber6" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0247449 s.
+              Total duration of all mappings so far: 0.0246075 s.
 * Create mapping between meshes "fiber16" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0251327 s.
+              Total duration of all mappings so far: 0.0249963 s.
 * Create mapping between meshes "fiber26" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0255808 s.
+              Total duration of all mappings so far: 0.0253886 s.
 * Create mapping between meshes "fiber36" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0259601 s.
+              Total duration of all mappings so far: 0.0258144 s.
 * Create mapping between meshes "fiber46" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0263468 s.
+              Total duration of all mappings so far: 0.0262064 s.
 * Create mapping between meshes "fiber56" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0267406 s.
+              Total duration of all mappings so far: 0.0266 s.
 * Create mapping between meshes "fiber66" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 0 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0271214 s.
+              Total duration of all mappings so far: 0.0271273 s.
 * Create mapping between meshes "fiber76" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0275544 s.
+              Total duration of all mappings so far: 0.027561 s.
 * Create mapping between meshes "fiber86" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0279846 s.
+              Total duration of all mappings so far: 0.0280279 s.
 * Create mapping between meshes "fiber96" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0284071 s.
+              Total duration of all mappings so far: 0.0284537 s.
 * Create mapping between meshes "fiber7" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0288466 s.
+              Total duration of all mappings so far: 0.0288701 s.
 * Create mapping between meshes "fiber17" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0292586 s.
+              Total duration of all mappings so far: 0.0293459 s.
 * Create mapping between meshes "fiber27" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0296712 s.
+              Total duration of all mappings so far: 0.0298227 s.
 * Create mapping between meshes "fiber37" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0300912 s.
+              Total duration of all mappings so far: 0.0302401 s.
 * Create mapping between meshes "fiber47" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0305148 s.
+              Total duration of all mappings so far: 0.0306613 s.
 * Create mapping between meshes "fiber57" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0309422 s.
+              Total duration of all mappings so far: 0.0310869 s.
 * Create mapping between meshes "fiber67" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0313645 s.
+              Total duration of all mappings so far: 0.0315046 s.
 * Create mapping between meshes "fiber77" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0317995 s.
+              Total duration of all mappings so far: 0.0319436 s.
 * Create mapping between meshes "fiber87" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0322611 s.
+              Total duration of all mappings so far: 0.0323649 s.
 * Create mapping between meshes "fiber97" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0326893 s.
+              Total duration of all mappings so far: 0.0327887 s.
 * Create mapping between meshes "fiber8" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0331036 s.
+              Total duration of all mappings so far: 0.033206 s.
 * Create mapping between meshes "fiber18" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0335224 s.
+              Total duration of all mappings so far: 0.0336286 s.
 * Create mapping between meshes "fiber28" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0339356 s.
+              Total duration of all mappings so far: 0.0340377 s.
 * Create mapping between meshes "fiber38" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0343483 s.
+              Total duration of all mappings so far: 0.0344569 s.
 * Create mapping between meshes "fiber48" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.034776 s.
+              Total duration of all mappings so far: 0.034878 s.
 * Create mapping between meshes "fiber58" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0351997 s.
+              Total duration of all mappings so far: 0.0353197 s.
 * Create mapping between meshes "fiber68" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0356522 s.
+              Total duration of all mappings so far: 0.0357426 s.
 * Create mapping between meshes "fiber78" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0360834 s.
+              Total duration of all mappings so far: 0.0361817 s.
 * Create mapping between meshes "fiber88" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1000/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0365193 s.
+              Total duration of all mappings so far: 0.0367222 s.
 * Create mapping between meshes "fiber98" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0369606 s.
+              Total duration of all mappings so far: 0.0371547 s.
 * Create mapping between meshes "fiber9" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0373691 s.
+              Total duration of all mappings so far: 0.0376051 s.
 * Create mapping between meshes "fiber19" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0377799 s.
+              Total duration of all mappings so far: 0.038027 s.
 * Create mapping between meshes "fiber29" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0381932 s.
+              Total duration of all mappings so far: 0.0384489 s.
 * Create mapping between meshes "fiber39" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0385956 s.
+              Total duration of all mappings so far: 0.0388539 s.
 * Create mapping between meshes "fiber49" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0390233 s.
+              Total duration of all mappings so far: 0.0392823 s.
 * Create mapping between meshes "fiber59" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0394917 s.
+              Total duration of all mappings so far: 0.0397195 s.
 * Create mapping between meshes "fiber69" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0399077 s.
+              Total duration of all mappings so far: 0.0401356 s.
 * Create mapping between meshes "fiber79" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0403403 s.
+              Total duration of all mappings so far: 0.0405707 s.
 * Create mapping between meshes "fiber89" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1150/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.040772 s.
+              Total duration of all mappings so far: 0.041083 s.
 * Create mapping between meshes "fiber99" (1D) -> "mesh3D" (3D).
   Statistics: 0/100 source dofs are outside the target mesh,
               1200/1225 target dofs are outside the source mesh (fixing this is disabled),
               iterated 1 times over target mesh,
               "xiTolerance": 0.1 (increase this value to reduce the number of (costly) iterations over the whole mesh, however increasing potentially leads to more elements being checked which takes longer).
-              Total duration of all mappings so far: 0.0412017 s.
+              Total duration of all mappings so far: 0.041549 s.
 * Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
         to field variable "γ" component 0, mesh "mesh3D" (3D)
   using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
@@ -778,111 +778,3 @@
         to field variable "geometry", all components, mesh "fiber0" (1D)
   using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
   Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".
-* Map from field variable "geometry", all components, mesh "mesh3D" (3D)  [and other field variables/meshes, in total 100]
-        to field variable "geometry", all components, mesh "fiber0" (1D)
-  using reverse direction of mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Simply interpolate in the mesh "mesh3D".
-* Map from field variable "Razumova/activestress" component 0, mesh "fiber0" (1D)  [and other field variables/meshes, in total 100]
-        to field variable "γ" component 0, mesh "mesh3D" (3D)
-  using forward mapping "fiber0" (1D) -> "mesh3D" (3D).
-  Description: Collection and normalization of the contributions from points in mesh "fiber0" that are located in adjacent elements to the target dof in the target mesh "mesh3D".

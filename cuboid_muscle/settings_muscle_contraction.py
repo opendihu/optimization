@@ -2,6 +2,7 @@ import sys
 import os
 import itertools
 import importlib
+import numpy as np
 
 # parse arguments
 rank_no = (int)(sys.argv[-2])
@@ -33,6 +34,35 @@ else:
   exit(0)
 
 scenario_name = "muscle-contraction" 
+
+#Questions:
+#How do you only execute callback_funtion at first and last iteration?
+#Else: How do I find out if it's the first time this simulation that callback_function is being called?
+
+output_interval = 10
+
+def callback_function(raw_data):
+  number_of_fibers = variables.fb_x * variables.fb_y
+  average_z_start = 0
+  average_z_end = 0
+
+  for i in range(number_of_fibers):
+    z_data = raw_data[i]["data"][0]["components"][2]["values"]
+    average_z_start += np.min(z_data)
+    average_z_end += np.max(z_data)
+  
+  average_z_start /= number_of_fibers
+  average_z_end /= number_of_fibers
+
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle: ", length_of_muscle)
+
+  f = open("muscle_length.csv", "a")
+  f.write(str(length_of_muscle))
+  f.write(",")
+  f.close()
+
+
 
 # define config
 config = {
@@ -165,13 +195,11 @@ config = {
 
                 "OutputWriter": [
                   {
-                    "format":         "Paraview",
-                    "outputInterval": int(1.0 / variables.dt_splitting * variables.output_interval),
-                    "filename":       "out/" + scenario_name + "/fibers",
-                    "fileNumbering":  "incremental",
-                    "binary":         True,
-                    "fixedFormat":    False,
-                    "combineFiles":   True
+                    "format": "PythonCallback",
+                    "callback": callback_function,
+                    "outputInterval": output_interval,
+                    #"filename": "test",
+                    #"fileNumbering": "incremental",
                   }
                 ],
 
