@@ -35,34 +35,39 @@ else:
 
 scenario_name = "muscle-contraction" 
 
-#Questions:
-#How do you only execute callback_funtion at first and last iteration?
-#Else: How do I find out if it's the first time this simulation that callback_function is being called?
-
-output_interval = 10
+#-------------------------------------------------------------------------------------------------------------
 
 def callback_function(raw_data):
-  number_of_fibers = variables.fb_x * variables.fb_y
-  average_z_start = 0
-  average_z_end = 0
+  t = raw_data[0]["currentTime"]
+  if t == variables.dt_3D or t == variables.end_time:
+    number_of_nodes = variables.bs_x * variables.bs_y
+    average_z_start = 0
+    average_z_end = 0
 
-  for i in range(number_of_fibers):
-    z_data = raw_data[i]["data"][0]["components"][2]["values"]
-    average_z_start += np.min(z_data)
-    average_z_end += np.max(z_data)
-  
-  average_z_start /= number_of_fibers
-  average_z_end /= number_of_fibers
+    z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-  length_of_muscle = np.abs(average_z_end - average_z_start)
-  print("length of muscle: ", length_of_muscle)
+    for i in range(number_of_nodes):
+      average_z_start += z_data[i]
+      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
-  f = open("muscle_length.csv", "a")
-  f.write(str(length_of_muscle))
-  f.write(",")
-  f.close()
+    average_z_start /= number_of_nodes
+    average_z_end /= number_of_nodes
 
+    length_of_muscle = np.abs(average_z_end - average_z_start)
+    print("length of muscle: ", length_of_muscle)
 
+    if t == variables.dt_3D:
+      f = open("muscle_length.csv", "w")
+      f.write(str(length_of_muscle))
+      f.write(",")
+      f.close()
+    else:
+      f = open("muscle_length.csv", "a")
+      f.write(str(length_of_muscle))
+      f.write(",")
+      f.close()
+
+#---------------------------------------------------------------------------------------------------------------
 
 # define config
 config = {
@@ -195,11 +200,14 @@ config = {
 
                 "OutputWriter": [
                   {
-                    "format": "PythonCallback",
-                    "callback": callback_function,
-                    "outputInterval": output_interval,
-                    #"filename": "test",
-                    #"fileNumbering": "incremental",
+                    "format":             "Paraview",
+                    "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                    "filename":           "out/" + scenario_name + "/muscle",
+                    "fileNumbering":      "incremental",
+                    "binary":             True,
+                    "fixedFormat":        False,
+                    "onlyNodalValues":    True,
+                    "combineFiles":       True
                   }
                 ],
 
@@ -313,7 +321,13 @@ config = {
           "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log.txt",
           "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log.txt",
 
-          "OutputWriter": [],
+          "OutputWriter": [
+            {
+              "format": "PythonCallback",
+              "callback": callback_function,
+              "outputInterval": 1,
+            }
+          ],
           "pressure":       { "OutputWriter": [] },
           "dynamic":        { "OutputWriter": [] },
           "LoadIncrements": { "OutputWriter": [] }
