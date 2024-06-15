@@ -10,13 +10,13 @@ import sys, os
 
 # parameters
 force = 1.0                       # [N] load on top
-material_parameters = [1.0, 1.0]
-physical_extent = [1.0, 1.0, 1.0]
-constant_body_force = None
+material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
+physical_extent = [3.0, 3.0, 12.0]
+constant_body_force = None                                                                      #?
 scenario_name = "tensile_test"
-dirichlet_bc_mode = "fix_floating"
+dirichlet_bc_mode = "fix_floating"                                                              #?
  
-if len(sys.argv) > 3:
+if len(sys.argv) > 3:                                                                           #?
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
@@ -47,7 +47,8 @@ if len(sys.argv) > 3:
   else:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
     quit()
- 
+
+"""
 # number of elements (2x2x2)
 nx = 8
 ny = 8
@@ -57,6 +58,10 @@ nz = 8
 mx = 2*nx + 1
 my = 2*ny + 1
 mz = 2*nz + 1
+"""
+
+nx, ny, nz = 3, 3, 12                     # number of elements
+mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
 
 # boundary conditions (for quadratic elements)
 # --------------------------------------------
