@@ -24,25 +24,25 @@ if len(sys.argv) > 3:                                                           
     
   # set material parameters depending on scenario name
   if scenario_name == "compressible_mooney_rivlin":
-    material_parameters = [5, 7.5, 10]      # c1, c2, c
+    material_parameters = [3.176e-10, 1.813, 10]      # c1, c2, c
     
   elif scenario_name == "compressible_mooney_rivlin_decoupled":
-    material_parameters = [5, 7.5, 10.0]      # c1, c2, kappa
+    material_parameters = [3.176e-10, 1.813, 10.0]      # c1, c2, kappa
     
   elif scenario_name == "incompressible_mooney_rivlin":
-    material_parameters = [10, 10]      # c1, c2
+    material_parameters = [3.176e-10, 1.813]      # c1, c2
     
   elif scenario_name == "nearly_incompressible_mooney_rivlin":
-    material_parameters = [10, 10, 1e3]      # c1, c2, kappa
+    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
 
   elif scenario_name == "nearly_incompressible_mooney_rivlin_decoupled":
-    material_parameters = [10, 10, 1e3]      # c1, c2, kappa
+    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
 
   elif scenario_name == "linear":
     pass
 
   elif scenario_name == "nearly_incompressible_mooney_rivlin_febio":
-    material_parameters = [10, 10, 1e3]      # c1, c2, kappa
+    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
 
   else:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
@@ -92,6 +92,35 @@ elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": tract
 # callback for result
 def handle_result_hyperelasticity(result):
   data = result[0]
+
+#-----------------------------------------------------------------------
+  number_of_nodes = mx * my
+  average_z_start = 0
+  average_z_end = 0
+
+  z_data = data["data"][0]["components"][2]["values"]
+
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(mz -1) + i]
+
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
+
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle: ", length_of_muscle)
+
+  if data["timeStepNo"] == 0:
+    f = open("muscle_length.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_length.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+#-----------------------------------------------------------------------
   
   if data["timeStepNo"] == 1:
     field_variables = data["data"]
