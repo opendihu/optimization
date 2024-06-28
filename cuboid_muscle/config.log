@@ -1,9 +1,9 @@
 file /home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/SConstructGeneral,line 147:
 	Configure(confdir = .sconf_temp)
 scons: Configure: Checking for MPI ...           
-cflags: /tmp/tmpdrxz82is -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
+cflags: /tmp/tmp4td3wxph -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
 
-ldflags: /tmp/tmpdrxz82is -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi_cxx -lmpi
+ldflags: /tmp/tmp4td3wxph -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi_cxx -lmpi
 
 extracted cflags  from mpic++: 
  -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
@@ -213,7 +213,10 @@ scons: Configure: ".sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db[0m
+scons: Configure: ".sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db[0m
+  |
 scons: Configure: ".sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db > .sconf_temp/conftest_0f7fbb3c611549b3c99e214d53cf6284_0_a0e80f722fd1a8af25928cdeaaca13db.out
@@ -223,7 +226,7 @@ Program output: ""
 this was successful (using ['python3.9']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/python/install/include', '/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/python/install/include/python3.9'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/python/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for Python packages...
 
@@ -306,7 +309,10 @@ scons: Configure: ".sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406[0m
+scons: Configure: ".sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406[0m
+  |
 scons: Configure: ".sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406 > .sconf_temp/conftest_aadd70c5badbcb6077c1334b0cea4781_0_04f504dc562a6ba81f9d92ae6a689406.out
@@ -317,7 +323,7 @@ Program output: "pythonSearchPath: [/home/lukas/Desktop/Bachelorthesis/OpenDiHu/
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/pythonpackages/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/pythonpackages/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for Base64 ...        
 
@@ -502,7 +508,10 @@ scons: Configure: ".sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03[0m
+scons: Configure: ".sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03[0m
+  |
 scons: Configure: ".sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03 > .sconf_temp/conftest_ff48b8fecab20d7fcb88f0eeeebdbbff_0_dcb5259aaf86fe7bc9bf954ebf977a03.out
@@ -512,7 +521,7 @@ Program output: ""
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/base64/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/base64/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for googletest ...    
 
@@ -588,7 +597,10 @@ scons: Configure: ".sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690[0m
+scons: Configure: ".sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690[0m
+  |
 scons: Configure: ".sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690 > .sconf_temp/conftest_f9f70754af714efece99a97b41c0df8a_0_9764e547a70eed4115446df4d2cf0690.out
@@ -608,7 +620,7 @@ Program output: "[==========] Running 1 test from 1 test case.
 this was successful (using ['gtest']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/googletest/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/googletest/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for SEMT ...          
 
@@ -710,7 +722,10 @@ scons: Configure: ".sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614[0m
+scons: Configure: ".sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614[0m
+  |
 scons: Configure: ".sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614 > .sconf_temp/conftest_2f34108e4ac1906b1061cd82904e5298_0_7d9bdc3fbfc722fa01cf0d302a334614.out
@@ -722,7 +737,7 @@ Program output: "(((x0 * x1) - t1) + (x2)^(2))
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/semt/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/semt/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for ADIOS2 ...        
 
@@ -890,7 +905,10 @@ scons: Configure: ".sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c[0m
+scons: Configure: ".sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c[0m
+  |
 scons: Configure: ".sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c > .sconf_temp/conftest_570feb342354ede9a9fe618041eb2d3d_0_6d76d94c07fa0700689273debae5bd8c.out
@@ -916,7 +934,7 @@ Attribute: Single_String	Key: Elements	Value: 1
 this was successful (using ['adios2']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/adios/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/adios/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for Vc ...            
 
@@ -1012,7 +1030,10 @@ scons: Configure: ".sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba[0m
+scons: Configure: ".sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba[0m
+  |
 scons: Configure: ".sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba > .sconf_temp/conftest_32b2d14b65c386b861ee6f5731aff93d_0_a1072a72579388f2dbd3f155c4c33bba.out
@@ -2022,7 +2043,7 @@ Program output: "  0:   -0.78036,   0.152758 ->   0.795171,    168.924
 this was successful (using ['Vc']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/vc/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/vc/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for std_simd ...      
 
@@ -2140,7 +2161,10 @@ scons: Configure: ".sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370[0m
+scons: Configure: ".sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370[0m
+  |
 scons: Configure: ".sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370 > .sconf_temp/conftest_bd7a38f0ea326f18f93f65c8cf460143_0_c13e8cb459cfc59d95b00ab78f629370.out
@@ -2159,7 +2183,7 @@ isfinite
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/std_simd/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/std_simd/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for xbraid ...        
 
@@ -2485,7 +2509,10 @@ scons: Configure: ".sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0.c[0m
   |
-[32mLinking   .sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee[0m
+scons: Configure: ".sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee[0m
+  |
 scons: Configure: ".sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee > .sconf_temp/conftest_7468606977159e632f7fd32b42633e4b_0_15b9f07ebf8e232063ec5e27a0c25cee.out
@@ -2534,7 +2561,7 @@ Program output: "
 this was successful (using ['braid']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/xbraid/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/xbraid/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for OpenCOR ...       
 
@@ -2617,7 +2644,10 @@ scons: Configure: ".sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7[0m
+scons: Configure: ".sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7[0m
+  |
 scons: Configure: ".sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7 > .sconf_temp/conftest_b665397109ca5a8fef1519d04d40b8ec_0_7bd10119980a9a184b27cf3d53184bd7.out
@@ -2628,7 +2658,7 @@ opencor found."
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/opencor/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/opencor/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for libxml2 ...       
 
@@ -2695,7 +2725,10 @@ scons: Configure: ".sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0.c[0m
   |
-[32mLinking   .sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c[0m
+scons: Configure: ".sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c[0m
+  |
 scons: Configure: ".sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c > .sconf_temp/conftest_ac3a3d0e775bd87dbee85d0ef463c07c_0_578f20c708854cc9871f89a06e5bae7c.out
@@ -2705,7 +2738,7 @@ Program output: ""
 this was successful (using ['xml2']), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/libxml2/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/libxml2/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 scons: Configure: Checking for preCICE ...       
 
@@ -13477,7 +13510,10 @@ scons: Configure: ".sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0.o" is
 scons: Configure: The original builder output was:
   |[32mCompiling .sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0.cpp[0m
   |
-[32mLinking   .sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d[0m
+scons: Configure: ".sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d" is up to date.
+scons: Configure: The original builder output was:
+  |[32mLinking   .sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d[0m
+  |
 scons: Configure: ".sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d.out" is up to date.
 scons: Configure: The original builder output was:
   |.sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d > .sconf_temp/conftest_af9f1a565719144c3dc56fc4c64b85c4_0_5196864bbd5af7ff57fd4ff97ba0f82d.out
@@ -13488,6 +13524,6 @@ Program output: "2024-06-18 11:03:09,616 INFO [default] hi
 this was successful (using [[]]), done with list of libraries
 Combination of (include, lib) directories ['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/easyloggingpp/install/include'],['/home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/dependencies/easyloggingpp/install/lib'] was successful, done with combinations.
 Build was successful, touch file "scons_build_success".
-scons: Configure: yes
+scons: Configure: (cached) yes
 
 
