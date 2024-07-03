@@ -71,6 +71,50 @@ mz = 2*nz + 1
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
 
+fb_x, fb_y = 10, 10         # number of fibers
+fb_points = 100             # number of points per fiber
+fiber_direction = [0, 0, 1] # direction of fiber in element
+
+def get_fiber_no(fiber_x, fiber_y):
+    return fiber_x + fiber_y*fb_x
+
+meshes = { # create 3D mechanics mesh
+    "mesh3D": {
+        "nElements":            [nx, ny, nz],
+        "physicalExtent":       [nx, ny, nz],
+        "physicalOffset":       [0, 0, 0],
+        "logKey":               "mesh3D",
+        "inputMeshIsGlobal":    True,
+        "nRanks":               n_ranks
+    },
+    "3Dmesh_quadratic": { 
+      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
+      "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
+      "physicalExtent":             physical_extent,            # physical size of the box
+      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
+    },
+    "3Dmesh_febio": { 
+      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
+      "nElements":                  [2*nx, 2*ny, 2*nz],               # number of quadratic elements in x, y and z direction
+      "physicalExtent":             physical_extent,            # physical size of the box
+      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
+    }
+}
+
+for fiber_x in range(fb_x):
+    for fiber_y in range(fb_y):
+        fiber_no = get_fiber_no(fiber_x, fiber_y)
+        x = nx * fiber_x / (fb_x - 1)
+        y = ny * fiber_y / (fb_y - 1)
+        nodePositions = [[x, y, nz * i / (fb_points - 1)] for i in range(fb_points)]
+        meshName = "fiber{}".format(fiber_no)
+        meshes[meshName] = { # create fiber meshes
+            "nElements":            [fb_points - 1],
+            "nodePositions":        nodePositions,
+            "inputMeshIsGlobal":    True,
+            "nRanks":               n_ranks
+        }
+
 # boundary conditions (for quadratic elements)
 # --------------------------------------------
 
@@ -119,7 +163,7 @@ def handle_result_hyperelasticity(result):
   print("length of muscle: ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
-    f = open("muscle_length.csv", "w")
+    f = open("muscle_length.csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -191,7 +235,10 @@ def handle_result_linear_elasticity(result):
 
 def callback_function(raw_data):
   t = raw_data[0]["currentTime"]
-  if t == variables.dt_3D or t == variables.end_time:
+  print("test")
+  if False:
+  #if t == variables.dt_3D or t == variables.end_time:
+    print("test2")
     number_of_nodes = variables.bs_x * variables.bs_y
     average_z_start = 0
     average_z_end = 0
@@ -240,7 +287,12 @@ config = {
     }
   },
 
-  "Meshes": variables.meshes,
+  "Meshes": meshes,
+  "MappingsBetweenMeshes": { 
+    "mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+  },
+
+
 
   "Solvers": {
     "linearElasticitySolver": {           # solver for linear elasticity
@@ -252,6 +304,30 @@ config = {
       "dumpFilename":       "",
       "dumpFormat":         "matlab",
     }, 
+    "diffusionSolver": {
+      "solverType":                     "cg",
+      "preconditionerType":             "none",
+      "relativeTolerance":              1e-10,
+      "absoluteTolerance":              1e-10,
+      "maxIterations":                  1e4,
+      "dumpFilename":                   "",
+      "dumpFormat":                     "matlab"
+    },
+    "mechanicsSolver": {
+      "solverType":                     "preonly",
+      "preconditionerType":             "lu",
+      "relativeTolerance":              1e-10,
+      "absoluteTolerance":              1e-10,
+      "maxIterations":                  1e4,
+      "snesLineSearchType":             "l2",
+      "snesRelativeTolerance":          1e-5,
+      "snesAbsoluteTolerance":          1e-5,
+      "snesMaxIterations":              10,
+      "snesMaxFunctionEvaluations":     1e8,
+      "snesRebuildJacobianFrequency":   5,
+      "dumpFilename":                   "",
+      "dumpFormat":                     "matlab"
+    }
   },
 
   "Coupling": {

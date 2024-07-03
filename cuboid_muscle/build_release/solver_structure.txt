@@ -148,6 +148,6 @@ Connection Types:
   ─m──   Mapping between different meshes
 
 Referenced Meshes:
-  [a] "anonymous0", 3D structured deformable, quadratic Lagrange basis
+  [a] "3Dmesh_quadratic", 3D structured deformable, quadratic Lagrange basis
   [b] "fiber0", 1D structured deformable, linear Lagrange basis
   [c] "mesh3D", 3D structured deformable, quadratic Lagrange basis

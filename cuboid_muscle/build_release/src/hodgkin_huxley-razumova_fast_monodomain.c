@@ -88,7 +88,7 @@
 
 using Vc::double_v; 
 
-/* This file was created by opendihu at 2024/6/28 22:34:18.
+/* This file was created by opendihu at 2024/7/3 15:17:39.
  * It is designed for the FastMonodomainSolver.
   */
 
