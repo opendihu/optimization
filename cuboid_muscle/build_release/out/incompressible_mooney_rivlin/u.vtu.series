@@ -2,6 +2,6 @@
 	"file-series-version" : "1.0",
 	"files" : [
 		{ "name" : "u_0000000.vtu", "time" : 0 },
-		{ "name" : "u_0000001.vtu", "time" : 0.5 }
+		{ "name" : "u_0000001.vtu", "time" : 2 }
 	]
 }

@@ -163,7 +163,7 @@ def handle_result_hyperelasticity(result):
   print("length of muscle: ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
-    f = open("muscle_length.csv", "a")
+    f = open("muscle_length.csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -336,6 +336,7 @@ config = {
 
     "timeStepWidth": variables.end_time,
     "endTime": variables.end_time,
+    "connectedSlotsTerm1To2": {0},
 
     "Term1": {
       "HyperelasticitySolver": {
@@ -649,54 +650,4 @@ config = {
       }
     }
   },
-
-
-
-  # "FiniteElementMethod" : {       # linear elasticity finite element method
-  #   "meshName":             "3Dmesh_quadratic",           # mesh with quadratic Lagrange ansatz functions
-  #   "inputMeshIsGlobal":    True,                         # boundary conditions are specified in global numberings, whereas the mesh is given in local numbering 
-  #   "solverName":           "linearElasticitySolver",                   # reference to the linear solver
-  #   "prefactor":            1.0,                                        # prefactor of the lhs, has no effect here
-  #   "slotName":             "",
-  #   "dirichletBoundaryConditions": elasticity_dirichlet_bc,             # the Dirichlet boundary conditions that define values for displacements u
-  #   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-  #   "neumannBoundaryConditions":   elasticity_neumann_bc,               # Neumann boundary conditions that define traction forces on surfaces of elements
-  #   "divideNeumannBoundaryConditionValuesByTotalArea": False,           # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
-    
-  #   # material parameters
-  #   "bulkModulus":          50,     # bulk modulus K, how much incompressible, high -> incompressible, low -> very compressible
-  #   "shearModulus":         100,      # shear modulus, μ or G, "rigidity", how much shear stress response to shear deformation
-    
-  #   "OutputWriter" : [
-  #     # Paraview files
-  #     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/u", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-      
-  #     # Python files and callback
-  #     {"format": "PythonFile", "outputInterval": 1, "filename": "out/all/"+scenario_name, "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-  #     {"format": "PythonCallback", "outputInterval": 1, "filename": "out/all/"+scenario_name, "callback": handle_result_linear_elasticity, "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-  #   ],
-  # },
-  # "NonlinearElasticitySolverFebio": {
-  #   "durationLogKey": "febio",
-  #   "tractionVector": traction_vector,                    # traction vector that is applied
-  #   #"tractionElementNos": [(2*nz-1)*2*nx*2*ny + j*2*nx + i for j in range(2*ny) for i in range(2*nx)],    # elements on which traction is applied
-  #   "tractionElementNos": [(nz-1)*nx*ny + j*nx + i for j in range(ny) for i in range(nx)],    # elements on which traction is applied
-  #   "dirichletBoundaryConditionsMode": dirichlet_bc_mode, # "fix_all" or "fix_floating", how the bottom of the box will be fixed, fix_all fixes all nodes, fix_floating fixes all nodes only in z and the edges in x/y direction
-  #   "materialParameters": material_parameters,            # c0, c1, k for Ψ = c0 * (I1-3) + c1 * (I2-3) + 1/2*k*(log(J))^2
-    
-  #   "meshName":             "3Dmesh_quadratic",           # mesh with quadratic Lagrange ansatz functions
-  #   "inputMeshIsGlobal":    True,                         # boundary conditions are specified in global numberings, whereas the mesh is given in local numbering 
-  #   "slotNames":            [],
-    
-  #   # 1. main output writer that writes output files using the quadratic elements function space. Writes displacements, velocities and PK2 stresses.
-  #   "OutputWriter" : [
-      
-  #     # Paraview files
-  #     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/u", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-      
-  #     # Python files and callback
-  #     {"format": "PythonFile", "outputInterval": 1, "filename": "out/all/"+scenario_name, "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-  #     {"format": "PythonCallback", "outputInterval": 1, "filename": "out/all/"+scenario_name, "callback": handle_result_febio, "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-  #   ],
-  # },
 }
