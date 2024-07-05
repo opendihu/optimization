@@ -13,7 +13,7 @@ dt_3D = 1e-1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 2.0         # end time of the simulation 
+end_time = 0.5         # end time of the simulation 
 output_interval = dt_3D # time interval between outputs
 
 # Material parameters
