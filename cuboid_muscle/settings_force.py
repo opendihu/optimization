@@ -15,7 +15,7 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-
+#
 # parameters
 force = 1.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
