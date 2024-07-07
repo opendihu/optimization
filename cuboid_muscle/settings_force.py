@@ -15,9 +15,9 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-#
+
 # parameters
-force = 1.0                       # [N] load on top
+force = 0.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 physical_extent = [3.0, 3.0, 12.0]
 constant_body_force = None                                                                      #?
@@ -55,18 +55,6 @@ if len(sys.argv) > 3:                                                           
   else:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
     quit()
-
-"""
-# number of elements (2x2x2)
-nx = 8
-ny = 8
-nz = 8
-
-# number of nodes
-mx = 2*nx + 1
-my = 2*ny + 1
-mz = 2*nz + 1
-"""
 
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
@@ -163,12 +151,12 @@ def handle_result_hyperelasticity(result):
   print("length of muscle: ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
-    f = open("muscle_length.csv", "w")
+    f = open("muscle_length_prestretch.csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
   else:
-    f = open("muscle_length.csv", "a")
+    f = open("muscle_length_prestretch.csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -256,12 +244,12 @@ def callback_function(raw_data):
     print("length of muscle: ", length_of_muscle)
 
     if t == variables.dt_3D:
-      f = open("muscle_length1.csv", "w")
+      f = open("muscle_length_contraction.csv", "w")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
     else:
-      f = open("muscle_length1.csv", "a")
+      f = open("muscle_length_contraction.csv", "a")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
@@ -336,7 +324,7 @@ config = {
 
     "timeStepWidth": variables.end_time,
     "endTime": variables.end_time,
-    "connectedSlotsTerm1To2": {0},
+    "connectedSlotsTerm1To2": {},
 
     "Term1": {
       "HyperelasticitySolver": {
@@ -620,8 +608,8 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            variables.dirichlet_bc,
-              "neumannBoundaryConditions":                              variables.neumann_bc,
+              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,

@@ -1,9 +1,9 @@
 file /home/lukas/Desktop/Bachelorthesis/OpenDiHu/opendihu/SConstructGeneral,line 147:
 	Configure(confdir = .sconf_temp)
 scons: Configure: Checking for MPI ...           
-cflags: /tmp/tmpfj0b2q14 -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
+cflags: /tmp/tmpvrixvc1o -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
 
-ldflags: /tmp/tmpfj0b2q14 -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi_cxx -lmpi
+ldflags: /tmp/tmpvrixvc1o -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi_cxx -lmpi
 
 extracted cflags  from mpic++: 
  -I/usr/lib/x86_64-linux-gnu/openmpi/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi
