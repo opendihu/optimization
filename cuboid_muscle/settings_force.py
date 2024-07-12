@@ -20,11 +20,11 @@ n_ranks = (int)(sys.argv[-1])
 force = 0.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 physical_extent = [3.0, 3.0, 12.0]
-constant_body_force = None                                                                      #?
+constant_body_force = None                                                                      
 scenario_name = "tensile_test"
-dirichlet_bc_mode = "fix_floating"                                                              #?
+dirichlet_bc_mode = "fix_floating"                                                              
  
-if len(sys.argv) > 3:                                                                           #?
+if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
@@ -103,9 +103,6 @@ for fiber_x in range(fb_x):
             "nRanks":               n_ranks
         }
 
-# boundary conditions (for quadratic elements)
-# --------------------------------------------
-
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc = {}
 k = 0
@@ -133,7 +130,6 @@ elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": tract
 def handle_result_hyperelasticity(result):
   data = result[0]
 
-#-----------------------------------------------------------------------
   number_of_nodes = mx * my
   average_z_start = 0
   average_z_end = 0
@@ -160,7 +156,6 @@ def handle_result_hyperelasticity(result):
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
-#-----------------------------------------------------------------------
   
   if data["timeStepNo"] == 1:
     field_variables = data["data"]
@@ -221,12 +216,9 @@ def handle_result_linear_elasticity(result):
     with open("result.csv","a") as f:
       f.write("{},{},{}\n".format(scenario_name,strain,stress))
 
-def callback_function(raw_data):
+def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
-  print("test")
   if True:
-  #if t == variables.dt_3D or t == variables.end_time:
-    print("test2")
     number_of_nodes = variables.bs_x * variables.bs_y
     average_z_start = 0
     average_z_end = 0
@@ -389,7 +381,7 @@ config = {
         "OutputWriter" : [
           
           # Paraview files
-          {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/u", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+          {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
           
           # Python files and callback
           {"format": "PythonFile", "outputInterval": 1, "filename": "out/all/"+scenario_name, "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
@@ -503,7 +495,7 @@ config = {
                       {
                         "format":             "Paraview",
                         "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                        "filename":           "out/" + scenario_name + "/muscle",
+                        "filename":           "out/" + scenario_name + "/fibers",
                         "fileNumbering":      "incremental",
                         "binary":             True,
                         "fixedFormat":        False,
@@ -574,7 +566,7 @@ config = {
               {
                 "format":             "Paraview",
                 "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/muscle",
+                "filename":           "out/" + scenario_name + "/mechanics",
                 "fileNumbering":      "incremental",
                 "binary":             True,
                 "fixedFormat":        False,
@@ -591,7 +583,7 @@ config = {
               "density":                variables.rho,
               "timeStepOutputInterval": 1,
 
-              "meshName":                   "mesh3D",
+              "meshName":                   "3Dmesh_quadratic",
               "fiberDirectionInElement":    variables.fiber_direction,
               "inputMeshIsGlobal":          True,
               "fiberMeshNames":             [],
@@ -614,7 +606,7 @@ config = {
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
 
-              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              #"initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "constantBodyForce":          (0, 0, 0),
 
@@ -625,7 +617,7 @@ config = {
               "OutputWriter": [
                 {
                   "format": "PythonCallback",
-                  "callback": callback_function,
+                  "callback": callback_function_contraction,
                   "outputInterval": 1,
                 }
               ],
