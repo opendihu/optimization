@@ -95,7 +95,7 @@ class CustomSingleTaskGP(SingleTaskGP):
                          likelihood=likelihood,
                          covar_module=kernel,
                          mean_module=mean,
-                         input_transform=input_transform,
+                         #input_transform=input_transform,
                          #outcome_transform=output_tansform,
                         )
 
@@ -129,7 +129,7 @@ print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
-num_iterations = 3##################################
+num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
@@ -157,7 +157,7 @@ for i in range(num_iterations):
         candidate = torch.tensor([x_query[argmax_stddev].numpy()])
         print("max stddev used")
 
-    new_y = torch.tensor([[simulation(candidate)]], dtype=torch.double)
+    new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
     #new_y = simulation(candidate).clone().detach()
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
@@ -224,13 +224,13 @@ plt.title("Optimization Results")
 plt.legend()
 plt.show()
 
-continueing = input("Do you want to add another query point? (y/n)")
+continuing = input("Do you want to add another query point? (y/n)")
 
-while continueing == "y":
+while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
 
-    new_y = torch.tensor([[simulation(candidate)]], dtype=torch.double)
+    new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     initial_x = torch.cat([initial_x, candidate])
@@ -258,4 +258,4 @@ while continueing == "y":
     plt.legend()
     plt.show()
 
-    continueing = input("Do you want to add another query point? (y/n)")
+    continuing = input("Do you want to add another query point? (y/n)")
