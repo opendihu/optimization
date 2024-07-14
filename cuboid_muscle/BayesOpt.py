@@ -1,4 +1,5 @@
 import subprocess
+import sys
 import os
 import shlex
 import csv
@@ -19,8 +20,6 @@ from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
 import variables
 
-print(variables.end_time)
-variables.end_time = 5
 print(variables.end_time)
 
 ########################################################################################################################
