@@ -36,7 +36,7 @@ max_stddev = False
 freq = 3
 
 #Minor changes:
-fixed_Yvar = 1e-3
+fixed_Yvar = 1e-6
 lower_bound = 0.
 upper_bound = 10.
 sobol_on = True
@@ -223,3 +223,39 @@ plt.ylabel("Objective Value")
 plt.title("Optimization Results")
 plt.legend()
 plt.show()
+
+continueing = input("Do you want to add another query point? (y/n)")
+
+while continueing == "y":
+    candidate = input("Which point do you want to add?")
+    candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
+
+    new_y = torch.tensor([[simulation(candidate)]], dtype=torch.double)
+    new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
+
+    initial_x = torch.cat([initial_x, candidate])
+    initial_y = torch.cat([initial_y, new_y])
+    initial_yvar = torch.cat([initial_yvar, new_yvar])
+    gp = CustomSingleTaskGP(initial_x, initial_y)
+    mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
+    fit_gpytorch_mll(mll)
+
+    x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
+    posterior = gp.posterior(x_query)
+
+    mean = posterior.mean.squeeze(-1).detach().numpy()
+    variance = posterior.variance.squeeze(-1)
+    stddev = torch.sqrt(variance).detach().numpy()
+
+    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
+    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
+    plt.plot(x_query, mean)
+    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+    plt.xlabel("x")
+    plt.ylabel("Objective Value")
+    plt.title("Optimization Process")
+    plt.legend()
+    plt.show()
+
+    continueing = input("Do you want to add another query point? (y/n)")
