@@ -160,13 +160,6 @@ def handle_result_hyperelasticity(result):
   if data["timeStepNo"] == 1:
     field_variables = data["data"]
     
-    # field_variables[0]: geometry
-    # field_variables[1]: u
-    # field_variables[2]: v
-    # field_variables[3]: t (current traction)
-    # field_variables[4]: T (material traction)
-    # field_variables[5]: PK2-Stress (Voigt), components: S_11, S_22, S_33, S_12, S_13, S_23
-    
     strain = max(field_variables[1]["components"][2]["values"])
     stress = max(field_variables[5]["components"][2]["values"])
     
@@ -196,15 +189,6 @@ def handle_result_linear_elasticity(result):
   
   if data["timeStepNo"] == -1:
     field_variables = data["data"]
-    
-    # field_variables[0]: geometry
-    # field_variables[1]: solution (displacements)
-    # field_variables[2]: rightHandSide
-    # field_variables[3]: -rhsNeumannBC
-    
-    # σ = CC : ε with CC_abcd = K δ_ab δ_cd + μ(δ_ac δ_bd + δ_ad δ_bc - 2/3 δ_ab δ_cd)
-    # σ_ab = K*δ_ab*ε_cc + 2*μ*(ε_ab - 1/3*δ_ab*ε_cc)
-    # σ_33 = K tr(ε) + μ (ε_33 + ε_33 - 2/3 tr(ε)) =(tensile test in z direction)= (K + 4/3 μ) ε_33
     
     strain = max(field_variables[1]["components"][2]["values"])
     K = 50    # parameters as given in config
@@ -252,27 +236,11 @@ config = {
   "logFormat":                    "csv",                        # "csv" or "json", format of the lines in the log file, csv gives smaller files
   "solverStructureDiagramFile":   "solver_structure.txt",       # output file of a diagram that shows data connection between solvers
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
-  "Meshes": {
-    "3Dmesh_quadratic": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent,            # physical size of the box
-      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
-    },
-    "3Dmesh_febio": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [2*nx, 2*ny, 2*nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent,            # physical size of the box
-      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
-    }
-  },
 
   "Meshes": meshes,
   "MappingsBetweenMeshes": { 
     "mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
   },
-
-
 
   "Solvers": {
     "linearElasticitySolver": {           # solver for linear elasticity
