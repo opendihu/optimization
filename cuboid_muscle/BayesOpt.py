@@ -20,7 +20,7 @@ from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
 import variables
 
-print(variables.end_time)
+#print(variables.end_time)
 
 ########################################################################################################################
 #Customize code here
