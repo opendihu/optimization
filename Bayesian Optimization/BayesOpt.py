@@ -17,11 +17,11 @@ from botorch.optim import optimize_acqf
 from botorch.models.transforms.input import InputStandardize
 from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
-import variables
+#import variables
 
-print(variables.end_time)
-variables.end_time = 5
-print(variables.end_time)
+#print(variables.end_time)
+#variables.end_time = 5
+#print(variables.end_time)
 
 ########################################################################################################################
 #Customize code here
