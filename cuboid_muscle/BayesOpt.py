@@ -18,9 +18,12 @@ from botorch.optim import optimize_acqf
 from botorch.models.transforms.input import InputStandardize
 from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
-import variables
 
-#print(variables.end_time)
+script_path = os.path.dirname(os.path.abspath(__file__))
+var_path = os.path.join(script_path, "variables")
+sys.path.insert(0, var_path)
+
+import variables
 
 ########################################################################################################################
 #Customize code here

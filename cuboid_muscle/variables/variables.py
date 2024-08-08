@@ -2,8 +2,10 @@ import sys
 import itertools
 import numpy as np
 
-rank_no = int(sys.argv[-2])
-n_ranks = int(sys.argv[-1])
+if sys.argv[-1] != "BayesOpt.py":
+    n_ranks = int(sys.argv[-1])
+else:
+    n_ranks = 1
 
 # PreCICE
 precice_config = "../../variables/precice-config.xml"
