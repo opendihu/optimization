@@ -53,6 +53,8 @@ def simulation(force):
     command = shlex.split(f"./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin {force}")
     subprocess.run(command)
 
+    print("test")
+
     f = open("muscle_length_prestretch.csv")
     reader = csv.reader(f, delimiter=",")
     for row in reader:
