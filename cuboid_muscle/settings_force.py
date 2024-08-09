@@ -280,8 +280,6 @@ config = {
 
   "Coupling": {
 
-    #I dont know what to put here
-
     "timeStepWidth": variables.end_time,
     "endTime": variables.end_time,
     "connectedSlotsTerm1To2": {},
@@ -513,7 +511,7 @@ config = {
           "valueForStimulatedPoint":                            20.0,
           "onlyComputeIfHasBeenStimulated":                     True,
           "disableComputationWhenStatesAreCloseToEquilibrium":  True,
-          "neuromuscularJunctionRelativeSize":                  0.1,
+          "neuromuscularJunctionRelativeSize":                  0.1,################################change for no randomness
           "generateGPUSource":                                  True,
           "useSinglePrecision":                                 False
         },
