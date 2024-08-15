@@ -53,10 +53,11 @@ num_initial_trials = 2 #this needs to be >=2
 
 def simulation(force):
     force = force.numpy()[0]
+    print("start simulation with force", force)
     command = shlex.split(f"./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin {force}")
     subprocess.run(command)
 
-    print("test")
+    print("end simulation")
 
     f = open("muscle_length_prestretch.csv")
     reader = csv.reader(f, delimiter=",")
@@ -204,16 +205,16 @@ for i in range(num_iterations):
         break
 
 
-    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-    plt.plot(x_query, mean)
-    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.xlabel("x")
-    plt.ylabel("Objective Value")
-    plt.title("Optimization Process")
-    plt.legend()
-    plt.show()
+#    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
+#    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
+#    plt.plot(x_query, mean)
+#    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+#    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+#    plt.xlabel("x")
+#    plt.ylabel("Objective Value")
+#    plt.title("Optimization Process")
+#    plt.legend()
+#    plt.show()
 
 x_query = torch.linspace(0, 10, 1000).unsqueeze(-1)
 posterior = gp.posterior(x_query)
@@ -222,17 +223,18 @@ mean = posterior.mean.squeeze(-1).detach().numpy()
 variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
-plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-plt.plot(x_query, mean)
-plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-plt.xlabel("x")
-plt.ylabel("Objective Value")
-plt.title("Optimization Results")
-plt.legend()
-plt.show()
+#plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
+#plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
+#plt.plot(x_query, mean)
+#plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+#plt.xlabel("x")
+#plt.ylabel("Objective Value")
+#plt.title("Optimization Results")
+#plt.legend()
+#plt.show()
 
-continuing = input("Do you want to add another query point? (y/n)")
+#continuing = input("Do you want to add another query point? (y/n)")
+continuing = "n"
 
 while continuing == "y":
     candidate = input("Which point do you want to add?")
@@ -255,15 +257,15 @@ while continuing == "y":
     variance = posterior.variance.squeeze(-1)
     stddev = torch.sqrt(variance).detach().numpy()
 
-    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-    plt.plot(x_query, mean)
-    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.xlabel("x")
-    plt.ylabel("Objective Value")
-    plt.title("Optimization Process")
-    plt.legend()
-    plt.show()
+#    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
+#    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
+#    plt.plot(x_query, mean)
+#    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+#    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+#    plt.xlabel("x")
+#    plt.ylabel("Objective Value")
+#    plt.title("Optimization Process")
+#    plt.legend()
+#    plt.show()
 
     continuing = input("Do you want to add another query point? (y/n)")

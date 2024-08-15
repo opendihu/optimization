@@ -27,7 +27,7 @@ echo "working directory="$SLURM_SUBMIT_DIR
 echo "Configuring enviroment variables"
 
 echo "Running Optimization Loop"
-mpirun -n 1 python BayesOpt.py  &> BayesOpt.log
+python BayesOpt.py  &> BayesOpt.log
 echo "Simulation completed."
 
 

@@ -38,16 +38,3 @@ for i in range(10):
     f.write(",")
     f.close()
 
-import matplotlib.pyplot as plt
-
-f = open("contractions_0N.csv", "r")
-reader = csv.reader(f, delimiter=",")
-for row in reader:
-    i = 0
-    for j in row:
-        i +=1
-        if j != "":
-            plt.scatter(0,float(j), label=i)
-f.close()
-plt.legend()
-plt.show()

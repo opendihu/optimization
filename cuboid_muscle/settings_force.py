@@ -511,7 +511,7 @@ config = {
           "valueForStimulatedPoint":                            20.0,
           "onlyComputeIfHasBeenStimulated":                     True,
           "disableComputationWhenStatesAreCloseToEquilibrium":  True,
-          "neuromuscularJunctionRelativeSize":                  0.1,################################change for no randomness
+          "neuromuscularJunctionRelativeSize":                  0.0,################################change for no randomness
           "generateGPUSource":                                  True,
           "useSinglePrecision":                                 False
         },

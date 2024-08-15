@@ -15,7 +15,7 @@
 #SBATCH --mail-user=LCBa@web.de
 #
 # Wall clock limit:
-#SBATCH --time=2:00:00
+#SBATCH --time=3:00:00
 #
 # Compute resources
 #SBATCH --nodes=1
@@ -27,7 +27,7 @@ echo "working directory="$SLURM_SUBMIT_DIR
 echo "Configuring enviroment variables"
 
 echo "Launching muscle"
-mpirun -n 1 python SingleSimulation.py  &> SingleSimulation.log
+python SingleSimulation.py  &> SingleSimulation.log
 echo "Simulation completed."
 
 
