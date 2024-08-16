@@ -27,7 +27,7 @@ echo "working directory="$SLURM_SUBMIT_DIR
 echo "Configuring enviroment variables"
 
 echo "Launching muscle"
-mpirun -n 1 python Simulate_10N_20ms.py  &> Simulate_10N_20ms.log
+python Simulate_10N_20ms.py  &> Simulate_10N_20ms.log
 echo "Simulation completed."
 
 

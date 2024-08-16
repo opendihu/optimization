@@ -11,7 +11,7 @@ subprocess.run("pwd")
 """
 os.chdir("build_release")
 
-for i in range(10):
+for i in range(1):
     command = shlex.split("./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin 0.0")
     subprocess.run(command)
 

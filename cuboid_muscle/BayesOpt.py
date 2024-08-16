@@ -235,9 +235,6 @@ mean = posterior.mean.squeeze(-1).detach().numpy()
 variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
-print(mean)
-print(stddev)
-
 #plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
 #plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
 #plt.plot(x_query, mean)
