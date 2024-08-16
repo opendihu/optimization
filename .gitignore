@@ -3,3 +3,5 @@ build_release
 __pycache__
 .scons*
 .sconf*
+*.out
+*.err
