@@ -122,9 +122,17 @@ if sobol_on:
 else:
     initial_x = torch.tensor([[0.],[10.],[5.]], dtype=torch.double)
 
+with open("BayesOpt_outputs.csv", "w"):
+    pass
+
 initial_y = torch.tensor([])
 for force in initial_x:
     y = torch.tensor([[simulation(force)]], dtype=torch.double)
+
+    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([force.numpy()[0], y.numpy()[0,0]])
+
     initial_y = torch.cat([initial_y, y])
 #initial_y = torch.tensor(simulation(initial_x),dtype=torch.double)
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
@@ -138,7 +146,7 @@ print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
-num_iterations = 100
+num_iterations = 1
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
@@ -169,6 +177,10 @@ for i in range(num_iterations):
     new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
     #new_y = simulation(candidate).clone().detach()
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
+
+    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([candidate.numpy()[0,0], new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -223,6 +235,9 @@ mean = posterior.mean.squeeze(-1).detach().numpy()
 variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
+print(mean)
+print(stddev)
+
 #plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
 #plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
 #plt.plot(x_query, mean)
@@ -242,6 +257,10 @@ while continuing == "y":
 
     new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
+
+    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([candidate.numpy()[0,0], new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -269,3 +288,9 @@ while continuing == "y":
 #    plt.show()
 
     continuing = input("Do you want to add another query point? (y/n)")
+
+with open("BayesOpt_outputs.csv", "a", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(np.linspace(lower_bound, upper_bound, 1000))
+    writer.writerow(mean)
+    writer.writerow(stddev)
