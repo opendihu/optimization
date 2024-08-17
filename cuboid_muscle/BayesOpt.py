@@ -33,20 +33,28 @@ nu = 1.5
 matern = True
 rbf = False
 
-const = False
-zero = True
+const = True
+zero = False
 
-num_consecutive_trials = 4
+num_consecutive_trials = 2
+
 EI = True
+PI = False ########## still needs to be added
+KG = False
+ES = False
+
 max_stddev = False
 freq = 3
+
+ML = True ################### still needs to be added
+full_Bayes = False
 
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-upper_bound = 10.
+upper_bound = 20. ########### what should this be?
 sobol_on = True
-improvement_threshold = 1e-2
+improvement_threshold = 1e-4
 num_initial_trials = 2 #this needs to be >=2
 ########################################################################################################################
 
@@ -89,13 +97,17 @@ class CustomSingleTaskGP(SingleTaskGP):
         elif rbf:
             kernel = ScaleKernel(RBFKernel())
         else:
-            kernel = ScaleKernel(MaternKernel(nu=nu))
+            print("Wrong input, used Matern Kernel with nu=1.5 instead")
+            kernel = ScaleKernel(MaternKernel(nu=1.5))
+
         if const:
             mean = ConstantMean()
         elif zero:
             mean = ZeroMean()
         else:
+            print("Wrong input, used Constant Mean instead")
             mean = ConstantMean()
+
         input_transform = InputStandardize(d=1)
         output_tansform = Standardize(m=1)
 
@@ -146,7 +158,7 @@ print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
-num_iterations = 1
+num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
@@ -217,18 +229,18 @@ for i in range(num_iterations):
         break
 
 
-#    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-#    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-#    plt.plot(x_query, mean)
-#    plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-#    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-#    plt.xlabel("x")
-#    plt.ylabel("Objective Value")
-#    plt.title("Optimization Process")
-#    plt.legend()
-#    plt.show()
+    #plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
+    #plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
+    #plt.plot(x_query, mean)
+    #plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+    #plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+    #plt.xlabel("x")
+    #plt.ylabel("Objective Value")
+    #plt.title("Optimization Process")
+    #plt.legend()
+    #plt.show()
 
-x_query = torch.linspace(0, 10, 1000).unsqueeze(-1)
+x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
 posterior = gp.posterior(x_query)
 
 mean = posterior.mean.squeeze(-1).detach().numpy()
