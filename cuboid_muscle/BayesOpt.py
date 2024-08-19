@@ -38,12 +38,12 @@ nu = 1.5
 matern = True
 rbf = False
 
-const = True
-zero = False
+const = False
+zero = True
 
 EI = True
-PI = False ########## still needs to be tested
-KG = False
+PI = True ########## still needs to be tested
+KG = True
 ES = True
 
 max_stddev = False
@@ -53,14 +53,14 @@ ML = True ################### still needs to be added
 full_Bayes = False
 
 #Minor changes:
-fixed_Yvar = 1e-6
+fixed_Yvar = 1#1e-6
 lower_bound = 0.
 upper_bound = 20. ########### what should this be?
 sobol_on = True
 improvement_threshold = 1e-4
 num_initial_trials = 2 #this needs to be >=2
 num_consecutive_trials = 3
-visualize = False
+visualize = True
 add_points = False
 ########################################################################################################################
 
@@ -102,8 +102,6 @@ def simulation(force):
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
         train_Yvar = torch.full_like(train_Y, fixed_Yvar, dtype=torch.double)
-        print(train_Yvar)
-        print(train_Y)
         likelihood = FixedNoiseGaussianLikelihood(noise=train_Yvar)
         if matern:
             kernel = ScaleKernel(MaternKernel(nu=nu))
@@ -121,8 +119,8 @@ class CustomSingleTaskGP(SingleTaskGP):
             print("Wrong input, used Constant Mean instead")
             mean = ConstantMean()
 
-        input_transform = InputStandardize(d=1)
-        output_tansform = Standardize(m=1)
+        #input_transform = InputStandardize(d=1)
+        #output_tansform = Standardize(m=1)
 
         super().__init__(train_X,
                          train_Y,
@@ -138,26 +136,22 @@ starting_time = time.time()
 os.chdir("..")
 os.chdir("cuboid_muscle/build_release")
 
-
-def scale_samples(samples, lower_bound, upper_bound):
-    return lower_bound + (upper_bound - lower_bound) * samples
-
 sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
-    initial_x = scale_samples(sobol.draw(num_initial_trials, dtype=torch.double), lower_bound, upper_bound)
+    initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
 else:
-    initial_x = torch.linspace(lower_bound, upper_bound, num_initial_trials)
+    initial_x = torch.linspace(0, 1, num_initial_trials)
 
 with open("BayesOpt_outputs.csv", "w"):
     pass
 
 initial_y = torch.tensor([])
 for force in initial_x:
-    y = torch.tensor([[simulation(force)]], dtype=torch.double)
+    y = torch.tensor([[simulation(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
 
     with open("BayesOpt_outputs.csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([force.numpy()[0], y.numpy()[0,0]])
+        writer.writerow([force.numpy()[0]*(upper_bound-lower_bound)+lower_bound, y.numpy()[0,0]])
 
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
@@ -193,7 +187,7 @@ for i in range(num_iterations):
     elif KG:
         acq_fct = qKnowledgeGradient(model=gp, num_fantasies=16)
     elif ES:
-        grid_points = torch.linspace(lower_bound, upper_bound, 1000)
+        grid_points = torch.linspace(0, 1, 1000)
         acq_fct = qMaxValueEntropy(model=gp, candidate_set=grid_points)
     else:
         print("Wrong input, used Expected Improvement instead.")
@@ -202,13 +196,13 @@ for i in range(num_iterations):
     if not max_stddev or counter%freq!=0:
         candidate, acq_value = optimize_acqf(
             acq_function=acq_fct,
-            bounds=torch.tensor([[lower_bound], [upper_bound]], dtype=torch.double),
+            bounds=torch.tensor([[0], [1]], dtype=torch.double),
             q=1,
             num_restarts=20,
             raw_samples=256,
         )
     else:
-        x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
+        x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
         posterior = gp.posterior(x_query)
         variance = posterior.variance.squeeze(-1)
         stddev = torch.sqrt(variance).detach().numpy()
@@ -216,12 +210,12 @@ for i in range(num_iterations):
         candidate = torch.tensor([x_query[argmax_stddev].numpy()])
         print("max stddev used")
 
-    new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
+    new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs.csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([candidate.numpy()[0,0], new_y.numpy()[0,0]])
+        writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -239,7 +233,7 @@ for i in range(num_iterations):
         print("Wrong input, used Maximum Likelihood instead.")
         fit_gpytorch_mll(mll)
 
-    x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
+    x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
     posterior = gp.posterior(x_query)
 
     mean = posterior.mean.squeeze(-1).detach().numpy()
@@ -259,7 +253,7 @@ for i in range(num_iterations):
 
     counter += 1
 
-    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()}, Value = {current_value}, Best Value = {best_value}")
+    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
 
     if no_improvement_trials >= num_consecutive_trials:
         print("Stopping criterion met. No significant improvement for consecutive trials.")
@@ -267,18 +261,18 @@ for i in range(num_iterations):
         break
 
     if visualize:
-        plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-        plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-        plt.plot(x_query, mean)
-        plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-        plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+        plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
+        plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
+        plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
+        plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+        plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
         plt.xlabel("x")
         plt.ylabel("Objective Value")
         plt.title("Optimization Process")
         plt.legend()
         plt.show()
 
-x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
+x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
 posterior = gp.posterior(x_query)
 
 mean = posterior.mean.squeeze(-1).detach().numpy()
@@ -286,10 +280,10 @@ variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
 if visualize:
-    plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-    plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-    plt.plot(x_query, mean)
-    plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+    plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
+    plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
+    plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
+    plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
     plt.xlabel("x")
     plt.ylabel("Objective Value")
     plt.title("Optimization Results")
@@ -305,12 +299,12 @@ while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
 
-    new_y = torch.tensor([[simulation(candidate[0])]], dtype=torch.double)
+    new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs.csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([candidate.numpy()[0,0], new_y.numpy()[0,0]])
+        writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -329,7 +323,7 @@ while continuing == "y":
 
     print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()}, Value = {current_value}, Best Value = {best_value}")
 
-    x_query = torch.linspace(lower_bound, upper_bound, 1000).unsqueeze(-1)
+    x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
     posterior = gp.posterior(x_query)
 
     mean = posterior.mean.squeeze(-1).detach().numpy()
@@ -337,11 +331,11 @@ while continuing == "y":
     stddev = torch.sqrt(variance).detach().numpy()
 
     if visualize:
-        plt.scatter(initial_x.numpy(), initial_y.numpy(), color="red", label="Trials", zorder=3)
-        plt.plot(initial_x.numpy(), initial_y.numpy(), color="red", linestyle="", markersize=3)
-        plt.plot(x_query, mean)
-        plt.scatter(candidate.numpy(), new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-        plt.fill_between(x_query.numpy().squeeze(), mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+        plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
+        plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
+        plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
+        plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
+        plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
         plt.xlabel("x")
         plt.ylabel("Objective Value")
         plt.title("Optimization Process")
@@ -360,5 +354,5 @@ with open("BayesOpt_outputs.csv", "a", newline="") as f:
     writer.writerow(mean)
     writer.writerow(stddev)
     writer.writerow([counter])
-    writer.writerow([maximizer.numpy()[0], best_y.numpy()[0]])
+    writer.writerow([maximizer.numpy()[0]*(upper_bound-lower_bound)+lower_bound, best_y.numpy()[0]])
     writer.writerow([time.time()-starting_time])
