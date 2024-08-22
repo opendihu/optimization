@@ -13,11 +13,11 @@ from gpytorch.means import ConstantMean, ZeroMean
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from botorch.fit import fit_gpytorch_mll
 from botorch.acquisition.monte_carlo import qExpectedImprovement
-from botorch.acquisition import ExpectedImprovement, ProbabilityOfImprovement
+from botorch.acquisition import ExpectedImprovement, ProbabilityOfImprovement, PosteriorMean
 from botorch.acquisition.knowledge_gradient import qKnowledgeGradient
 from botorch.acquisition.max_value_entropy_search import qMaxValueEntropy
 from botorch.optim import optimize_acqf
-from botorch.models.transforms.input import InputStandardize
+from botorch.models.transforms.input import InputStandardize, Normalize
 from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
 import time
@@ -41,9 +41,9 @@ rbf = False
 const = False
 zero = True
 
-EI = True
-PI = True ########## still needs to be tested
-KG = True
+EI = False
+PI = False ########## still needs to be tested
+KG = False
 ES = True
 
 max_stddev = False
@@ -53,13 +53,13 @@ ML = True ################### still needs to be added
 full_Bayes = False
 
 #Minor changes:
-fixed_Yvar = 1#1e-6
+fixed_Yvar = 1e-6
 lower_bound = 0.
 upper_bound = 20. ########### what should this be?
 sobol_on = True
 improvement_threshold = 1e-4
 num_initial_trials = 2 #this needs to be >=2
-num_consecutive_trials = 3
+num_consecutive_trials = 2
 visualize = True
 add_points = False
 ########################################################################################################################
@@ -119,16 +119,16 @@ class CustomSingleTaskGP(SingleTaskGP):
             print("Wrong input, used Constant Mean instead")
             mean = ConstantMean()
 
-        #input_transform = InputStandardize(d=1)
-        #output_tansform = Standardize(m=1)
+        input_transform = Normalize(d=train_X.shape[-1])
+        output_transform = Standardize(m=1)
 
         super().__init__(train_X,
                          train_Y,
                          likelihood=likelihood,
                          covar_module=kernel,
                          mean_module=mean,
-                         #input_transform=input_transform,
-                         #outcome_transform=output_tansform,
+                         input_transform=input_transform,
+                         outcome_transform=output_transform,
                         )
 
 starting_time = time.time()
@@ -185,15 +185,53 @@ for i in range(num_iterations):
     elif PI:
         acq_fct = ProbabilityOfImprovement(model=gp, best_f=initial_y.max())
     elif KG:
-        acq_fct = qKnowledgeGradient(model=gp, num_fantasies=16)
+        pass
     elif ES:
-        grid_points = torch.linspace(0, 1, 1000)
+        grid_points = torch.linspace(0, 1, 10)
+        print(grid_points)
         acq_fct = qMaxValueEntropy(model=gp, candidate_set=grid_points)
     else:
         print("Wrong input, used Expected Improvement instead.")
         acq_fct = ExpectedImprovement(model=gp, best_f=initial_y.max())
 
-    if not max_stddev or counter%freq!=0:
+    if KG:
+        SMOKE_TEST = os.environ.get("SMOKE_TEST")
+        NUM_FANTASIES = 128 if not SMOKE_TEST else 4
+        NUM_RESTARTS = initial_x.size()[0] if not SMOKE_TEST else 2
+        RAW_SAMPLES = initial_x.size()[0]
+        bounds = torch.stack([torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)])
+        acq_fct = qKnowledgeGradient(model=gp, num_fantasies=NUM_FANTASIES)
+        candidates, acq_value = optimize_acqf(
+            acq_function=acq_fct,
+            bounds=bounds,
+            q=1,
+            num_restarts=NUM_RESTARTS,
+            raw_samples=RAW_SAMPLES,
+        )
+
+        argmax_pmean, max_pmean = optimize_acqf(
+            acq_function=PosteriorMean(gp),
+            bounds=bounds,
+            q=1,
+            num_restarts=NUM_RESTARTS,
+            raw_samples=RAW_SAMPLES,
+        )
+        qKG_proper = qKnowledgeGradient(
+            gp,
+            num_fantasies=NUM_FANTASIES,
+            sampler=acq_fct.sampler,
+            current_value=max_pmean,
+        )
+
+        candidate, acq_value_proper = optimize_acqf(
+            acq_function=qKG_proper,
+            bounds=bounds,
+            q=1,
+            num_restarts=NUM_RESTARTS,
+            raw_samples=RAW_SAMPLES,
+        )
+
+    elif not max_stddev or counter%freq!=0:
         candidate, acq_value = optimize_acqf(
             acq_function=acq_fct,
             bounds=torch.tensor([[0], [1]], dtype=torch.double),
