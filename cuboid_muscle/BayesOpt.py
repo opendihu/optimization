@@ -22,7 +22,8 @@ from botorch.models.transforms.outcome import Standardize
 from gpytorch.priors import GammaPrior
 import time
 import botorch
-botorch.settings.debug(True)
+#from gpytorch.mcmc import MCMCVariationalStrategy, HamiltonianMonteCarlo
+
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 var_path = os.path.join(script_path, "variables")
@@ -41,9 +42,9 @@ rbf = False
 const = False
 zero = True
 
-EI = False
+EI = True
 PI = False ########## still needs to be tested
-KG = False
+KG = True
 ES = True
 
 max_stddev = False
@@ -52,14 +53,19 @@ freq = 3
 ML = True ################### still needs to be added
 full_Bayes = False
 
+stopping_y = False
+improvement_threshold = 1e-4
+stopping_x = False
+stopping_xy = True
+x_range = 5e-2
+num_consecutive_trials = 3
+
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
 upper_bound = 20. ########### what should this be?
 sobol_on = True
-improvement_threshold = 1e-4
-num_initial_trials = 2 #this needs to be >=2
-num_consecutive_trials = 2
+num_initial_trials = 3 #this needs to be >=2
 visualize = True
 add_points = False
 ########################################################################################################################
@@ -178,6 +184,7 @@ num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
+x_with_monotonically_increasing_y = initial_x
 
 for i in range(num_iterations):
     if EI:
@@ -187,9 +194,11 @@ for i in range(num_iterations):
     elif KG:
         pass
     elif ES:
-        grid_points = torch.linspace(0, 1, 10)
-        print(grid_points)
-        acq_fct = qMaxValueEntropy(model=gp, candidate_set=grid_points)
+        bounds=torch.tensor([[0], [1]], dtype=torch.double)
+        candidate_set = torch.rand(1000, bounds.size(1))
+        candidate_set = bounds[0] + (bounds[1] - bounds[0]) * candidate_set
+        print(initial_x.size())
+        acq_fct = qMaxValueEntropy(model=gp, candidate_set=candidate_set)
     else:
         print("Wrong input, used Expected Improvement instead.")
         acq_fct = ExpectedImprovement(model=gp, best_f=initial_y.max())
@@ -230,7 +239,14 @@ for i in range(num_iterations):
             num_restarts=NUM_RESTARTS,
             raw_samples=RAW_SAMPLES,
         )
-
+    elif ES:
+        candidate, acq_value = optimize_acqf(
+            acq_function=acq_fct,
+            bounds=torch.tensor([[0], [1]], dtype=torch.double),
+            q=1,
+            num_restarts=initial_x.size()[0],
+            raw_samples=initial_x.size()[0],
+        )
     elif not max_stddev or counter%freq!=0:
         candidate, acq_value = optimize_acqf(
             acq_function=acq_fct,
@@ -282,22 +298,6 @@ for i in range(num_iterations):
     print("Outputscale:", gp.covar_module.outputscale.item())
     print("Noise:", gp.likelihood.noise.mean().item())
 
-    current_value = new_y.item()
-    if current_value > best_value + improvement_threshold:
-        best_value = current_value
-        no_improvement_trials = 0
-    elif len(initial_x) > num_initial_trials:
-        no_improvement_trials += 1
-
-    counter += 1
-
-    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
-
-    if no_improvement_trials >= num_consecutive_trials:
-        print("Stopping criterion met. No significant improvement for consecutive trials.")
-        print("Number of total trials: ", i+1+num_initial_trials)
-        break
-
     if visualize:
         plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
         plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
@@ -310,6 +310,62 @@ for i in range(num_iterations):
         plt.legend()
         plt.show()
 
+    if stopping_y:
+        current_value = new_y.item()
+        if current_value > best_value + improvement_threshold:
+            best_value = current_value
+            no_improvement_trials = 0
+        elif len(initial_x) > num_initial_trials:
+            no_improvement_trials += 1
+        if no_improvement_trials >= num_consecutive_trials:
+            print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
+            print("Stopping criterion met. No significant improvement for consecutive trials.")
+            print("Number of total trials: ", i+1+num_initial_trials)
+            break
+        counter += 1
+    elif stopping_x:
+        for k in range(len(initial_x)):
+            number_x_in_epsilon_neighborhood = 0
+            breaking = False
+            for j in range(len(initial_x)):
+                if np.abs(initial_x[k,0].numpy() - initial_x[j,0].numpy()) < x_range:
+                    number_x_in_epsilon_neighborhood += 1
+            if number_x_in_epsilon_neighborhood >= num_consecutive_trials:
+                print("Stopping criterion met. No significant improvement for consecutive trials.")
+                print("Number of total trials: ", i+1+num_initial_trials)
+                breaking = True
+                break
+        if breaking:
+            break
+    elif stopping_xy:
+        max_index = torch.argmax(initial_y)
+        for k in range(len(initial_x)):
+            number_x_in_epsilon_neighborhood = 0
+            breaking = False
+            max_y_in_range = False
+            for j in range(len(initial_x)):
+                if np.abs(initial_x[k,0].numpy() - initial_x[j,0].numpy()) < x_range:
+                    number_x_in_epsilon_neighborhood += 1
+                    if initial_x[max_index,0].numpy() == initial_x[k,0].numpy() or initial_x[max_index,0].numpy() == initial_x[j,0].numpy():
+                        max_y_in_range = True
+            if number_x_in_epsilon_neighborhood >= num_consecutive_trials and max_y_in_range:
+                print("Stopping criterion met. No significant improvement for consecutive trials.")
+                print("Number of total trials: ", i+1+num_initial_trials)
+                breaking = True
+                break
+        if breaking:
+            break
+    else:
+        print("Wrong input, used stopping_y instead.")
+        stopping_y = True
+
+    current_value = new_y.item()
+    if current_value > best_value + improvement_threshold:
+        best_value = current_value
+
+    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
+
+    
 x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
 posterior = gp.posterior(x_query)
 
