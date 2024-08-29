@@ -1,0 +1,7 @@
+build_release
+*.log
+__pycache__
+.scons*
+.sconf*
+*.out
+*.err
