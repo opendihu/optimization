@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from botorch.models import SingleTaskGP
 from gpytorch.likelihoods import FixedNoiseGaussianLikelihood
+from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.kernels import MaternKernel, ScaleKernel, RBFKernel
 from gpytorch.means import ConstantMean, ZeroMean
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -42,8 +43,8 @@ rbf = False
 const = False
 zero = True
 
-EI = True
-PI = False ########## still needs to be tested
+EI = False
+PI = True ########## still needs to be tested
 KG = True
 ES = True
 
@@ -108,7 +109,7 @@ def simulation(force):
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
         train_Yvar = torch.full_like(train_Y, fixed_Yvar, dtype=torch.double)
-        likelihood = FixedNoiseGaussianLikelihood(noise=train_Yvar)
+        likelihood = GaussianLikelihood(noise=train_Yvar)
         if matern:
             kernel = ScaleKernel(MaternKernel(nu=nu))
         elif rbf:
