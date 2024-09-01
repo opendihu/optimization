@@ -2,10 +2,19 @@ import csv
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+
+"""
+When calling this file: python visualise_BayesOpt.py {individuality_parameter}
+with individuality_parameter being parameter printed by BayesOpt file in the end.
+It is the parameter in the filename in build_releas: "BayesOpt_outputs{individuality_parameter}.csv".
+"""
+
+individuality_parameter = sys.argv[1]
 
 os.chdir("build_release")
 
-with open("BayesOpt_outputs.csv", "r") as f:
+with open("BayesOpt_outputs"+individuality_parameter+".csv", "r") as f:
     reader = csv.reader(f, delimiter=",")
     rows = [row for row in reader]
 

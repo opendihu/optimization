@@ -59,28 +59,52 @@ visualize = False
 add_points = False
 ########################################################################################################################
 
+global_individuality_parameter = ""
+if matern:
+    global_individuality_parameter = global_individuality_parameter + "_matern_" + str(nu)
+elif rbf:
+    global_individuality_parameter = global_individuality_parameter + "_rbf"
+if const:
+    global_individuality_parameter = global_individuality_parameter + "_const"
+elif zero:
+    global_individuality_parameter = global_individuality_parameter + "_zero"
+if EI:
+    global_individuality_parameter = global_individuality_parameter + "_EI"
+elif PI:
+    global_individuality_parameter = global_individuality_parameter + "_PI"
+elif KG:
+    global_individuality_parameter = global_individuality_parameter + "_KG"
+elif ES:
+    global_individuality_parameter = global_individuality_parameter + "_ES"
+if stopping_y:
+    global_individuality_parameter = global_individuality_parameter + "_stopping_y"
+elif stopping_xy:
+    global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
+
+"""
 def simulation(force):
     x = force.numpy()[0]
     f = -0.001678*x**2 + 0.05034*x
     return f
-
 """
+
 def simulation(force):
     force = force.numpy()[0]
     print("start simulation with force", force)
-    command = shlex.split(f"./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin {force}")
+    individuality_parameter = str(int(time.time()))+str(force)
+    command = shlex.split(f"./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin {force} {individuality_parameter}")
     subprocess.run(command)
 
     print("end simulation")
 
-    f = open("muscle_length_prestretch.csv")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
     reader = csv.reader(f, delimiter=",")
     for row in reader:
         prestretch = float(row[1]) - float(row[0])
         print("The muscle was stretched ", prestretch)
     f.close()
 
-    f = open("muscle_length_contraction.csv")
+    f = open("muscle_length_contraction"+individuality_parameter+".csv")
     reader = csv.reader(f, delimiter=",")
     muscle_length_process = []
     for row in reader:
@@ -92,7 +116,7 @@ def simulation(force):
     f.close()
 
     return contraction
-"""
+
 
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
@@ -137,14 +161,14 @@ if sobol_on:
 else:
     initial_x = torch.linspace(0, 1, num_initial_trials)
 
-with open("BayesOpt_outputs.csv", "w"):
+with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
     pass
 
 initial_y = torch.tensor([])
 for force in initial_x:
     y = torch.tensor([[simulation(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
 
-    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+    with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([force.numpy()[0]*(upper_bound-lower_bound)+lower_bound, y.numpy()[0,0]])
 
@@ -160,7 +184,7 @@ print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
-num_iterations = 100
+num_iterations = 2
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
@@ -229,7 +253,7 @@ for i in range(num_iterations):
     new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
-    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+    with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
 
@@ -336,7 +360,7 @@ while continuing == "y":
     new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
-    with open("BayesOpt_outputs.csv", "a", newline="") as f:
+    with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
 
@@ -376,7 +400,7 @@ max_index = torch.argmax(initial_y)
 maximizer = initial_x[max_index]
 best_y = initial_y[max_index]
 
-with open("BayesOpt_outputs.csv", "a", newline="") as f:
+with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
     writer = csv.writer(f)
     writer.writerow(np.linspace(lower_bound, upper_bound, 1000))
     writer.writerow(mean)
@@ -384,3 +408,5 @@ with open("BayesOpt_outputs.csv", "a", newline="") as f:
     writer.writerow([counter])
     writer.writerow([maximizer.numpy()[0]*(upper_bound-lower_bound)+lower_bound, best_y.numpy()[0]])
     writer.writerow([time.time()-starting_time])
+
+print(global_individuality_parameter)
