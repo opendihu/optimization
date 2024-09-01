@@ -7,23 +7,18 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from botorch.models import SingleTaskGP
-from gpytorch.likelihoods import FixedNoiseGaussianLikelihood
 from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.kernels import MaternKernel, ScaleKernel, RBFKernel
 from gpytorch.means import ConstantMean, ZeroMean
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from botorch.fit import fit_gpytorch_mll
-from botorch.acquisition.monte_carlo import qExpectedImprovement
 from botorch.acquisition import ExpectedImprovement, ProbabilityOfImprovement, PosteriorMean
 from botorch.acquisition.knowledge_gradient import qKnowledgeGradient
 from botorch.acquisition.max_value_entropy_search import qMaxValueEntropy
 from botorch.optim import optimize_acqf
-from botorch.models.transforms.input import InputStandardize, Normalize
+from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
-from gpytorch.priors import GammaPrior
 import time
-import botorch
-#from gpytorch.mcmc import MCMCVariationalStrategy, HamiltonianMonteCarlo
 
 
 script_path = os.path.dirname(os.path.abspath(__file__))
@@ -44,19 +39,12 @@ const = False
 zero = True
 
 EI = False
-PI = True ########## still needs to be tested
-KG = True
+PI = False
+KG = False
 ES = True
-
-max_stddev = False
-freq = 3
-
-ML = True ################### still needs to be added
-full_Bayes = False
 
 stopping_y = False
 improvement_threshold = 1e-4
-stopping_x = False
 stopping_xy = True
 x_range = 5e-2
 num_consecutive_trials = 3
@@ -67,7 +55,7 @@ lower_bound = 0.
 upper_bound = 20. ########### what should this be?
 sobol_on = True
 num_initial_trials = 3 #this needs to be >=2
-visualize = True
+visualize = False
 add_points = False
 ########################################################################################################################
 
@@ -166,16 +154,7 @@ initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
 
 gp = CustomSingleTaskGP(initial_x, initial_y)
 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-if ML:
-    try:
-        fit_gpytorch_mll(mll)
-    except Exception as e:
-        print(f"Failed to fit the model: {e}")
-elif full_Bayes:
-    pass
-else:
-    print("Wrong input, used Maximum Likelihood instead.")
-    fit_gpytorch_mll(mll)
+fit_gpytorch_mll(mll)
 
 print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
@@ -185,7 +164,6 @@ num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
-x_with_monotonically_increasing_y = initial_x
 
 for i in range(num_iterations):
     if EI:
@@ -198,7 +176,6 @@ for i in range(num_iterations):
         bounds=torch.tensor([[0], [1]], dtype=torch.double)
         candidate_set = torch.rand(1000, bounds.size(1))
         candidate_set = bounds[0] + (bounds[1] - bounds[0]) * candidate_set
-        print(initial_x.size())
         acq_fct = qMaxValueEntropy(model=gp, candidate_set=candidate_set)
     else:
         print("Wrong input, used Expected Improvement instead.")
@@ -207,8 +184,8 @@ for i in range(num_iterations):
     if KG:
         SMOKE_TEST = os.environ.get("SMOKE_TEST")
         NUM_FANTASIES = 128 if not SMOKE_TEST else 4
-        NUM_RESTARTS = initial_x.size()[0] if not SMOKE_TEST else 2
-        RAW_SAMPLES = initial_x.size()[0]
+        NUM_RESTARTS = 10 if not SMOKE_TEST else 2
+        RAW_SAMPLES = 128
         bounds = torch.stack([torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)])
         acq_fct = qKnowledgeGradient(model=gp, num_fantasies=NUM_FANTASIES)
         candidates, acq_value = optimize_acqf(
@@ -240,15 +217,7 @@ for i in range(num_iterations):
             num_restarts=NUM_RESTARTS,
             raw_samples=RAW_SAMPLES,
         )
-    elif ES:
-        candidate, acq_value = optimize_acqf(
-            acq_function=acq_fct,
-            bounds=torch.tensor([[0], [1]], dtype=torch.double),
-            q=1,
-            num_restarts=initial_x.size()[0],
-            raw_samples=initial_x.size()[0],
-        )
-    elif not max_stddev or counter%freq!=0:
+    else:
         candidate, acq_value = optimize_acqf(
             acq_function=acq_fct,
             bounds=torch.tensor([[0], [1]], dtype=torch.double),
@@ -256,14 +225,6 @@ for i in range(num_iterations):
             num_restarts=20,
             raw_samples=256,
         )
-    else:
-        x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
-        posterior = gp.posterior(x_query)
-        variance = posterior.variance.squeeze(-1)
-        stddev = torch.sqrt(variance).detach().numpy()
-        argmax_stddev = stddev.argmax()
-        candidate = torch.tensor([x_query[argmax_stddev].numpy()])
-        print("max stddev used")
 
     new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
@@ -277,16 +238,7 @@ for i in range(num_iterations):
     initial_yvar = torch.cat([initial_yvar, new_yvar])
     gp = CustomSingleTaskGP(initial_x, initial_y)
     mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-    if ML:
-        try:
-            fit_gpytorch_mll(mll)
-        except Exception as e:
-            print(f"Failed to fit the model: {e}")
-    elif full_Bayes:
-        pass
-    else:
-        print("Wrong input, used Maximum Likelihood instead.")
-        fit_gpytorch_mll(mll)
+    fit_gpytorch_mll(mll)
 
     x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
     posterior = gp.posterior(x_query)
@@ -311,6 +263,8 @@ for i in range(num_iterations):
         plt.legend()
         plt.show()
 
+    counter += 1
+
     if stopping_y:
         current_value = new_y.item()
         if current_value > best_value + improvement_threshold:
@@ -322,21 +276,6 @@ for i in range(num_iterations):
             print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
             print("Stopping criterion met. No significant improvement for consecutive trials.")
             print("Number of total trials: ", i+1+num_initial_trials)
-            break
-        counter += 1
-    elif stopping_x:
-        for k in range(len(initial_x)):
-            number_x_in_epsilon_neighborhood = 0
-            breaking = False
-            for j in range(len(initial_x)):
-                if np.abs(initial_x[k,0].numpy() - initial_x[j,0].numpy()) < x_range:
-                    number_x_in_epsilon_neighborhood += 1
-            if number_x_in_epsilon_neighborhood >= num_consecutive_trials:
-                print("Stopping criterion met. No significant improvement for consecutive trials.")
-                print("Number of total trials: ", i+1+num_initial_trials)
-                breaking = True
-                break
-        if breaking:
             break
     elif stopping_xy:
         max_index = torch.argmax(initial_y)
@@ -406,13 +345,7 @@ while continuing == "y":
     initial_yvar = torch.cat([initial_yvar, new_yvar])
     gp = CustomSingleTaskGP(initial_x, initial_y)
     mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-    if ML:
-        fit_gpytorch_mll(mll)
-    elif full_Bayes:
-        pass
-    else:
-        print("Wrong input, used Maximum Likelihood instead.")
-        fit_gpytorch_mll(mll)
+    fit_gpytorch_mll(mll)
 
     counter += 1
 
