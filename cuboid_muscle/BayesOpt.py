@@ -38,6 +38,9 @@ rbf = False
 const = False
 zero = True
 
+fixed_noise = False
+variable_noise = True
+
 EI = False
 PI = False
 KG = False
@@ -54,8 +57,8 @@ fixed_Yvar = 1e-6
 lower_bound = 0.
 upper_bound = 20. ########### what should this be?
 sobol_on = True
-num_initial_trials = 3 #this needs to be >=2
-visualize = False
+num_initial_trials = 2 #this needs to be >=2
+visualize = True
 add_points = False
 ########################################################################################################################
 
@@ -68,6 +71,10 @@ if const:
     global_individuality_parameter = global_individuality_parameter + "_const"
 elif zero:
     global_individuality_parameter = global_individuality_parameter + "_zero"
+if fixed_noise:
+    global_individuality_parameter = global_individuality_parameter + "_fixed_noise"
+elif variable_noise:
+    global_individuality_parameter = global_individuality_parameter + "_variable_noise"
 if EI:
     global_individuality_parameter = global_individuality_parameter + "_EI"
 elif PI:
@@ -81,7 +88,7 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
 
-"""
+
 def simulation(force):
     x = force.numpy()[0]
     f = -0.001678*x**2 + 0.05034*x
@@ -116,12 +123,18 @@ def simulation(force):
     f.close()
 
     return contraction
-
+"""
 
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
         train_Yvar = torch.full_like(train_Y, fixed_Yvar, dtype=torch.double)
-        likelihood = GaussianLikelihood(noise=train_Yvar)
+        if fixed_noise:
+            likelihood = GaussianLikelihood(noise=train_Yvar)
+        elif variable_noise:
+            likelihood = GaussianLikelihood()
+        else:
+            print("Wrong input, used variable noise instead")
+            likelihood = GaussianLikelihood()
         if matern:
             kernel = ScaleKernel(MaternKernel(nu=nu))
         elif rbf:
@@ -184,7 +197,7 @@ print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
 print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
-num_iterations = 2
+num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
 counter = num_initial_trials
@@ -281,8 +294,8 @@ for i in range(num_iterations):
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("x")
-        plt.ylabel("Objective Value")
+        plt.xlabel("prestretch force")
+        plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
         plt.legend()
         plt.show()
@@ -342,8 +355,8 @@ if visualize:
     plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
     plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.xlabel("x")
-    plt.ylabel("Objective Value")
+    plt.xlabel("prestretch force")
+    plt.ylabel("contraction of muscle")
     plt.title("Optimization Results")
     plt.legend()
     plt.show()
@@ -388,8 +401,8 @@ while continuing == "y":
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("x")
-        plt.ylabel("Objective Value")
+        plt.xlabel("prestretch force")
+        plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
         plt.legend()
         plt.show()
@@ -410,3 +423,7 @@ with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline
     writer.writerow([time.time()-starting_time])
 
 print(global_individuality_parameter)
+
+with open("BayesOpt_global_individuality_parameters.csv", "a") as f:
+    writer = csv.writer(f)
+    writer.writerow([global_individuality_parameter])
