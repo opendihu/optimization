@@ -55,11 +55,13 @@ num_consecutive_trials = 3
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-upper_bound = 20. ########### what should this be?
+#upper_bound = 20. ########### what should this be?
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
+relative_prestretch_min = 1.5
+relative_prestretch_max = 1.6
 ########################################################################################################################
 
 global_individuality_parameter = ""
@@ -163,10 +165,46 @@ class CustomSingleTaskGP(SingleTaskGP):
                          outcome_transform=output_transform,
                         )
 
-starting_time = time.time()
+def find_relative_prestretch(force):
+    print(force)
+    individuality_parameter = str(int(time.time()))+"_"+str(force)
+    command = shlex.split(f"./incompressible_mooney_rivlin_2 ../prestretch_tensile_test.py incompressible_mooney_rivlin_2 {force} {individuality_parameter}")
+    subprocess.run(command)
 
-os.chdir("..")
-os.chdir("cuboid_muscle/build_release")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
+    reader = csv.reader(f, delimiter=",")
+    for row in reader:
+        relative_prestretch = float(row[1]) / float(row[0])
+    f.close()
+
+    command2 = shlex.split("rm muscle_length_prestretch"+individuality_parameter+".csv")
+    subprocess.run(command2)
+
+    return relative_prestretch
+
+def find_upper_bound():
+    lower_guess = 0
+    upper_guess = 10
+    relative_prestretch = find_relative_prestretch(upper_guess)
+
+    while relative_prestretch < relative_prestretch_min or relative_prestretch > relative_prestretch_max:
+        if relative_prestretch < relative_prestretch_min:
+            not_relevant = upper_guess
+            upper_guess = 2*upper_guess - lower_guess
+            lower_guess = not_relevant
+        if relative_prestretch > relative_prestretch_max:
+            upper_guess = (upper_guess + lower_guess)/2
+        relative_prestretch = find_relative_prestretch(upper_guess)
+        
+    return upper_guess
+
+os.chdir("build_release")
+
+upper_bound = find_upper_bound()
+
+print(upper_bound)
+
+starting_time = time.time()
 
 sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
@@ -194,7 +232,7 @@ mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
 fit_gpytorch_mll(mll)
 
 print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
-print("Outputscale:", gp.covar_module.outputscale.item())
+#print("Outputscale:", gp.covar_module.outputscale.item())
 print("Noise:", gp.likelihood.noise.mean().item())
 
 num_iterations = 100
@@ -285,7 +323,7 @@ for i in range(num_iterations):
     stddev = torch.sqrt(variance).detach().numpy()
 
     print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
-    print("Outputscale:", gp.covar_module.outputscale.item())
+    #print("Outputscale:", gp.covar_module.outputscale.item())
     print("Noise:", gp.likelihood.noise.mean().item())
 
     if visualize:
