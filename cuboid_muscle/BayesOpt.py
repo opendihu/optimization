@@ -21,34 +21,36 @@ from botorch.models.transforms.outcome import Standardize
 import time
 
 
-script_path = os.path.dirname(os.path.abspath(__file__))
-var_path = os.path.join(script_path, "variables")
-sys.path.insert(0, var_path)
-
-import variables
+#If you want to call this file, you have two options:
+#>python BayesOpt.py
+#or
+#>python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy
+#You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
+#of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
+#also doesn't matter.
 
 ########################################################################################################################
 #Customize code here
 
 #Major changes:
 nu = 1.5
-matern = True
+matern = False
 rbf = False
 
 const = False
-zero = True
+zero = False
 
 fixed_noise = False
-variable_noise = True
+variable_noise = False
 
 EI = False
 PI = False
 KG = False
-ES = True
+ES = False
 
 stopping_y = False
 improvement_threshold = 1e-4
-stopping_xy = True
+stopping_xy = False
 x_range = 5e-2
 num_consecutive_trials = 3
 
@@ -63,6 +65,51 @@ add_points = False
 relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
+
+inputs = [item.lower() for item in sys.argv]
+if len(inputs) > 0:
+    if "matern" in inputs:
+        matern = True
+        if "0.5" in inputs:
+            nu = 0.5
+        elif "1.5" in inputs:
+            nu = 1.5
+        elif "2.5" in inputs:
+            nu = 2.5
+    elif "rbf" in inputs:
+        matern = False
+        rbf = True
+    if "const" in inputs:
+        const = True
+    elif "zero" in inputs:
+        const = False
+        zero = True
+    if "fixed_noise" in inputs:
+        fixed_noise = True
+    elif "variable_noise" in inputs:
+        fixed_noise = False
+        variable_noise = True
+    if "ei" in inputs:
+        EI = True
+    elif "pi" in inputs:
+        EI = False
+        PI = True
+    elif "kg" in inputs:
+        EI = False
+        PI = False
+        KG = True
+    elif "es" in inputs:
+        EI = False
+        PI = False
+        KG = False
+        ES = True
+    if "stopping_y" in inputs:
+        stopping_y = True
+    elif "stopping_xy" in inputs:
+        stopping_y = False
+        stopping_xy = True
+
+
 
 global_individuality_parameter = ""
 if matern:
@@ -166,7 +213,6 @@ class CustomSingleTaskGP(SingleTaskGP):
                         )
 
 def find_relative_prestretch(force):
-    print(force)
     individuality_parameter = str(int(time.time()))+"_"+str(force)
     command = shlex.split(f"./incompressible_mooney_rivlin_2 ../prestretch_tensile_test.py incompressible_mooney_rivlin_2 {force} {individuality_parameter}")
     subprocess.run(command)
@@ -185,16 +231,27 @@ def find_relative_prestretch(force):
 def find_upper_bound():
     lower_guess = 0
     upper_guess = 10
-    relative_prestretch = find_relative_prestretch(upper_guess)
+    relative_prestretch_low = 1
+    relative_prestretch_up = find_relative_prestretch(upper_guess)
 
-    while relative_prestretch < relative_prestretch_min or relative_prestretch > relative_prestretch_max:
-        if relative_prestretch < relative_prestretch_min:
+    while (relative_prestretch_low < relative_prestretch_min or relative_prestretch_low > relative_prestretch_max) and (relative_prestretch_up < relative_prestretch_min or relative_prestretch_up > relative_prestretch_max):
+        if relative_prestretch_up < relative_prestretch_min:
             not_relevant = upper_guess
             upper_guess = 2*upper_guess - lower_guess
             lower_guess = not_relevant
-        if relative_prestretch > relative_prestretch_max:
-            upper_guess = (upper_guess + lower_guess)/2
-        relative_prestretch = find_relative_prestretch(upper_guess)
+            relative_prestretch_low = relative_prestretch_up
+            relative_prestretch_up = find_relative_prestretch(upper_guess)
+        else:
+            middle_guess = (upper_guess+lower_guess)/2
+            relative_prestretch_mid = find_relative_prestretch(middle_guess)
+            if relative_prestretch_mid < relative_prestretch_min:
+                lower_guess = middle_guess
+                relative_prestretch_low = relative_prestretch_mid
+            elif relative_prestretch_mid > relative_prestretch_max:
+                upper_guess = middle_guess
+                relative_prestretch_up = relative_prestretch_mid
+            else:
+                return middle_guess
         
     return upper_guess
 
