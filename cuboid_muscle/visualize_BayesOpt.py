@@ -32,6 +32,7 @@ time_elapsed = float(rows[-1][0])
 print("Time elapsed: ", time_elapsed, " seconds")
 print("Number of trials: ", number_of_trials)
 print("Best value: ", best_f)
+print("Maximizer: ", maximizer)
 
 x = np.array(x)
 mean = np.array(mean)

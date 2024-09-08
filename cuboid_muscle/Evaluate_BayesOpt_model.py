@@ -2,15 +2,17 @@ import subprocess
 import shlex
 import csv
 
-number_of_iterations = 2
+number_of_iterations = 10
 
 number_of_trials = 0
 maximizer = 0
 best_f = 0
 time = 0
 
+inputs = "matern 1.5 zero fixed_noise pi stopping_xy"
+
 for i in range(number_of_iterations):
-    subprocess.run(shlex.split("python3 BayesOpt.py"))
+    subprocess.run(shlex.split("python3 BayesOpt.py "+ inputs))
 
     with open("build_release/BayesOpt_global_individuality_parameters.csv", "r") as f:
         reader = csv.reader(f)
@@ -27,6 +29,14 @@ for i in range(number_of_iterations):
     time += float(rows[-1][0])
 
 print("Average number of trials: ", number_of_trials/number_of_iterations)
-print("Average maximizer: ", maximizer)
+print("Average maximizer: ", maximizer/number_of_iterations)
 print("Average maximum: ", best_f/number_of_iterations)
 print("Average time elapsed: ", time/number_of_iterations, " seconds")
+
+with open("build_release/BayesOpt_evaluations.csv", "a") as f:
+    writer = csv.writer(f)
+    writer.writerow(["Inputs: ", inputs])
+    writer.writerow(["Average number of trials: ", number_of_trials/number_of_iterations])
+    writer.writerow(["Average maximizer: ", maximizer/number_of_iterations])
+    writer.writerow(["Average maximum: ", best_f/number_of_iterations])
+    writer.writerow(["Average time elapsed: ", time/number_of_iterations, " seconds"])

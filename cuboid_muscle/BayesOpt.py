@@ -62,6 +62,8 @@ sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
+upper_bound = 30
+relative_upper_bound = False
 relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
@@ -112,30 +114,43 @@ if len(inputs) > 0:
 
 
 global_individuality_parameter = ""
+title = ""
 if matern:
     global_individuality_parameter = global_individuality_parameter + "_matern_" + str(nu)
+    title = title + "Matern Kernel with nu=" + str(nu) + ", "
 elif rbf:
     global_individuality_parameter = global_individuality_parameter + "_rbf"
+    title = title + "RBF Kernel, "
 if const:
     global_individuality_parameter = global_individuality_parameter + "_const"
+    title = title + "Constant Mean, "
 elif zero:
     global_individuality_parameter = global_individuality_parameter + "_zero"
+    title = title + "Zero Mean, "
 if fixed_noise:
     global_individuality_parameter = global_individuality_parameter + "_fixed_noise"
+    title = title + "Fixed Noise, "
 elif variable_noise:
     global_individuality_parameter = global_individuality_parameter + "_variable_noise"
+    title = title + "Variable Noise, "
 if EI:
     global_individuality_parameter = global_individuality_parameter + "_EI"
+    title = title + "Expected Improvement, "
 elif PI:
     global_individuality_parameter = global_individuality_parameter + "_PI"
+    title = title + "Probability of Improvement, "
 elif KG:
     global_individuality_parameter = global_individuality_parameter + "_KG"
+    title = title + "Knoledge Gradient, "
 elif ES:
     global_individuality_parameter = global_individuality_parameter + "_ES"
+    title = title + "Entropy Search, "
 if stopping_y:
     global_individuality_parameter = global_individuality_parameter + "_stopping_y"
+    title = title + "Y-Stopping"
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
+    title = title + "XY-Stopping"
 
 
 def simulation(force):
@@ -257,9 +272,8 @@ def find_upper_bound():
 
 os.chdir("build_release")
 
-upper_bound = find_upper_bound()
-
-print(upper_bound)
+if relative_upper_bound:
+    upper_bound = find_upper_bound()
 
 starting_time = time.time()
 
@@ -392,6 +406,7 @@ for i in range(num_iterations):
         plt.xlabel("prestretch force")
         plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
+        plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
         plt.show()
 
@@ -453,6 +468,7 @@ if visualize:
     plt.xlabel("prestretch force")
     plt.ylabel("contraction of muscle")
     plt.title("Optimization Results")
+    plt.gcf().suptitle(title, fontsize=8)
     plt.legend()
     plt.show()
 
@@ -499,6 +515,7 @@ while continuing == "y":
         plt.xlabel("prestretch force")
         plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
+        plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
         plt.show()
 
