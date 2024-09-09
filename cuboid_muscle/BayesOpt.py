@@ -152,7 +152,7 @@ elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
 
-
+"""
 def simulation(force):
     x = force.numpy()[0]
     f = -0.001678*x**2 + 0.05034*x
@@ -187,7 +187,7 @@ def simulation(force):
     f.close()
 
     return contraction
-"""
+
 
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
