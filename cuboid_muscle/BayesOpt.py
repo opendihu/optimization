@@ -19,6 +19,7 @@ from botorch.optim import optimize_acqf
 from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
 import time
+import signal
 
 
 #If you want to call this file, you have two options:
@@ -63,7 +64,8 @@ num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
 upper_bound = 30
-relative_upper_bound = False
+specific_relative_upper_bound = False
+max_upper_bound = True
 relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
@@ -227,30 +229,68 @@ class CustomSingleTaskGP(SingleTaskGP):
                          outcome_transform=output_transform,
                         )
 
+class TimeoutException(Exception):
+    pass
+
+def handler(signum, frame):
+    raise TimeoutException()
+
+
+
 def find_relative_prestretch(force):
     individuality_parameter = str(int(time.time()))+"_"+str(force)
     command = shlex.split(f"./incompressible_mooney_rivlin_2 ../prestretch_tensile_test.py incompressible_mooney_rivlin_2 {force} {individuality_parameter}")
-    subprocess.run(command)
+    
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(10)
 
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
-    for row in reader:
-        relative_prestretch = float(row[1]) / float(row[0])
-    f.close()
-
-    command2 = shlex.split("rm muscle_length_prestretch"+individuality_parameter+".csv")
-    subprocess.run(command2)
+    try:
+        subprocess.run(command)
+        f = open("muscle_length_prestretch"+individuality_parameter+".csv")
+        reader = csv.reader(f, delimiter=",")
+        for row in reader:
+            relative_prestretch = float(row[1]) / float(row[0])
+        f.close()
+        command2 = shlex.split("rm muscle_length_prestretch"+individuality_parameter+".csv")
+        subprocess.run(command2)
+    except TimeoutException:
+        relative_prestretch = -1
+        print("Muscle tore")
+    finally:
+        signal.alarm(0)
 
     return relative_prestretch
 
-def find_upper_bound():
+def find_max_upper_bound():
+    lower_guess = 0
+    upper_guess = 10
+    relative_prestretch_up = find_relative_prestretch(upper_guess)
+
+    while relative_prestretch_up >= 0 or (relative_prestretch_up < 0 and upper_guess-lower_guess > 3):
+        if relative_prestretch_up >= 0:
+            not_relevant = upper_guess
+            upper_guess = 2*upper_guess - lower_guess
+            lower_guess = not_relevant
+            relative_prestretch_up = find_relative_prestretch(upper_guess)
+        else:
+            middle_guess = (upper_guess+lower_guess)/2
+            relative_prestretch_mid = find_relative_prestretch(middle_guess)
+            if relative_prestretch_mid >= 0:
+                lower_guess = middle_guess
+            elif relative_prestretch_mid < 0:
+                upper_guess = middle_guess
+                relative_prestretch_up = relative_prestretch_mid
+
+    return lower_guess
+    
+def find_specific_upper_bound():
     lower_guess = 0
     upper_guess = 10
     relative_prestretch_low = 1
     relative_prestretch_up = find_relative_prestretch(upper_guess)
 
     while (relative_prestretch_low < relative_prestretch_min or relative_prestretch_low > relative_prestretch_max) and (relative_prestretch_up < relative_prestretch_min or relative_prestretch_up > relative_prestretch_max):
-        if relative_prestretch_up < relative_prestretch_min:
+        if relative_prestretch_up < relative_prestretch_min and relative_prestretch_up >= 0:
             not_relevant = upper_guess
             upper_guess = 2*upper_guess - lower_guess
             lower_guess = not_relevant
@@ -272,8 +312,10 @@ def find_upper_bound():
 
 os.chdir("build_release")
 
-if relative_upper_bound:
-    upper_bound = find_upper_bound()
+if specific_relative_upper_bound:
+    upper_bound = find_specific_upper_bound()
+elif max_upper_bound:
+    upper_bound = find_max_upper_bound()
 
 starting_time = time.time()
 
