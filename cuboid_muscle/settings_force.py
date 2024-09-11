@@ -2,7 +2,7 @@
 # - Isotropic hyperelastic material
 # - Linear elasticity
 #
-# arguments: <scenario_name> <force>
+# arguments: <scenario_name> <force> <individuality_parameter>
 
 
 import numpy as np
@@ -23,8 +23,9 @@ physical_extent = [3.0, 3.0, 12.0]
 constant_body_force = None                                                                      
 scenario_name = "tensile_test"
 dirichlet_bc_mode = "fix_floating"                                                              
- 
-if len(sys.argv) > 3:                                                                           
+individuality_parameter = sys.argv[2]
+
+if len(sys.argv) > 4:                                                                           
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
@@ -147,12 +148,12 @@ def handle_result_hyperelasticity(result):
   print("length of muscle: ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
-    f = open("muscle_length_prestretch.csv", "w")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
   else:
-    f = open("muscle_length_prestretch.csv", "a")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -220,12 +221,12 @@ def callback_function_contraction(raw_data):
     print("length of muscle: ", length_of_muscle)
 
     if t == variables.dt_3D:
-      f = open("muscle_length_contraction.csv", "w")
+      f = open("muscle_length_contraction"+individuality_parameter+".csv", "w")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
     else:
-      f = open("muscle_length_contraction.csv", "a")
+      f = open("muscle_length_contraction"+individuality_parameter+".csv", "a")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
