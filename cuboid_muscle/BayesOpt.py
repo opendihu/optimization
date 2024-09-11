@@ -65,7 +65,7 @@ visualize = True
 add_points = False
 upper_bound = 30
 specific_relative_upper_bound = False
-max_upper_bound = True
+max_upper_bound = False
 relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
