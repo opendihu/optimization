@@ -239,7 +239,7 @@ def handler(signum, frame):
 
 def find_relative_prestretch(force):
     individuality_parameter = str(int(time.time()))+"_"+str(force)
-    command = shlex.split(f"./incompressible_mooney_rivlin_2 ../prestretch_tensile_test.py incompressible_mooney_rivlin_2 {force} {individuality_parameter}")
+    command = shlex.split(f"./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only {force} {individuality_parameter}")
     
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(10)
