@@ -21,7 +21,7 @@ To run a single simulation of stretching a muscle with a certain force and then 
 ```
 To run a single simulation of only stretching a muscle with a certain force, go to build_release and run:
 ```
-./incompressible_mooney_rivlin_2 ../prestretch_tensile_test.py incompressible_mooney_rivlin_2 10.0
+./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only 10.0
 ```
 To run an optimization process with Bayesian Optimization, choose the BO model you want to use, go to cuboid_muscle and run:
 ```
