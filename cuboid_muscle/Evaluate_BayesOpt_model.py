@@ -3,7 +3,7 @@ import shlex
 import csv
 import sys
 
-number_of_iterations = 10
+number_of_iterations = 5
 
 number_of_trials = 0
 maximizer = 0
