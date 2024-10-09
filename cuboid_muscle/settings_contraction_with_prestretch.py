@@ -17,7 +17,7 @@ import variables
 n_ranks = (int)(sys.argv[-1])
 
 # parameters
-force = 0.0                       # [N] load on top
+force = 10.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 physical_extent = [3.0, 3.0, 12.0]
 constant_body_force = None                                                                      
@@ -81,12 +81,6 @@ meshes = { # create 3D mechanics mesh
       "physicalExtent":             physical_extent,            # physical size of the box
       "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
     },
-    "3Dmesh_febio": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [2*nx, 2*ny, 2*nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent,            # physical size of the box
-      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
-    }
 }
 
 for fiber_x in range(fb_x):
@@ -127,7 +121,7 @@ traction_vector = [0, 0, force]     # the traction force in specified in the ref
 elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
 
 # callback for result
-def handle_result_hyperelasticity(result):
+def handle_result_prestretch(result):
   data = result[0]
 
   number_of_nodes = mx * my
@@ -144,7 +138,7 @@ def handle_result_hyperelasticity(result):
   average_z_end /= number_of_nodes
 
   length_of_muscle = np.abs(average_z_end - average_z_start)
-  print("length of muscle: ", length_of_muscle)
+  print("length of muscle (prestretch): ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
     f = open("muscle_length_prestretch.csv", "w")
@@ -157,6 +151,51 @@ def handle_result_hyperelasticity(result):
     f.write(",")
     f.close()
   
+  
+  if data["timeStepNo"] == 1:
+    field_variables = data["data"]
+    
+    strain = max(field_variables[1]["components"][2]["values"])
+    stress = max(field_variables[5]["components"][2]["values"])
+    
+    print("strain: {}, stress: {}".format(strain, stress))
+    
+    with open("result.csv","a") as f:
+      f.write("{},{},{}\n".format(scenario_name,strain,stress))
+
+# callback for result
+def handle_result_febio(result):
+  data = result[0]
+  
+  if data["timeStepNo"] == 1:
+    field_variables = data["data"]
+    
+    strain = max(field_variables[2]["components"][2]["values"])
+    stress = max(field_variables[5]["components"][2]["values"])
+    
+    print("strain: {}, stress: {}".format(strain, stress))
+    
+    with open("result.csv","a") as f:
+      f.write("{},{},{}\n".format(scenario_name,strain,stress))
+
+# callback for result
+def handle_result_linear_elasticity(result):
+  data = result[0]
+  
+  if data["timeStepNo"] == -1:
+    field_variables = data["data"]
+    
+    strain = max(field_variables[1]["components"][2]["values"])
+    K = 50    # parameters as given in config
+    mu = 100
+    stress = (K + 4./3*mu) * strain
+    
+    print("strain: {}, stress: {}".format(strain, stress))
+    
+    with open("result.csv","a") as f:
+      f.write("{},{},{}\n".format(scenario_name,strain,stress))
+
+
   if data["timeStepNo"] == 1:
     field_variables = data["data"]
     
@@ -217,7 +256,7 @@ def callback_function_contraction(raw_data):
     average_z_end /= number_of_nodes
 
     length_of_muscle = np.abs(average_z_end - average_z_start)
-    print("length of muscle: ", length_of_muscle)
+    print("length of muscle (contraction): ", length_of_muscle)
 
     if t == variables.dt_3D:
       f = open("muscle_length_contraction.csv", "w")
@@ -239,7 +278,7 @@ config = {
 
   "Meshes": meshes,
   "MappingsBetweenMeshes": { 
-    "mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+    #"mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
   },
 
   "Solvers": {
@@ -279,18 +318,18 @@ config = {
   },
 
   "Coupling": {
-
+    #"numberTimeSteps":              1,
     "timeStepWidth": variables.end_time,
     "endTime": variables.end_time,
-    "connectedSlotsTerm1To2": {},
+                              #0        1     2   3     4     5     6       7     8   9     10    11    12    13
+    "connectedSlotsTerm1To2": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
+    "connectedSlotsTerm2To1": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],   # transfer nothing back
 
     "Term1": {
       "Coupling": {
             "numberTimeSteps":              1,
             "logTimeStepWidthAsKey":    "dt_3D",
             "durationLogKey":           "duration_3D",
-            "endTime":                  variables.end_time,
-            "timeStepOutputInterval":   1,
             "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
             "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
@@ -303,7 +342,8 @@ config = {
                   "ranks": [0],
 
                   "StrangSplitting": {
-                    "timeStepWidth":            variables.dt_splitting,
+                    "numberTimeSteps":              1,
+
                     "logTimeStepWidthAsKey":    "dt_splitting",
                     "durationLogKey":           "duration_splitting",
                     "timeStepOutputInterval":   100,
@@ -318,7 +358,7 @@ config = {
                           "ranks": [0],
 
                           "Heun": {
-                            "timeStepWidth":            variables.dt_0D,
+                            "numberTimeSteps":              1,
                             "logTimeStepWidthAsKey":    "dt_0D",
                             "durationLogKey":           "duration_0D",
                             "timeStepOutputInterval":   100,
@@ -391,7 +431,7 @@ config = {
                           "ranks": [0],
 
                           "ImplicitEuler": {
-                            "timeStepWidth":            variables.dt_1D,
+                            "numberTimeSteps":              1,
                             "logTimeStepWidthAsKey":    "dt_1D",
                             "durationLogKey":           "duration_1D",
                             "timeStepOutputInterval":   100,
@@ -521,7 +561,7 @@ config = {
 
                     {
                       "format": "PythonCallback",
-                      "callback": handle_result_hyperelasticity,
+                      "callback": handle_result_prestretch,
                       "outputInterval": 1,
                     }
                   ],
@@ -538,7 +578,7 @@ config = {
         "logTimeStepWidthAsKey":    "dt_3D",
         "durationLogKey":           "duration_3D",
         "endTime":                  variables.end_time,
-        "timeStepOutputInterval":   1,
+        #"numberTimeSteps":              40,
         "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
         "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
@@ -555,8 +595,8 @@ config = {
                 "logTimeStepWidthAsKey":    "dt_splitting",
                 "durationLogKey":           "duration_splitting",
                 "timeStepOutputInterval":   100,
-                "connectedSlotsTerm1To2":   None,
-                "connectedSlotsTerm2To1":   None,
+                "connectedSlotsTerm1To2":   {0:0,1:1,2:2,3:3,4:4},
+                "connectedSlotsTerm2To1":   {0:0,1:1,2:2,3:3,4:4},
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
@@ -684,7 +724,8 @@ config = {
         "Term2": { # solid mechanics (MuscleContractionSolver)
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
-            "slotNames":                    ["lambda", "ldot", "gamma", "T"],
+            "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
+            #"slotNames":                    ["lambda", "ldot", "gamma", "T"],
             "dynamic":                      True,
 
             "numberTimeSteps":              1,
@@ -718,7 +759,7 @@ config = {
               "fiberDirectionInElement":    variables.fiber_direction,
               "inputMeshIsGlobal":          True,
               "fiberMeshNames":             [],
-              "fiberDirection":             None,
+              "fiberDirection":             [0,0,1],
 
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
@@ -737,7 +778,7 @@ config = {
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
 
-              #"initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "constantBodyForce":          (0, 0, 0),
 
