@@ -8,9 +8,6 @@ if sys.argv[-1] != "BayesOpt.py":
 else:
     n_ranks = 1
 
-# PreCICE
-precice_config = "../../variables/precice-config.xml"
-
 # Time stepping
 dt_3D = 1e-1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting

@@ -67,14 +67,6 @@ def get_fiber_no(fiber_x, fiber_y):
     return fiber_x + fiber_y*fb_x
 
 meshes = { # create 3D mechanics mesh
-    "mesh3D": {
-        "nElements":            [nx, ny, nz],
-        "physicalExtent":       [nx, ny, nz],
-        "physicalOffset":       [0, 0, 0],
-        "logKey":               "mesh3D",
-        "inputMeshIsGlobal":    True,
-        "nRanks":               n_ranks
-    },
     "3Dmesh_quadratic": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
       "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
@@ -163,81 +155,6 @@ def handle_result_prestretch(result):
     with open("result.csv","a") as f:
       f.write("{},{},{}\n".format(scenario_name,strain,stress))
 
-# callback for result
-def handle_result_febio(result):
-  data = result[0]
-  
-  if data["timeStepNo"] == 1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[2]["components"][2]["values"])
-    stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
-# callback for result
-def handle_result_linear_elasticity(result):
-  data = result[0]
-  
-  if data["timeStepNo"] == -1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[1]["components"][2]["values"])
-    K = 50    # parameters as given in config
-    mu = 100
-    stress = (K + 4./3*mu) * strain
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
-
-  if data["timeStepNo"] == 1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[1]["components"][2]["values"])
-    stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
-# callback for result
-def handle_result_febio(result):
-  data = result[0]
-  
-  if data["timeStepNo"] == 1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[2]["components"][2]["values"])
-    stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
-# callback for result
-def handle_result_linear_elasticity(result):
-  data = result[0]
-  
-  if data["timeStepNo"] == -1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[1]["components"][2]["values"])
-    K = 50    # parameters as given in config
-    mu = 100
-    stress = (K + 4./3*mu) * strain
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
@@ -277,10 +194,6 @@ config = {
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
 
   "Meshes": meshes,
-  "MappingsBetweenMeshes": { 
-    #"mesh3D" : ["fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
-  },
-
   "Solvers": {
     "linearElasticitySolver": {           # solver for linear elasticity
       "relativeTolerance":  1e-10,
@@ -318,13 +231,10 @@ config = {
   },
 
   "Coupling": {
-    #"numberTimeSteps":              1,
     "timeStepWidth": variables.end_time,
     "endTime": variables.end_time,
-                              #0        1     2   3     4     5     6       7     8   9     10    11    12    13
-    "connectedSlotsTerm1To2": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],
-    "connectedSlotsTerm2To1": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None],   # transfer nothing back
-
+    "connectedSlotsTerm1To2": None,
+    "connectedSlotsTerm2To1": None,
     "Term1": {
       "Coupling": {
             "numberTimeSteps":              1,
@@ -578,7 +488,6 @@ config = {
         "logTimeStepWidthAsKey":    "dt_3D",
         "durationLogKey":           "duration_3D",
         "endTime":                  variables.end_time,
-        #"numberTimeSteps":              40,
         "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
         "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
@@ -595,8 +504,8 @@ config = {
                 "logTimeStepWidthAsKey":    "dt_splitting",
                 "durationLogKey":           "duration_splitting",
                 "timeStepOutputInterval":   100,
-                "connectedSlotsTerm1To2":   {0:0,1:1,2:2,3:3,4:4},
-                "connectedSlotsTerm2To1":   {0:0,1:1,2:2,3:3,4:4},
+                "connectedSlotsTerm1To2":   None, #{0:0,1:1,2:2,3:3,4:4},
+                "connectedSlotsTerm2To1":   None, #{0:0,1:1,2:2,3:3,4:4},
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
