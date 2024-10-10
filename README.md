@@ -17,7 +17,7 @@ For a debug build, look into the documentation.
 To run a single simulation of stretching a muscle with a certain force and then contract it, go to build_release and run:
 
 ```
-./incompressible_mooney_rivlin ../settings_force.py incompressible_mooney_rivlin 10.0
+./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 10.0
 ```
 To run a single simulation of only stretching a muscle with a certain force, go to build_release and run:
 ```
