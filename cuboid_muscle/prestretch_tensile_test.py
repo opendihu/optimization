@@ -41,7 +41,7 @@ if len(sys.argv) > 4:
   elif scenario_name == "incompressible_mooney_rivlin":
     material_parameters = [3.176e-10, 1.813]      # c1, c2
 
-  elif scenario_name == "incompressible_mooney_rivlin_2":
+  elif scenario_name == "incompressible_mooney_rivlin_prestretch_only":
     material_parameters = [3.176e-10, 1.813]      # c1, c2
     
   elif scenario_name == "nearly_incompressible_mooney_rivlin":
