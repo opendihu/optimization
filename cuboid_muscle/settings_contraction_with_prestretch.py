@@ -60,7 +60,7 @@ if len(sys.argv) > 3:
 if len(sys.argv) > 4:
   individuality_parameter = sys.argv[2] 
 else:
-  str(individuality_parameter = time.time())
+  individuality_parameter = str(time.time())
 
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
