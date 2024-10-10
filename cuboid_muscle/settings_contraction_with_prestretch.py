@@ -2,11 +2,12 @@
 # - Isotropic hyperelastic material
 # - Linear elasticity
 #
-# arguments: <scenario_name> <force>
+# arguments: <scenario_name> <force> <individuality_parameter>
 
 
 import numpy as np
 import sys, os
+import time
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 var_path = os.path.join(script_path, "variables")
@@ -55,6 +56,11 @@ if len(sys.argv) > 3:
   else:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
     quit()
+
+if len(sys.argv) > 4:
+  individuality_parameter = sys.argv[2] 
+else:
+  individuality_parameter = time.time()
 
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
@@ -133,12 +139,12 @@ def handle_result_prestretch(result):
   print("length of muscle (prestretch): ", length_of_muscle)
 
   if data["timeStepNo"] == 0:
-    f = open("muscle_length_prestretch.csv", "w")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
   else:
-    f = open("muscle_length_prestretch.csv", "a")
+    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -176,12 +182,12 @@ def callback_function_contraction(raw_data):
     print("length of muscle (contraction): ", length_of_muscle)
 
     if t == variables.dt_3D:
-      f = open("muscle_length_contraction.csv", "w")
+      f = open("muscle_length_contraction"+individuality_parameter+".csv", "w")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
     else:
-      f = open("muscle_length_contraction.csv", "a")
+      f = open("muscle_length_contraction"+individuality_parameter+".csv", "a")
       f.write(str(length_of_muscle))
       f.write(",")
       f.close()
