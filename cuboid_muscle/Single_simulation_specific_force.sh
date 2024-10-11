@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Job name:
-#SBATCH -J BayesOpt
+#SBATCH -J Single_simulation
 #
 # Error and Output files
 #SBATCH -o ./%x.%j.out
@@ -27,7 +27,7 @@ echo "working directory="$SLURM_SUBMIT_DIR
 echo "Configuring enviroment variables"
 
 echo "Running Optimization Loop"
-python BayesOpt.py  &> BayesOpt.log
+python ./build_release/muscle_contraction_with_prestretch ./settings_contraction_with_prestretch.py incompressible_mooney_rivlin 0.0 0.0N &> force0.0.log
 echo "Simulation completed."
 
 

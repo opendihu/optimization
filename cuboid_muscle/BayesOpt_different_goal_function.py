@@ -65,7 +65,7 @@ visualize = True
 add_points = False
 upper_bound = 30
 specific_relative_upper_bound = False
-max_upper_bound = False
+max_upper_bound = True
 relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
@@ -174,6 +174,7 @@ def simulation(force):
     reader = csv.reader(f, delimiter=",")
     for row in reader:
         prestretch = float(row[1]) - float(row[0])
+        starting_length = float(row[0])
         print("The muscle was stretched ", prestretch)
     f.close()
 
@@ -184,7 +185,8 @@ def simulation(force):
         for j in row:
             muscle_length_process.append(j)
         
-    contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
+    #contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
+    contraction = starting_length - float(muscle_length_process[0])
     print("The muscle contracted ", contraction)
     f.close()
 
