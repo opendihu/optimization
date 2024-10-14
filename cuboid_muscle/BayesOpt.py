@@ -323,8 +323,8 @@ sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
     initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
 else:
-    initial_x = torch.linspace(0, 1, num_initial_trials)
-
+    initial_x = torch.linspace(0, 1, num_initial_trials).unsqueeze(0)
+    
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
     pass
 
