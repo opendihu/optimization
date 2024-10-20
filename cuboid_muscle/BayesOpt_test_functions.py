@@ -63,7 +63,7 @@ lower_bound = 0.
 #upper_bound = 20. ########### what should this be?
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
-visualize = True
+visualize = False
 add_points = False
 upper_bound = 1
 specific_relative_upper_bound = False
@@ -227,7 +227,7 @@ sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
     initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
 else:
-    initial_x = torch.linspace(0, 1, num_initial_trials).unsqueeze(1)
+    initial_x = torch.linspace(0, 1, num_initial_trials, dtype=torch.double).unsqueeze(1)
     
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
     pass
