@@ -6,7 +6,7 @@ import numpy as np
 
 means = ["const", "zero"]
 kernels = ["matern 0.5", "matern 1.5", "matern 2.5", "rbf"]
-acqu_fcts = ["ei", "es"]
+acqu_fcts = ["kg"]
 
 for mean in means:
     for kernel in kernels:

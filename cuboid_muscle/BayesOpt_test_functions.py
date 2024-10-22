@@ -122,6 +122,14 @@ if len(inputs) > 0:
         test_function_number = 4
     elif "5" in inputs:
         test_function_number = 5
+    elif "6" in inputs:
+        test_function_number = 6
+    elif "7" in inputs:
+        test_function_number = 7
+    elif "8" in inputs:
+        test_function_number = 8
+    elif "9" in inputs:
+        test_function_number = 9
 
 
 
@@ -178,6 +186,14 @@ def test_function(x):
         return np.exp( -(10*x -2)**2 ) + np.exp(-(10*x-6)**2/10) + 1/((10*x)**2 +1)
     elif test_function_number == 5:
         return 0.5-3*x*(x-1)*np.sin(5*x)
+    elif test_function_number == 6:
+        return np.sin(5*x)**2
+    elif test_function_number == 7:
+        return x + 0.5*x**2 * np.sin(18*x)
+    elif test_function_number == 8:
+        return 1-np.abs(x-0.5)
+    elif test_function_number == 9:
+        return np.sqrt(x)-np.exp(5*(x-1))
 
 
 class CustomSingleTaskGP(SingleTaskGP):

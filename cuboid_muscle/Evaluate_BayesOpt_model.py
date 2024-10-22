@@ -5,7 +5,7 @@ import sys
 import numpy as np
 
 
-for i in range(5):
+for i in range(4):
     number_of_iterations = 100
 
     number_of_trials = 0
@@ -19,7 +19,7 @@ for i in range(5):
     input_string = ""
     for item in inputs:
         input_string = input_string + item + " "
-    input_string = input_string + str(i+1)
+    input_string = input_string + str(i+6)
 
     for j in range(number_of_iterations):
         subprocess.run(shlex.split("python3 BayesOpt_test_functions.py "+ input_string))
@@ -65,6 +65,29 @@ for i in range(5):
                 percentage_global_maxima_found += 1
                 percentage_local_maxima_found += 1
             if np.abs(float(rows[-2][0]) - 1) < 3e-2 and np.abs(float(rows[-2][1]) - 0.5)< 1e-2:
+                percentage_local_maxima_found += 1
+        elif i+6 == 6:
+            if np.abs(float(rows[-2][0]) - 0.3143) < 3e-2 and np.abs(float(rows[-2][1]) - 1)< 1e-2:
+                percentage_global_maxima_found += 1
+                percentage_local_maxima_found += 1
+            if np.abs(float(rows[-2][0]) - 0.943) < 3e-2 and np.abs(float(rows[-2][1]) - 1)< 1e-2:
+                percentage_local_maxima_found += 1
+                percentage_global_maxima_found += 1
+        elif i+6 == 7:
+            if np.abs(float(rows[-2][0]) - 0.8028) < 3e-2 and np.abs(float(rows[-2][1]) - 1.1093)< 1e-2:
+                percentage_global_maxima_found += 1
+                percentage_local_maxima_found += 1
+            if np.abs(float(rows[-2][0]) - 1) < 3e-2 and np.abs(float(rows[-2][1]) - 0.624)< 1e-2:
+                percentage_local_maxima_found += 1
+            if np.abs(float(rows[-2][0]) - 0.477) < 3e-2 and np.abs(float(rows[-2][1]) - 0.561)< 1e-2:
+                percentage_local_maxima_found += 1
+        elif i+6 == 8:
+            if np.abs(float(rows[-2][0]) - 0.5) < 3e-2 and np.abs(float(rows[-2][1]) - 1)< 1e-2:
+                percentage_global_maxima_found += 1
+                percentage_local_maxima_found += 1
+        elif i+6 == 9:
+            if np.abs(float(rows[-2][0]) - 0.5916) < 3e-2 and np.abs(float(rows[-2][1]) - 0.6393)< 1e-2:
+                percentage_global_maxima_found += 1
                 percentage_local_maxima_found += 1
 
     #print("Average number of trials: ", number_of_trials/number_of_iterations)

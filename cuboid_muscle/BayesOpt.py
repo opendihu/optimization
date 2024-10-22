@@ -154,12 +154,6 @@ elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
 
-"""
-def simulation(force):
-    x = force.numpy()[0]
-    f = -0.001678*x**2 + 0.05034*x
-    return f
-"""
 
 def simulation(force):
     force = force.numpy()[0]
