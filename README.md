@@ -25,9 +25,9 @@ To run a single simulation of only stretching a muscle with a certain force, go 
 ```
 To run an optimization process with Bayesian Optimization, choose the BO model you want to use, go to cuboid_muscle and run:
 ```
-python BayesOpt.py matern 1.5 zero fixed_noise ei stopping-xy
+python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
 ```
 To evaluate a Bayesian Optimization model by averaging the results over multiple iterations, go to cuboid_muscle and run:
 ```
-python Evaluate_BayesOpt_model.py matern 1.5 zero fixed_noise ei stopping-xy
+python Evaluate_BayesOpt_model.py matern 0.5 const fixed_noise es stopping_xy
 ```
