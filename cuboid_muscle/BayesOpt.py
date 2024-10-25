@@ -21,15 +21,16 @@ from botorch.models.transforms.outcome import Standardize
 import time
 import signal
 
-
-#If you want to call this file, you have two options:
-#>python BayesOpt.py
-#or
-#>python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy
-#You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
-#of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
-#also doesn't matter.
-
+"""
+This is a file to carry out Bayesian Optimization for the cuboid muscle simulation in OpenDiHu.
+If you want to call this file, you have two options:
+>python BayesOpt.py
+or
+>python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
+You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
+of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
+also doesn't matter.
+"""
 ########################################################################################################################
 #Customize code here
 
@@ -57,8 +58,7 @@ num_consecutive_trials = 3
 
 #Minor changes:
 fixed_Yvar = 1e-6
-lower_bound = 0.
-#upper_bound = 20. ########### what should this be?
+lower_bound = 0.0
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
@@ -70,6 +70,7 @@ relative_prestretch_min = 1.5
 relative_prestretch_max = 1.6
 ########################################################################################################################
 
+#This interprets the custom inputs for the BO model
 inputs = [item.lower() for item in sys.argv]
 if len(inputs) > 0:
     if "matern" in inputs:
@@ -114,7 +115,8 @@ if len(inputs) > 0:
         stopping_xy = True
 
 
-
+#We need to write some things into files. To see the difference between the resulting files, we add a individuality 
+#parameter in the filename, which we create here. 
 global_individuality_parameter = ""
 title = ""
 if matern:
@@ -155,6 +157,7 @@ elif stopping_xy:
     title = title + "XY-Stopping"
 
 
+#This is the method that evaluates the function we want to optimize.
 def simulation(force):
     force = force.numpy()[0]
     print("start simulation with force", force)
@@ -185,6 +188,7 @@ def simulation(force):
     return contraction
 
 
+#The BO needs a Gaussian Process as statistical model, which is being created here.
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
         train_Yvar = torch.full_like(train_Y, fixed_Yvar, dtype=torch.double)
@@ -230,13 +234,13 @@ def handler(signum, frame):
     raise TimeoutException()
 
 
-
+#This is the function that only stretches a muscle.
 def find_relative_prestretch(force):
     individuality_parameter = str(int(time.time()))+"_"+str(force)
     command = shlex.split(f"./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only {force} {individuality_parameter}")
     
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(10)
+    signal.alarm(15)
 
     try:
         subprocess.run(command)
@@ -255,6 +259,8 @@ def find_relative_prestretch(force):
 
     return relative_prestretch
 
+
+#To find out how far we can stretch the muscle without breaking, we use this function.
 def find_max_upper_bound():
     lower_guess = 0
     upper_guess = 10
@@ -277,6 +283,8 @@ def find_max_upper_bound():
 
     return lower_guess
     
+
+#If we want to see whith which force we have to stretch the muscle to get a certain length, we can use this function.
 def find_specific_upper_bound():
     lower_guess = 0
     upper_guess = 10
@@ -306,6 +314,7 @@ def find_specific_upper_bound():
 
 os.chdir("build_release")
 
+#Finds the upper bound
 if specific_relative_upper_bound:
     upper_bound = find_specific_upper_bound()
 elif max_upper_bound:
@@ -313,6 +322,7 @@ elif max_upper_bound:
 
 starting_time = time.time()
 
+#Chooses the initial query points for BO and evaluates them
 sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
     initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
@@ -334,14 +344,13 @@ for force in initial_x:
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
 
 
+#Initializes the GP and calculates its posterior distribution
 gp = CustomSingleTaskGP(initial_x, initial_y)
 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
 fit_gpytorch_mll(mll)
 
-print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
-#print("Outputscale:", gp.covar_module.outputscale.item())
-print("Noise:", gp.likelihood.noise.mean().item())
 
+#This starts the optimization loop. It is being carried out 100 times, unless the stopping criterion is being triggered.
 num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
@@ -429,10 +438,6 @@ for i in range(num_iterations):
     variance = posterior.variance.squeeze(-1)
     stddev = torch.sqrt(variance).detach().numpy()
 
-    print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
-    #print("Outputscale:", gp.covar_module.outputscale.item())
-    print("Noise:", gp.likelihood.noise.mean().item())
-
     if visualize:
         plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
         plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
@@ -513,6 +518,7 @@ if add_points:
 else:
     continuing = "n"
 
+#In case you want to add another point:
 while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)

@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+"""
+This is a file to visualize some test functions.
+"""
+
 def f1(x):
     return np.sin(5*x)**2
 
