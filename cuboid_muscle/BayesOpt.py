@@ -343,6 +343,8 @@ for force in initial_x:
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
 
+initial_x_vals = initial_x.clone()
+initial_y_vals = initial_y.clone()
 
 #Initializes the GP and calculates its posterior distribution
 gp = CustomSingleTaskGP(initial_x, initial_y)
@@ -444,6 +446,7 @@ for i in range(num_iterations):
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
         plt.xlabel("prestretch force")
         plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
@@ -502,10 +505,15 @@ variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
 if visualize:
+    max_index = torch.argmax(initial_y)
+    max_x = initial_x[max_index]
+    max_y = initial_y[max_index]
     plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
     plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
     plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+    plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
+    plt.scatter(max_x.numpy()*(upper_bound-lower_bound)+lower_bound, max_y.numpy(), color="green", label="Maximum", zorder=3)
     plt.xlabel("prestretch force")
     plt.ylabel("contraction of muscle")
     plt.title("Optimization Results")
@@ -554,6 +562,7 @@ while continuing == "y":
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
+        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
         plt.xlabel("prestretch force")
         plt.ylabel("contraction of muscle")
         plt.title("Optimization Process")
