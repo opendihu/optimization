@@ -27,7 +27,7 @@ for i in range(9):
     input_string = input_string + str(i+1)
 
     for j in range(number_of_iterations):
-        subprocess.run(shlex.split("python3 BayesOpt_test_functions.py "+ input_string))
+        subprocess.run(shlex.split("python3 BayesOpt.py "+ input_string))
 
         with open("build_release/BayesOpt_global_individuality_parameters.csv", "r") as f:
             reader = csv.reader(f)

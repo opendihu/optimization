@@ -12,7 +12,7 @@ It is the parameter in the filename in build_releas: "BayesOpt_outputs{individua
 
 individuality_parameter = sys.argv[1]
 
-os.chdir("saved_data")
+os.chdir("build_release")
 
 with open("BayesOpt_outputs"+individuality_parameter+".csv", "r") as f:
     reader = csv.reader(f, delimiter=",")

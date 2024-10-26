@@ -12,7 +12,7 @@ This does 100 optimization processes of each test function, averages the result 
 
 means = ["const", "zero"]
 kernels = ["matern 0.5", "matern 1.5", "matern 2.5", "rbf"]
-acqu_fcts = ["kg"]
+acqu_fcts = ["ei", "es"]
 
 for mean in means:
     for kernel in kernels:
@@ -20,7 +20,8 @@ for mean in means:
             avg_number_trials = 0
             avg_perc_local_maxima = 0
             avg_perc_global_maxima = 0
-            for i in range(5):
+
+            for i in range(9):
                 number_of_iterations = 100
 
                 number_of_trials = 0
@@ -33,7 +34,7 @@ for mean in means:
                 input_string = mean + " " + kernel + " " + acqu_fct + " stopping_xy fixed_noise " + str(i+1)
 
                 for j in range(number_of_iterations):
-                    subprocess.run(shlex.split("python3 BayesOpt_test_functions.py "+ input_string))
+                    subprocess.run(shlex.split("python3 BayesOpt.py "+ input_string))
 
                     with open("build_release/BayesOpt_global_individuality_parameters.csv", "r") as f:
                         reader = csv.reader(f)
