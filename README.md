@@ -7,7 +7,7 @@
 - No preCICE involved. 
 
 ### How to build?
-Follow OpenDiHu's documentation for installation, then run 
+Follow OpenDiHu's documentation (https://opendihu.readthedocs.io/en/latest/index.html) for installation, then run 
 ```
 mkorn && sr
 ```
@@ -31,3 +31,8 @@ To evaluate a Bayesian Optimization model by averaging the results over multiple
 ```
 python Evaluate_BayesOpt_model.py matern 0.5 const fixed_noise es stopping_xy
 ```
+To run an optimization process with Bayesian Optimization to optimize a test function, choose the BO model you want to use, go to cuboid_muscle and run:
+```
+python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
+```
+More detailed instructions can be found inside the respective files.
