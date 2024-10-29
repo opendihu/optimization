@@ -1,5 +1,13 @@
 # Bayesian Optimization for a cuboid muscle model
 
+## Dependendcies
+OpenDiHu: Version aadd55a4 (https://github.com/opendihu/opendihu/tree/aadd55a47fde8031cc4629ba138e949d54c26661)
+
+Python: Python 3.10.12
+
+Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
+
+
 ## Setup
 - A dummy cuboid muscle geometry. 
 - The solvers for both stretching and contraction are coupled mechanics solver and fastmonodomain solver. In the prestretch process we set dynamic to `False` and add boundary conditions that simulate the muscle being fixed at one side and being pulled at from the other side. In the contraction process we set dynamic to `True` and let the ends of the muscle free. 
@@ -41,9 +49,3 @@ python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
 ```
 More detailed instructions can be found inside the respective files.
 
-## Dependendcies
-OpenDiHu: Version aadd55a4
-
-Python: Python 3.10.12
-
-Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
