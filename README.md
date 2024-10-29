@@ -46,4 +46,4 @@ OpenDiHu: Version aadd55a4
 
 Python: Python 3.10.12
 
-Others: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
+Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
