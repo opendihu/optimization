@@ -1,4 +1,4 @@
-# Bayesian Optimizaiton for a cuboid muscle model
+# Bayesian Optimization for a cuboid muscle model
 
 ## Setup
 - A dummy cuboid muscle geometry. 
