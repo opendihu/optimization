@@ -30,6 +30,12 @@ or
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.
+The options:
+For the kernel: "matern 0.5" "matern 1.5" "matern 2.5" "rbf"
+For the mean: "const" "zero"
+For the noise: "fixed_noise" "variable_noise"
+For the acquisition function: "ei" "es" "kg" "pi"
+For the stopping criterion: "stopping_xy" "stopping_y"
 """
 ########################################################################################################################
 #Customize code here
@@ -115,7 +121,7 @@ if len(inputs) > 0:
         stopping_xy = True
 
 
-#We need to write some things into files. To see the difference between the resulting files, we add a individuality 
+#We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
 #parameter in the filename, which we create here. 
 global_individuality_parameter = ""
 title = ""
@@ -240,7 +246,7 @@ def find_relative_prestretch(force):
     command = shlex.split(f"./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only {force} {individuality_parameter}")
     
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(15)
+    signal.alarm(15) #After 15 seconds without feedback, the alarm activates
 
     try:
         subprocess.run(command)

@@ -31,6 +31,12 @@ or
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.
+The options:
+For the kernel: "matern 0.5" "matern 1.5" "matern 2.5" "rbf"
+For the mean: "const" "zero"
+For the noise: "fixed_noise" "variable_noise"
+For the acquisition function: "ei" "es" "kg" "pi"
+For the stopping criterion: "stopping_xy" "stopping_y"
 """
 
 ########################################################################################################################
@@ -63,7 +69,6 @@ test_function_number = 0
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-#upper_bound = 20. ########### what should this be?
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
@@ -137,7 +142,7 @@ if len(inputs) > 0:
 
 
 
-#We need to write some things into files. To see the difference between the resulting files, we add a individuality 
+#We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
 #parameter in the filename, which we create here. 
 global_individuality_parameter = ""
 title = ""
