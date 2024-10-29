@@ -6,14 +6,16 @@
 - It uses the CellML model "hodgkin_huxley-razumova".
 - No preCICE involved. 
 
-### How to build?
+## How to build?
 Follow OpenDiHu's documentation (https://opendihu.readthedocs.io/en/latest/index.html) for installation, then run 
 ```
 mkorn && sr
 ```
 For a debug build, look into the documentation. 
 
-### How to run?
+## How to run?
+
+### Running an OpenDiHu simulation
 To run a single simulation of stretching a muscle with a certain force and then contract it, go to build_release and run:
 
 ```
@@ -23,6 +25,8 @@ To run a single simulation of only stretching a muscle with a certain force, go 
 ```
 ./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only 10.0
 ```
+### Running an optimization loop
+
 To run an optimization process with Bayesian Optimization, choose the BO model you want to use, go to cuboid_muscle and run:
 ```
 python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
