@@ -3,7 +3,7 @@
 ## Setup
 - A dummy cuboid muscle geometry. 
 - The solvers for both stretching and contraction are coupled mechanics solver and fastmonodomain solver. In the prestretch process we set dynamic to `False` and add boundary conditions that simulate the muscle being fixed at one side and being pulled at from the other side. In the contraction process we set dynamic to `True` and let the ends of the muscle free. 
-- It uses the CellML model "hodgkin_huxley-razumova".
+- It uses the electrophysiology CellML model "hodgkin_huxley-razumova" and the incompressible mechanics model "Mooney-Rivlin".
 - No preCICE involved. 
 
 ## How to build?
