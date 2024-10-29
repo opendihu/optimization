@@ -42,6 +42,8 @@ python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
 More detailed instructions can be found inside the respective files.
 
 ## Dependendcies
-OpenDiHu: Version aadd55a4.
+OpenDiHu: Version aadd55a4
+
 Python: Python 3.10.12
+
 Others: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
