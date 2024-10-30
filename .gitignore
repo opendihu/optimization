@@ -6,3 +6,4 @@ __pycache__
 *.out
 *.err
 .sconf_temp
+saved_data

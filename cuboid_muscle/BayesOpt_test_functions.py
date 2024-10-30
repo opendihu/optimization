@@ -21,12 +21,13 @@ from botorch.models.transforms.outcome import Standardize
 import time
 import signal
 
+
 """
-This is a file to carry out Bayesian Optimization for the cuboid muscle simulation in OpenDiHu.
+This is a file to carry out Bayesian Optimization for the test functions.
 If you want to call this file, you have two options:
 >python BayesOpt.py
 or
->python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
+>python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy 1
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.
@@ -37,6 +38,7 @@ For the noise: "fixed_noise" "variable_noise"
 For the acquisition function: "ei" "es" "kg" "pi"
 For the stopping criterion: "stopping_xy" "stopping_y"
 """
+
 ########################################################################################################################
 #Customize code here
 
@@ -62,18 +64,18 @@ stopping_xy = False
 x_range = 5e-2
 num_consecutive_trials = 3
 
+test_function_number = 0
+
 #Minor changes:
 fixed_Yvar = 1e-6
-lower_bound = 0.0
+lower_bound = 0.
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
-upper_bound = 30
+upper_bound = 1
 specific_relative_upper_bound = False
 max_upper_bound = False
-relative_prestretch_min = 1.5
-relative_prestretch_max = 1.6
 ########################################################################################################################
 
 #This interprets the custom inputs for the BO model
@@ -119,6 +121,25 @@ if len(inputs) > 0:
     elif "stopping_xy" in inputs:
         stopping_y = False
         stopping_xy = True
+    if "1" in inputs:
+        test_function_number = 1
+    elif "2" in inputs:
+        test_function_number = 2
+    elif "3" in inputs:
+        test_function_number = 3
+    elif "4" in inputs:
+        test_function_number = 4
+    elif "5" in inputs:
+        test_function_number = 5
+    elif "6" in inputs:
+        test_function_number = 6
+    elif "7" in inputs:
+        test_function_number = 7
+    elif "8" in inputs:
+        test_function_number = 8
+    elif "9" in inputs:
+        test_function_number = 9
+
 
 
 #We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
@@ -161,37 +182,30 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
+global_individuality_parameter = global_individuality_parameter + f"_{test_function_number}"
 
 
-#This is the method that evaluates the function we want to optimize.
-def simulation(force):
-    force = force.numpy()[0]
-    print("start simulation with force", force)
-    individuality_parameter = str(int(time.time()))+str(force)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force} {individuality_parameter}")
-    subprocess.run(command)
-
-    print("end simulation")
-
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
-    for row in reader:
-        prestretch = float(row[1]) - float(row[0])
-        print("The muscle was stretched ", prestretch)
-    f.close()
-
-    f = open("muscle_length_contraction"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
-    muscle_length_process = []
-    for row in reader:
-        for j in row:
-            muscle_length_process.append(j)
-        
-    contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
-    print("The muscle contracted ", contraction)
-    f.close()
-
-    return contraction
+#This is the method that evaluates the test functions.
+def test_function(x):
+    x = x.numpy()[0]
+    if test_function_number == 1:
+        return -3*x*(x-1.3) + 0.3
+    elif test_function_number == 2:
+        return np.exp(-(5*x-3)**2) + 0.2*np.exp(-(30*x-22)**2)
+    elif test_function_number == 3:
+        return np.exp(-(5*x-5)**2) * np.sin(5*x-1.5) +x
+    elif test_function_number == 4:
+        return np.exp( -(10*x -2)**2 ) + np.exp(-(10*x-6)**2/10) + 1/((10*x)**2 +1)
+    elif test_function_number == 5:
+        return 0.5-3*x*(x-1)*np.sin(5*x)
+    elif test_function_number == 6:
+        return np.sin(5*x)**2
+    elif test_function_number == 7:
+        return x + 0.5*x**2 * np.sin(18*x)
+    elif test_function_number == 8:
+        return 1-np.abs(x-0.5)
+    elif test_function_number == 9:
+        return np.sqrt(x)-np.exp(5*(x-1))
 
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
@@ -233,98 +247,8 @@ class CustomSingleTaskGP(SingleTaskGP):
                          outcome_transform=output_transform,
                         )
 
-class TimeoutException(Exception):
-    pass
-
-def handler(signum, frame):
-    raise TimeoutException()
-
-
-#This is the function that only stretches a muscle.
-def find_relative_prestretch(force):
-    individuality_parameter = str(int(time.time()))+"_"+str(force)
-    command = shlex.split(f"./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only {force} {individuality_parameter}")
-    
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(15) #After 15 seconds without feedback, the alarm activates
-
-    try:
-        subprocess.run(command)
-        f = open("muscle_length_prestretch"+individuality_parameter+".csv")
-        reader = csv.reader(f, delimiter=",")
-        for row in reader:
-            relative_prestretch = float(row[1]) / float(row[0])
-        f.close()
-        command2 = shlex.split("rm muscle_length_prestretch"+individuality_parameter+".csv")
-        subprocess.run(command2)
-    except TimeoutException:
-        relative_prestretch = -1
-        print("Muscle tore")
-    finally:
-        signal.alarm(0)
-
-    return relative_prestretch
-
-
-#To find out how far we can stretch the muscle without breaking, we use this function.
-def find_max_upper_bound():
-    lower_guess = 0
-    upper_guess = 10
-    relative_prestretch_up = find_relative_prestretch(upper_guess)
-
-    while relative_prestretch_up >= 0 or (relative_prestretch_up < 0 and upper_guess-lower_guess > 1):
-        if relative_prestretch_up >= 0:
-            not_relevant = upper_guess
-            upper_guess = 2*upper_guess - lower_guess
-            lower_guess = not_relevant
-            relative_prestretch_up = find_relative_prestretch(upper_guess)
-        else:
-            middle_guess = (upper_guess+lower_guess)/2
-            relative_prestretch_mid = find_relative_prestretch(middle_guess)
-            if relative_prestretch_mid >= 0:
-                lower_guess = middle_guess
-            elif relative_prestretch_mid < 0:
-                upper_guess = middle_guess
-                relative_prestretch_up = relative_prestretch_mid
-
-    return lower_guess
-    
-
-#If we want to see whith which force we have to stretch the muscle to get a certain length, we can use this function.
-def find_specific_upper_bound():
-    lower_guess = 0
-    upper_guess = 10
-    relative_prestretch_low = 1
-    relative_prestretch_up = find_relative_prestretch(upper_guess)
-
-    while (relative_prestretch_low < relative_prestretch_min or relative_prestretch_low > relative_prestretch_max) and (relative_prestretch_up < relative_prestretch_min or relative_prestretch_up > relative_prestretch_max):
-        if relative_prestretch_up < relative_prestretch_min and relative_prestretch_up >= 0:
-            not_relevant = upper_guess
-            upper_guess = 2*upper_guess - lower_guess
-            lower_guess = not_relevant
-            relative_prestretch_low = relative_prestretch_up
-            relative_prestretch_up = find_relative_prestretch(upper_guess)
-        else:
-            middle_guess = (upper_guess+lower_guess)/2
-            relative_prestretch_mid = find_relative_prestretch(middle_guess)
-            if relative_prestretch_mid < relative_prestretch_min:
-                lower_guess = middle_guess
-                relative_prestretch_low = relative_prestretch_mid
-            elif relative_prestretch_mid > relative_prestretch_max:
-                upper_guess = middle_guess
-                relative_prestretch_up = relative_prestretch_mid
-            else:
-                return middle_guess
-        
-    return upper_guess
 
 os.chdir("build_release")
-
-#Finds the upper bound
-if specific_relative_upper_bound:
-    upper_bound = find_specific_upper_bound()
-elif max_upper_bound:
-    upper_bound = find_max_upper_bound()
 
 starting_time = time.time()
 
@@ -340,7 +264,7 @@ with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
 
 initial_y = torch.tensor([])
 for force in initial_x:
-    y = torch.tensor([[simulation(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    y = torch.tensor([[test_function(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
@@ -348,6 +272,7 @@ for force in initial_x:
 
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
+
 
 initial_x_vals = initial_x.clone()
 initial_y_vals = initial_y.clone()
@@ -425,7 +350,7 @@ for i in range(num_iterations):
             raw_samples=256,
         )
 
-    new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
@@ -453,10 +378,10 @@ for i in range(num_iterations):
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
         plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("x")
+        plt.ylabel("y")
         plt.title("Optimization Process")
-        plt.gcf().suptitle(title, fontsize=8)
+        plt.gcf().suptitle(title, fontsize=12)
         plt.legend()
         plt.show()
 
@@ -520,10 +445,10 @@ if visualize:
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
     plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
     plt.scatter(max_x.numpy()*(upper_bound-lower_bound)+lower_bound, max_y.numpy(), color="green", label="Maximum", zorder=3)
-    plt.xlabel("prestretch force")
-    plt.ylabel("contraction of muscle")
+    plt.xlabel("x")
+    plt.ylabel("y")
     plt.title("Optimization Results")
-    plt.gcf().suptitle(title, fontsize=8)
+    plt.gcf().suptitle(title, fontsize=12)
     plt.legend()
     plt.show()
 
@@ -537,7 +462,7 @@ while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
 
-    new_y = torch.tensor([[simulation(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
@@ -569,10 +494,10 @@ while continuing == "y":
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
         plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("x")
+        plt.ylabel("y")
         plt.title("Optimization Process")
-        plt.gcf().suptitle(title, fontsize=8)
+        plt.gcf().suptitle(title, fontsize=12)
         plt.legend()
         plt.show()
 

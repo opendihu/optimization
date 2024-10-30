@@ -7,6 +7,7 @@
 
 import numpy as np
 import sys, os
+import time
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 var_path = os.path.join(script_path, "variables")
@@ -15,6 +16,8 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
+
+print(sys.argv)
 
 # parameters
 force = 0.0                       # [N] load on top
@@ -25,7 +28,7 @@ scenario_name = "tensile_test"
 dirichlet_bc_mode = "fix_floating" 
 individuality_parameter = sys.argv[2]
  
-if len(sys.argv) > 4:                                                                           
+if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
@@ -60,6 +63,11 @@ if len(sys.argv) > 4:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
     quit()
  
+if len(sys.argv) > 4:
+  individuality_parameter = sys.argv[2] 
+else:
+  individuality_parameter = str(time.time())
+
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
 
