@@ -97,12 +97,16 @@ for fiber_x in range(fb_x):
 
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc = {}
+contraction_elasticity_dirichlet_bc = {}
+
 k = 0
 
 # fix z value on the whole x-y-plane
 for j in range(my):
   for i in range(mx):
     elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    contraction_elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    contraction_elasticity_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(my):
@@ -118,49 +122,6 @@ traction_vector = [0, 0, force]     # the traction force in specified in the ref
 
 elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
 
-# callback for result
-def handle_result_prestretch(result):
-  data = result[0]
-
-  number_of_nodes = mx * my
-  average_z_start = 0
-  average_z_end = 0
-
-  z_data = data["data"][0]["components"][2]["values"]
-
-  for i in range(number_of_nodes):
-    average_z_start += z_data[i]
-    average_z_end += z_data[number_of_nodes*(mz -1) + i]
-
-  average_z_start /= number_of_nodes
-  average_z_end /= number_of_nodes
-
-  length_of_muscle = np.abs(average_z_end - average_z_start)
-  print("length of muscle (prestretch): ", length_of_muscle)
-
-  if data["timeStepNo"] == 0:
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "w")
-    f.write(str(length_of_muscle))
-    f.write(",")
-    f.close()
-  else:
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "a")
-    f.write(str(length_of_muscle))
-    f.write(",")
-    f.close()
-  
-  
-  if data["timeStepNo"] == 1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[1]["components"][2]["values"])
-    stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
@@ -169,7 +130,7 @@ def callback_function_contraction(raw_data):
     average_z_start = 0
     average_z_end = 0
 
-    z_data = raw_data[0]["data"][0]["components"][2]["values"]
+    z_data = raw_data[0]["data"][3]["components"][2]["values"]
 
     for i in range(number_of_nodes):
       average_z_start += z_data[i]
@@ -181,16 +142,11 @@ def callback_function_contraction(raw_data):
     length_of_muscle = np.abs(average_z_end - average_z_start)
     print("length of muscle (contraction): ", length_of_muscle)
 
-    if t == variables.dt_3D:
-      f = open("muscle_length_contraction"+individuality_parameter+".csv", "w")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
-    else:
-      f = open("muscle_length_contraction"+individuality_parameter+".csv", "a")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
+  
+    f = open("muscle_contraction" +".csv", "a")
+    f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
+    f.write("\n")
+    f.close()
 
 
 config = {
@@ -474,12 +430,6 @@ config = {
                   "OutputWriter": 
                   [
                     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-
-                    {
-                      "format": "PythonCallback",
-                      "callback": handle_result_prestretch,
-                      "outputInterval": 1,
-                    }
                   ],
                   "pressure":       { "OutputWriter": [] },
                   "LoadIncrements": { "OutputWriter": [] }
@@ -687,7 +637,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            contraction_elasticity_dirichlet_bc, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
