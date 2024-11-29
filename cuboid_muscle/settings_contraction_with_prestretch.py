@@ -2,7 +2,7 @@
 # - Isotropic hyperelastic material
 # - Linear elasticity
 #
-# arguments: <scenario_name> <force> <individuality_parameter>
+# arguments: <scenario_name> <force>
 
 
 import numpy as np
@@ -57,10 +57,6 @@ if len(sys.argv) > 3:
     print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
     quit()
 
-if len(sys.argv) > 4:
-  individuality_parameter = sys.argv[2] 
-else:
-  individuality_parameter = str(time.time())
 
 nx, ny, nz = 3, 3, 12                     # number of elements
 mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
@@ -143,7 +139,7 @@ def callback_function_contraction(raw_data):
     print("length of muscle (contraction): ", length_of_muscle)
 
   
-    f = open("muscle_contraction" +".csv", "a")
+    f = open("muscle_contraction_" + str(force) + "N.csv", "a")
     f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
     f.write("\n")
     f.close()
