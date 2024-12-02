@@ -134,14 +134,12 @@ def callback_function_contraction(raw_data):
 
     average_z_start /= number_of_nodes
     average_z_end /= number_of_nodes
-
-    length_of_muscle = np.abs(average_z_end - average_z_start)
-    print("length of muscle (contraction): ", length_of_muscle)
-
-  
+ 
     f = open("muscle_contraction_" + str(force) + "N.csv", "a")
-    f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
-    f.write("\n")
+    f.write(str(average_z_start))
+    f.write(",")
+    #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
+    #f.write("\n")
     f.close()
 
 

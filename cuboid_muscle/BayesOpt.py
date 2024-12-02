@@ -58,12 +58,12 @@ num_consecutive_trials = 3
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-#upper_bound = 20. ########### what should this be?
+upper_bound = 30
+
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
-upper_bound = 30
 specific_relative_upper_bound = False
 max_upper_bound = False
 relative_prestretch_min = 1.5
@@ -154,41 +154,30 @@ elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
 
-"""
-def simulation(force):
-    x = force.numpy()[0]
-    f = -0.001678*x**2 + 0.05034*x
-    return f
-"""
+
 
 def simulation(force):
     force = force.numpy()[0]
     print("start simulation with force", force)
-    individuality_parameter = str(int(time.time()))+str(force)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force} {individuality_parameter}")
+    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force}")
     subprocess.run(command)
 
     print("end simulation")
 
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
+    f = open("muscle_contraction_" + str(force) + "N.csv")
+    reader = csv.reader(f)
+    tractionz = []
     for row in reader:
-        prestretch = float(row[1]) - float(row[0])
-        print("The muscle was stretched ", prestretch)
+        tractionz.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
-
-    f = open("muscle_length_contraction"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
-    muscle_length_process = []
-    for row in reader:
-        for j in row:
-            muscle_length_process.append(j)
-        
-    contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
-    print("The muscle contracted ", contraction)
+    
+    maxtraction = max(tractionz)
+    print("The maximum traction was ", maxtraction)
+    f = open("muscle_bayes_" + str(force) + "N.csv", "a")
+    f.write(str(force) + " " + str(maxtraction))
+    f.write("\n")
     f.close()
-
-    return contraction
+    return float(maxtraction)
 
 
 class CustomSingleTaskGP(SingleTaskGP):
@@ -286,7 +275,7 @@ def find_max_upper_bound():
 def find_specific_upper_bound():
     lower_guess = 0
     upper_guess = 10
-    relative_prestretch_low = 1
+    relative_prestretch_low = 0
     relative_prestretch_up = find_relative_prestretch(upper_guess)
 
     while (relative_prestretch_low < relative_prestretch_min or relative_prestretch_low > relative_prestretch_max) and (relative_prestretch_up < relative_prestretch_min or relative_prestretch_up > relative_prestretch_max):
@@ -445,8 +434,8 @@ for i in range(num_iterations):
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("prestretch force (N)")
+        plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
