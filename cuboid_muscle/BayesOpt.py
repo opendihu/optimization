@@ -170,14 +170,20 @@ def simulation(force):
     for row in reader:
         tractionz.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
+
+    f = open("length_after_prestretch_" + str(force) + "N.csv")
+    reader = csv.reader(f)
+    for row in reader:
+        length_after_prestretch = row[0]
+    f.close()
     
     maxtraction = max(tractionz)
     print("The maximum traction was ", maxtraction)
     f = open("muscle_bayes_" + str(force) + "N.csv", "a")
-    f.write(str(force) + " " + str(maxtraction))
+    f.write(str(force) + " " + str(maxtraction) + " " + str(length_after_prestretch))
     f.write("\n")
     f.close()
-    return float(maxtraction)
+    return maxtraction
 
 
 class CustomSingleTaskGP(SingleTaskGP):
@@ -496,8 +502,8 @@ if visualize:
     plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
     plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.xlabel("prestretch force")
-    plt.ylabel("contraction of muscle")
+    plt.xlabel("prestretch force (N)")
+    plt.ylabel("muscle force (N)")
     plt.title("Optimization Results")
     plt.gcf().suptitle(title, fontsize=8)
     plt.legend()
@@ -543,8 +549,8 @@ while continuing == "y":
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("prestretch force (N)")
+        plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
