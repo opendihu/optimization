@@ -118,6 +118,36 @@ traction_vector = [0, 0, force]     # the traction force in specified in the ref
 
 elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
 
+def callback_function_prestretch(raw_data):
+  data = raw_data[0]
+
+  number_of_nodes = mx * my
+  average_length = 0
+
+  z_data = data["data"][0]["components"][2]["values"]
+
+  for i in range(number_of_nodes):
+    average_length += z_data[number_of_nodes*(mz -1) + i]
+  average_length = average_length/number_of_nodes
+  print("length of muscle (prestretch): ", average_length)
+
+  f = open("length_after_prestretch_" + str(force) + "N.csv", "w")
+  f.write(str(average_length))
+  f.close()
+
+  
+  
+  if data["timeStepNo"] == 1:
+    field_variables = data["data"]
+    
+    strain = max(field_variables[1]["components"][2]["values"])
+    stress = max(field_variables[5]["components"][2]["values"])
+    
+    print("strain: {}, stress: {}".format(strain, stress))
+    
+    with open("result.csv","a") as f:
+      f.write("{},{},{}\n".format(scenario_name,strain,stress))
+
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
@@ -423,6 +453,11 @@ config = {
                 
                   "OutputWriter": 
                   [
+                    {
+                      "format": "PythonCallback",
+                      "callback": callback_function_prestretch,
+                      "outputInterval": 1,
+                    },
                     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
                   ],
                   "pressure":       { "OutputWriter": [] },
