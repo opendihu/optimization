@@ -58,7 +58,7 @@ num_consecutive_trials = 3
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-upper_bound = 30
+upper_bound = 2
 
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
@@ -440,7 +440,7 @@ for i in range(num_iterations):
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("prestretch force (N)")
+        plt.xlabel("prestretch extension (cm)")
         plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)
@@ -502,7 +502,7 @@ if visualize:
     plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
     plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.xlabel("prestretch force (N)")
+    plt.xlabel("prestretch extension (cm)")
     plt.ylabel("muscle force (N)")
     plt.title("Optimization Results")
     plt.gcf().suptitle(title, fontsize=8)
@@ -549,7 +549,7 @@ while continuing == "y":
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.xlabel("prestretch force (N)")
+        plt.xlabel("prestretch extension (cm)")
         plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)

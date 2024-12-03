@@ -18,7 +18,7 @@ import variables
 n_ranks = (int)(sys.argv[-1])
 
 # parameters
-force = 10.0                       # [N] load on top
+prestretch_extension = 1.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 physical_extent = [3.0, 3.0, 12.0]
 constant_body_force = None                                                                      
@@ -27,9 +27,9 @@ dirichlet_bc_mode = "fix_floating"
  
 if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
-  force = float(sys.argv[1])
+  prestretch_extension = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
-  print("force: {}".format(force))
+  print("prestretch extension: {}".format(prestretch_extension))
     
   # set material parameters depending on scenario name
   if scenario_name == "compressible_mooney_rivlin":
@@ -95,12 +95,17 @@ for fiber_x in range(fb_x):
 elasticity_dirichlet_bc = {}
 contraction_elasticity_dirichlet_bc = {}
 
+
+prestretch_initial_displacements = [[0.0,0.0,prestretch_extension*i/(mx*my*mz-1)] for i in range(mx*my*mz)]
+
 k = 0
 
 # fix z value on the whole x-y-plane
 for j in range(my):
   for i in range(mx):
     elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,prestretch_extension,None,None,None]
+
     contraction_elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
     contraction_elasticity_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
 
@@ -111,12 +116,6 @@ for j in range(my):
 # fix front edge 
 for i in range(mx):
   elasticity_dirichlet_bc[k*mx*my + 0*mx + i][1] = 0.0
-       
-# set Neumann BC, set traction at the top
-k = nz-1
-traction_vector = [0, 0, force]     # the traction force in specified in the reference configuration
-
-elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
 
 def callback_function_prestretch(raw_data):
   data = raw_data[0]
@@ -131,7 +130,7 @@ def callback_function_prestretch(raw_data):
 
   print("length of muscle (prestretch): ", average_length)
 
-  f = open("length_after_prestretch_" + str(force) + "N.csv", "w")
+  f = open("length_after_prestretch_" + str(prestretch_extension) + "N.csv", "w")
   f.write(str(average_length))
   f.close()
 
@@ -165,7 +164,7 @@ def callback_function_contraction(raw_data):
     average_z_start /= number_of_nodes
     average_z_end /= number_of_nodes
  
-    f = open("muscle_contraction_" + str(force) + "N.csv", "a")
+    f = open("muscle_contraction_" + str(prestretch_extension) + "N.csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
@@ -438,12 +437,12 @@ config = {
                   # boundary and initial conditions
                   "dirichletBoundaryConditions": elasticity_dirichlet_bc,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   None,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
                   
-                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(mx*my*mz)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
+                  "initialValuesDisplacements":  prestretch_initial_displacements,     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(mx*my*mz)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
                   "constantBodyForce":           constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
