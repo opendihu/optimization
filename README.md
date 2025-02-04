@@ -1,51 +1,32 @@
-# Bayesian Optimization for a cuboid muscle model
+# Bayesian Optimization
+
+## Description
+Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This repository has started as a Bachelor Thesis (https://github.com/opendihu/optimization/tree/Bachelor-thesis). It contains files for Bayesian Optimization that can be used by itself or be connected to OpenDiHu to use a simulation as a function evaluation. 
 
 ## Dependendcies
-OpenDiHu: Version aadd55a4 (https://github.com/opendihu/opendihu/tree/aadd55a47fde8031cc4629ba138e949d54c26661)
-
 Python: Python 3.10.12
 
 Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
 
+OpenDiHu (if used): Version aadd55a4 (https://github.com/opendihu/opendihu/tree/aadd55a47fde8031cc4629ba138e949d54c26661)
 
 ## Setup
-- A dummy cuboid muscle geometry. 
-- The solvers for both stretching and contraction are coupled mechanics solver and fastmonodomain solver. In the prestretch process we set dynamic to `False` and add boundary conditions that simulate the muscle being fixed at one side and being pulled at from the other side. In the contraction process we set dynamic to `True` and let the ends of the muscle free. 
-- It uses the electrophysiology CellML model "hodgkin_huxley-razumova" and the incompressible mechanics model "Mooney-Rivlin".
-- No preCICE involved. 
+Inside "BayesianOptimization" are two setups for Bayesian Optimization that are both set up to optimize an easy dummy function. Inside "1D" is the setup for a one-dimensional function, inside "nD" the setup for a n-dimensional function.
 
-## How to build?
-Follow OpenDiHu's documentation (https://opendihu.readthedocs.io/en/latest/index.html) for installation, then run 
-```
-mkorn && sr
-```
-For a debug build, look into the documentation. 
+Inside "examples" are a few examples where Bayesian Optimization has been used:
+- biceps: Has not been added yet
+- coupled_cuboid_muscles: Has not been added yet
+- cuboid_muscle: This was the main focus of the mensioned Bachelor Thesis. It uses Bayesian Optimization to find the prestretch that corresponds to the greatest range of motion of a dummy cuboid muscle.
+- test_functions: This can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
 
-## How to run?
+More details can be found in the corresponding ReadMe files.
 
-### Running an OpenDiHu simulation
-To run a single simulation of stretching a muscle with a certain force and then contract it, go to build_release and run:
+## Results
+### The optimal Bayesian Optimization model over all test functions
+The word "optimal" is very subjective. In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models averaged over all test functions, we find the following model as the best one:
+- Kernel: Mátern kernel with smoothness parameter 0.5
+- Mean: Constant mean
+- Acquisition function: Entropy search
 
-```
-./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 10.0
-```
-To run a single simulation of only stretching a muscle with a certain force, go to build_release and run:
-```
-./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only 10.0
-```
-### Running an optimization loop
-
-To run an optimization process with Bayesian Optimization, choose the BO model you want to use, go to cuboid_muscle and run:
-```
-python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
-```
-To evaluate a Bayesian Optimization model by averaging the results over multiple iterations, go to cuboid_muscle and run:
-```
-python Evaluate_BayesOpt_model.py matern 0.5 const fixed_noise es stopping_xy
-```
-To run an optimization process with Bayesian Optimization to optimize a test function, choose the BO model you want to use, go to cuboid_muscle and run:
-```
-python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
-```
-More detailed instructions can be found inside the respective files.
-
+It takes on average 7.352 evaluations and finds local maxima in 85.2% and global maxima in 79.8% of cases. There are other models with a higher accuracy and models with a lower number of evaluations, but no model balaces it as well as this one does. That has been the conclusion of the Bachelor Thesis.
+### The prestretch for the best range of motion of a cuboid muscle
