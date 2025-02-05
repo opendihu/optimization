@@ -483,7 +483,7 @@ def callback_function_prestretch(raw_data):
     number_of_nodes = mx * my
     average_z_start = 0
     average_z_end = 0
-    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
     if rank_no < 4:
 
@@ -491,7 +491,7 @@ def callback_function_prestretch(raw_data):
         average_z_start += z_data[i]
       average_z_start /= number_of_nodes
   
-      f = open("muscle_contraction_rank" + rank_no + "forceN.csv", "a")
+      f = open("muscle_prestretch_rank" + str(rank_no) + "forceN.csv", "a")
       f.write(str(average_z_start))
       f.write(",")
       f.close()
@@ -499,10 +499,10 @@ def callback_function_prestretch(raw_data):
     if rank_no > 12:
 
       for i in range(number_of_nodes):
-        average_z_end += z_data[number_of_nodes*(mz -1) + i]
+        average_z_end += z_data[-i]
       average_z_end /= number_of_nodes
   
-      f = open("muscle_contraction_rank" + str(rank_no) + "forceN.csv", "a")
+      f = open("muscle_prestretch_rank" + str(rank_no) + "forceN.csv", "a")
       f.write(str(average_z_end))
       f.write(",")
       f.close()
