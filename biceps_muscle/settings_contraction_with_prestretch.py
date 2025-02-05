@@ -351,7 +351,7 @@ config = {
       "Term2": {        # solid mechanics
         "MuscleContractionSolver": {
           "numberTimeSteps":              1,                         # only use 1 timestep per interval
-          "timeStepOutputInterval":       100,                       # do not output time steps
+          "timeStepOutputInterval":       1,                       # do not output time steps
           "Pmax":                         variables.pmax,            # maximum PK2 active stress
           "enableForceLengthRelation":    variables.enable_force_length_relation,  # if the factor f_l(λ_f) modeling the force-length relation (as in Heidlauf2013) should be multiplied. Set to false if this relation is already considered in the CellML model.
           "lambdaDotScalingFactor":       variables.lambda_dot_scaling_factor,     # scaling factor for the output of the lambda dot slot, i.e. the contraction velocity. Use this to scale the unit-less quantity to, e.g., micrometers per millisecond for the subcellular model.
@@ -364,9 +364,7 @@ config = {
           
           # the actual solid mechanics solver, this is either "DynamicHyperelasticitySolver" or "HyperelasticitySolver", depending on the value of "dynamic"
           "DynamicHyperelasticitySolver": {
-            "timeStepWidth":              variables.dt_3D,           # time step width 
             "durationLogKey":             "nonlinear",               # key to find duration of this solver in the log file
-            "timeStepOutputInterval":     1,                         # how often the current time step should be printed to console
             
             "materialParameters":         variables.material_parameters,  # material parameters of the Mooney-Rivlin material
             "density":                    variables.rho,             # density of the material
