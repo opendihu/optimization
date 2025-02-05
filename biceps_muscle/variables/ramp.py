@@ -76,7 +76,7 @@ import os
 input_dir = os.path.join(os.environ.get('OPENDIHU_HOME', '../../../../../'), "examples/electrophysiology/input/")
 
 #fiber_file = "../../../../../input//left_biceps_brachii_9x9fibers.bin"
-fiber_file = input_dir + "left_biceps_brachii_7x7fibers.bin"
+fiber_file = input_dir + "left_biceps_brachii_9x9fibers.bin"
 fat_mesh_file = fiber_file + "_fat.bin"
 firing_times_file = input_dir + "MU_firing_times_always.txt"    # use setSpecificStatesCallEnableBegin and setSpecificStatesCallFrequency
 fiber_distribution_file = input_dir + "MU_fibre_distribution_10MUs.txt"

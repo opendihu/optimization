@@ -461,7 +461,7 @@ variables.prestretch_neumann_bc = [{"element": 0*nx*ny + j*nx + i, "constantVect
  
 def callback_function_prestretch(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsGlobal"]
-  if True:
+  if n_ranks==1:
     number_of_nodes = mx * my
     average_z_start = 0
     average_z_end = 0
@@ -479,10 +479,39 @@ def callback_function_prestretch(raw_data):
     f.write(str(average_z_end - average_z_start))
     f.write(",")
     f.close()
+  elif n_ranks==16:
+    number_of_nodes = mx * my
+    average_z_start = 0
+    average_z_end = 0
+    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+
+    if rank_no < 4:
+
+      for i in range(number_of_nodes):
+        average_z_start += z_data[i]
+      average_z_start /= number_of_nodes
+  
+      f = open("muscle_contraction_rank" + rank_no + "forceN.csv", "a")
+      f.write(str(average_z_start))
+      f.write(",")
+      f.close()
+
+    if rank_no > 12:
+
+      for i in range(number_of_nodes):
+        average_z_end += z_data[number_of_nodes*(mz -1) + i]
+      average_z_end /= number_of_nodes
+  
+      f = open("muscle_contraction_rank" + str(rank_no) + "forceN.csv", "a")
+      f.write(str(average_z_end))
+      f.write(",")
+      f.close()
+  else:
+    sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
 
 def callback_function_contraction(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsGlobal"]
-  if True:
+  if n_ranks == 1:
     number_of_nodes = mx * my
     average_z_start = 0
     average_z_end = 0
@@ -500,3 +529,22 @@ def callback_function_contraction(raw_data):
     f.write(str(average_z_start))
     f.write(",")
     f.close()
+  elif n_ranks == 16:
+    number_of_nodes = mx * my
+    average_z_start = 0
+    average_z_end = 0
+
+    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    
+    if rank_no < 4:
+
+      for i in range(number_of_nodes):
+        average_z_start += z_data[i]
+      average_z_start /= number_of_nodes
+  
+      f = open("muscle_contraction_rank" + str(rank_no) + "forceN.csv", "a")
+      f.write(str(average_z_start))
+      f.write(",")
+      f.close()
+  else:
+    sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
