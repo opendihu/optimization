@@ -23,10 +23,13 @@ More details can be found in the corresponding ReadMe files.
 
 ## Results
 ### The optimal Bayesian Optimization model over all test functions
-The word "optimal" is very subjective. In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models averaged over all test functions, we find the following model as the best one:
+This is the test_functions example. The word "optimal" is very subjective. In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models averaged over all test functions, we find the following model as the best one:
 - Kernel: Mátern kernel with smoothness parameter 0.5
 - Mean: Constant mean
 - Acquisition function: Entropy search
 
 It takes on average 7.352 evaluations and finds local maxima in 85.2% and global maxima in 79.8% of cases. There are other models with a higher accuracy and models with a lower number of evaluations, but no model balaces it as well as this one does. That has been the conclusion of the Bachelor Thesis.
 ### The prestretch for the best range of motion of a cuboid muscle
+This is the cuboid_muscle example. For a muscle to contract better, the idea is to stretch it before the contraction. This creates a function that maps a prestretch force to the length the muscle can contract in a certain amount of time with the given prestretch. This has also been discussed in the Bachelor Thesis. The following plot shows the result of this model. As you can see, the function is almost linear, so that the best prestretch force in this scenario would be the maximal force with which the muscle does not tear.
+
+![](results/Figure_optimization_linear.png)
