@@ -25,9 +25,9 @@ import signal
 """
 This is a file to carry out Bayesian Optimization for the test functions.
 If you want to call this file, you have two options:
->python BayesOpt.py
+>python BayesOpt_test_functions.py
 or
->python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy 1
+>python BayesOpt_test_functions.py matern 1.5 const fixed_noise ei stopping_xy 1
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.
@@ -206,6 +206,8 @@ def test_function(x):
         return 1-np.abs(x-0.5)
     elif test_function_number == 9:
         return np.sqrt(x)-np.exp(5*(x-1))
+    else:
+        return 0
 
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
