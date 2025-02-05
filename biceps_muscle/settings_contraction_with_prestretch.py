@@ -360,10 +360,10 @@ config = {
             {"format": "Paraview", "outputInterval": int(1./variables.dt_3D*variables.output_timestep_3D), "filename": "out/" + variables.scenario_name + "/mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
           ],
           "mapGeometryToMeshes":          [],                        # the mesh names of the meshes that will get the geometry transferred
-          "dynamic":                      True,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
+          "dynamic":                      False,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
           
           # the actual solid mechanics solver, this is either "DynamicHyperelasticitySolver" or "HyperelasticitySolver", depending on the value of "dynamic"
-          "DynamicHyperelasticitySolver": {
+          "HyperelasticitySolver": {
             "durationLogKey":             "nonlinear",               # key to find duration of this solver in the log file
             
             "materialParameters":         variables.material_parameters,  # material parameters of the Mooney-Rivlin material
