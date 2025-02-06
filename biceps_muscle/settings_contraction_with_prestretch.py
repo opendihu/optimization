@@ -357,7 +357,7 @@ config = {
           "lambdaDotScalingFactor":       variables.lambda_dot_scaling_factor,     # scaling factor for the output of the lambda dot slot, i.e. the contraction velocity. Use this to scale the unit-less quantity to, e.g., micrometers per millisecond for the subcellular model.
           "slotNames":                    ["lambda", "ldot", "gamma", "T"],   # names of the data slots (lamdba, lambdaDot, gamma, traction), maximum 10 characters per slot name
           "OutputWriter" : [
-            {"format": "Paraview", "outputInterval": int(1./variables.dt_3D*variables.output_timestep_3D), "filename": "out/" + variables.scenario_name + "/mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+            {"format": "Paraview", "outputInterval": 1, "filename": "out/" + variables.scenario_name + "/prestretch_mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
           ],
           "mapGeometryToMeshes":          [],                        # the mesh names of the meshes that will get the geometry transferred
           "dynamic":                      False,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
@@ -402,7 +402,7 @@ config = {
             "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
             "constantBodyForce":           variables.constant_body_force,       # a constant force that acts on the whole body, e.g. for gravity
             
-            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
+            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/prestretch_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
             "totalForceLogFilename":       "out/"+variables.scenario_name+"/total_force.txt",                              # filename for a log file with the total force
             
             # define which file formats should be written
@@ -601,7 +601,7 @@ config = {
           "lambdaDotScalingFactor":       variables.lambda_dot_scaling_factor,     # scaling factor for the output of the lambda dot slot, i.e. the contraction velocity. Use this to scale the unit-less quantity to, e.g., micrometers per millisecond for the subcellular model.
           "slotNames":                    ["lambda", "ldot", "gamma", "T"],   # names of the data slots (lamdba, lambdaDot, gamma, traction), maximum 10 characters per slot name
           "OutputWriter" : [
-            {"format": "Paraview", "outputInterval": 1, "filename": "out/" + variables.scenario_name + "/mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+            {"format": "Paraview", "outputInterval": 1, "filename": "out/" + variables.scenario_name + "/contraction_mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
           ],
           "mapGeometryToMeshes":          [],                        # the mesh names of the meshes that will get the geometry transferred
           "dynamic":                      True,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
@@ -630,9 +630,8 @@ config = {
       
             # solving
             "solverName":                 "mechanicsSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
-            #"loadFactors":                [0.25, 0.66, 1.0],                # load factors for every timestep
-            "loadFactorGiveUpThreshold":   1,                      # when to abort the solve
-            "loadFactors":                [],                        # no load factors, solve problem directly
+            "loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],                # load factors for every timestep
+            "loadFactorGiveUpThreshold":  0.25,                      # when to abort the solve
             "scaleInitialGuess":          False,                     # when load stepping is used, scale initial guess between load steps a and b by sqrt(a*b)/a. This potentially reduces the number of iterations per load step (but not always).
             "nNonlinearSolveCalls":       1,                         # how often the nonlinear solve should be repeated
             
@@ -648,7 +647,7 @@ config = {
             "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
             "constantBodyForce":           variables.constant_body_force,       # a constant force that acts on the whole body, e.g. for gravity
             
-            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
+            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/contraction_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
             "totalForceLogFilename":       "out/"+variables.scenario_name+"/total_force.txt",                              # filename for a log file with the total force
             
             # define which file formats should be written

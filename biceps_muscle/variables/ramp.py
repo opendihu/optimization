@@ -24,7 +24,7 @@ pmax = 7.3                  # [N/cm^2] maximum isometric active stress
 
 # load
 constant_body_force = (0,0,-9.81e-4)   # [cm/ms^2], gravity constant for the body force
-bottom_traction = [0.0,0.0,0.0]        # [N]
+bottom_traction = [0.0,0.0,-2.0]        # [N]
 
 # Monodomain parameters
 # --------------------
@@ -60,7 +60,7 @@ motor_units = [
 
 # timing parameters
 # -----------------
-end_time = 4000.0                      # [ms] end time of the simulation
+end_time = 4.0                      # [ms] end time of the simulation
 stimulation_frequency = 100*1e-3    # [ms^-1] sampling frequency of stimuli in firing_times_file, in stimulations per ms, number before 1e-3 factor is in Hertz.
 stimulation_frequency_jitter = 0    # [-] jitter in percent of the frequency, added and substracted to the stimulation_frequency after each stimulation
 dt_0D = 2.5e-5                        # [ms] timestep width of ODEs (2e-3)

@@ -482,12 +482,12 @@ def callback_function_prestretch(raw_data):
   elif n_ranks==16:
     number_of_nodes = mx * my
     average_z_start = 0
-    average_z_end = 0
     z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
     if rank_no < 4:
 
       for i in range(number_of_nodes):
+        print ("in rank", rank_no, " z_data[i]=", z_data[i] )
         average_z_start += z_data[i]
       average_z_start /= number_of_nodes
   
@@ -496,16 +496,6 @@ def callback_function_prestretch(raw_data):
       f.write(",")
       f.close()
 
-    if rank_no > 12:
-
-      for i in range(number_of_nodes):
-        average_z_end += z_data[-i]
-      average_z_end /= number_of_nodes
-  
-      f = open("muscle_prestretch_rank" + str(rank_no) + "forceN.csv", "a")
-      f.write(str(average_z_end))
-      f.write(",")
-      f.close()
   else:
     sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
 
