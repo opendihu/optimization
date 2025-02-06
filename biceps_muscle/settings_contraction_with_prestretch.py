@@ -384,9 +384,8 @@ config = {
       
             # solving
             "solverName":                 "mechanicsSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
-            #"loadFactors":                [0.25, 0.66, 1.0],                # load factors for every timestep
-            "loadFactorGiveUpThreshold":   1,                      # when to abort the solve
-            "loadFactors":                [],                        # no load factors, solve problem directly
+            "loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],                # load factors for every timestep
+            "loadFactorGiveUpThreshold":   0.2,                      # when to abort the solve
             "scaleInitialGuess":          False,                     # when load stepping is used, scale initial guess between load steps a and b by sqrt(a*b)/a. This potentially reduces the number of iterations per load step (but not always).
             "nNonlinearSolveCalls":       1,                         # how often the nonlinear solve should be repeated
             
@@ -630,8 +629,8 @@ config = {
       
             # solving
             "solverName":                 "mechanicsSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
-            "loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],                # load factors for every timestep
-            "loadFactorGiveUpThreshold":  0.25,                      # when to abort the solve
+            "loadFactors":                [],                # load factors for every timestep
+            "loadFactorGiveUpThreshold":  1,                      # when to abort the solve
             "scaleInitialGuess":          False,                     # when load stepping is used, scale initial guess between load steps a and b by sqrt(a*b)/a. This potentially reduces the number of iterations per load step (but not always).
             "nNonlinearSolveCalls":       1,                         # how often the nonlinear solve should be repeated
             

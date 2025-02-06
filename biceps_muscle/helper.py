@@ -460,7 +460,7 @@ variables.prestretch_neumann_bc = [{"element": 0*nx*ny + j*nx + i, "constantVect
 #  f.write(str(variables.meshes["3Dmesh_quadratic"]))
  
 def callback_function_prestretch(raw_data):
-  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsGlobal"]
+  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
   if n_ranks==1:
     number_of_nodes = mx * my
     average_z_start = 0
@@ -500,7 +500,7 @@ def callback_function_prestretch(raw_data):
     sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
 
 def callback_function_contraction(raw_data):
-  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsGlobal"]
+  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
   if n_ranks == 1:
     number_of_nodes = mx * my
     average_z_start = 0
