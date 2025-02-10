@@ -8,15 +8,15 @@ Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, o
 
 ## Setup
 This is the setup for Bayesian optimization for different test functions. These functions are:
-- -3*x*(x-1.3) + 0.3
-- exp(-(5*x-3)^2) + 0.2*exp(-(30*x-22)^2)
-- exp(-(5*x-5)^2) * nsin(5*x-1.5) +x
-- exp( -(10*x -2)^2 ) + exp(-(10*x-6)^2/10) + 1/((10*x)^2 +1)
-- 0.5-3*x*(x-1)*sin(5*x)
-- sin(5*x)^2
-- x + 0.5*x^2 * sin(18*x)
+- -3x(x-1.3) + 0.3
+- exp(-(5x-3)^2) + 0.2 exp(-(30x-22)^2)
+- exp(-(5x-5)^2) n sin(5x-1.5) +x
+- exp(-(10x -2)^2 ) + exp(-(10x-6)^2/10) + 1/((10x)^2 +1)
+- 0.5 - 3x(x-1)\*sin(5x)
+- sin(5x)^2
+- x + 0.5x^2 \*sin(18x)
 - 1-|x-0.5|
-- x^0.5-exp(5*(x-1))
+- x^0.5 -exp(5(x-1))
 
 Apart from optimizing these functions, you can evaluate different Bayesian optimization models by averaging accuracy and number of evaluations over all the test functions.
 
