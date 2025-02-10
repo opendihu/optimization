@@ -11,13 +11,15 @@ Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, o
 OpenDiHu (if used): Version aadd55a4 (https://github.com/opendihu/opendihu/tree/aadd55a47fde8031cc4629ba138e949d54c26661)
 
 ## Setup
-Inside "BayesianOptimization" are two setups for Bayesian Optimization that are both set up to optimize an easy dummy function. Inside "1D" is the setup for a one-dimensional function, inside "nD" the setup for a n-dimensional function.
+Inside "BayesianOptimization" are two setups for Bayesian Optimization that are both set up to optimize an easy dummy function. Inside "1D" is the setup for a one-dimensional function, inside "nD" the setup for a function from R^n to R.
 
-Inside "examples" are a few examples where Bayesian Optimization has been used:
-- biceps: Has not been added yet
-- coupled_cuboid_muscles: Has not been added yet
-- cuboid_muscle: This was the main focus of the mensioned Bachelor Thesis. It uses Bayesian Optimization to find the prestretch that corresponds to the greatest range of motion of a dummy cuboid muscle.
-- test_functions: This can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
+Inside "examples" are two categories: "optimizing_contraction_length" and "optimizing_force".
+
+In "optimizing_contraction_length" we take a muscle and look for the prestretch force that maximizes its contraction length. The example "cuboid_muscle" in there was the main focus of the mensioned Bachelor Thesis. 
+
+In "optimizing_force" we take a fixed muscle and look for the prestretch that maximizes its contraction force. 
+
+The example "test_functions" can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
 
 More details can be found in the corresponding ReadMe files.
 
@@ -32,4 +34,4 @@ It takes on average 7.352 evaluations and finds local maxima in 85.2% and global
 ### The prestretch for the best range of motion of a cuboid muscle
 This is the cuboid_muscle example. For a muscle to contract better, the idea is to stretch it before the contraction. This creates a function that maps a prestretch force to the length the muscle can contract in a certain amount of time with the given prestretch. This has also been discussed in the Bachelor Thesis. The following plot shows the result of this model. As you can see, the function is almost linear, so that the best prestretch force in this scenario would be the maximal force with which the muscle does not tear.
 
-![](results/Figure_optimization_linear.png)
+![](figures/Figure_optimization_linear.png)
