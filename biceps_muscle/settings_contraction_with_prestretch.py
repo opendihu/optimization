@@ -157,7 +157,7 @@ config = {
   "scenarioName":                  variables.scenario_name,
   "mappingsBetweenMeshesLogFile":  "out/mappings_between_meshes.txt",
   "logFormat":                     "csv",     # "csv" or "json", format of the lines in the log file, csv gives smaller files
-  "solverStructureDiagramFile":    "out/solver_structure.txt",     # output file of a diagram that shows data connection between solvers
+  "solverStructureDiagramFile":    "out/solver_with_prestretch_structure.txt",     # output file of a diagram that shows data connection between solvers
   "meta": {                 # additional fields that will appear in the log
     "partitioning": [variables.n_subdomains_x, variables.n_subdomains_y, variables.n_subdomains_z]
   },
@@ -351,14 +351,11 @@ config = {
       "Term2": {        # solid mechanics
         "MuscleContractionSolver": {
           "numberTimeSteps":              1,                         # only use 1 timestep per interval
-          "timeStepOutputInterval":       1,                       # do not output time steps
+          "timeStepOutputInterval":       100,                       # do not output time steps
           "Pmax":                         variables.pmax,            # maximum PK2 active stress
           "enableForceLengthRelation":    variables.enable_force_length_relation,  # if the factor f_l(λ_f) modeling the force-length relation (as in Heidlauf2013) should be multiplied. Set to false if this relation is already considered in the CellML model.
           "lambdaDotScalingFactor":       variables.lambda_dot_scaling_factor,     # scaling factor for the output of the lambda dot slot, i.e. the contraction velocity. Use this to scale the unit-less quantity to, e.g., micrometers per millisecond for the subcellular model.
           "slotNames":                    ["lambda", "ldot", "gamma", "T"],   # names of the data slots (lamdba, lambdaDot, gamma, traction), maximum 10 characters per slot name
-          "OutputWriter" : [
-            {"format": "Paraview", "outputInterval": 1, "filename": "out/" + variables.scenario_name + "/prestretch_mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-          ],
           "mapGeometryToMeshes":          [],                        # the mesh names of the meshes that will get the geometry transferred
           "dynamic":                      False,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
           
@@ -384,8 +381,8 @@ config = {
       
             # solving
             "solverName":                 "mechanicsSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
-            "loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],                # load factors for every timestep
-            "loadFactorGiveUpThreshold":   0.2,                      # when to abort the solve
+            "loadFactors":                [],                # load factors for every timestep
+            "loadFactorGiveUpThreshold":   1e-5,                      # when to abort the solve
             "scaleInitialGuess":          False,                     # when load stepping is used, scale initial guess between load steps a and b by sqrt(a*b)/a. This potentially reduces the number of iterations per load step (but not always).
             "nNonlinearSolveCalls":       1,                         # how often the nonlinear solve should be repeated
             
@@ -410,7 +407,7 @@ config = {
               
               # Paraview files
               #{"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/u", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-              
+              {"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
               # Python callback function "postprocess"
               {"format": "PythonCallback", "outputInterval": 1, "callback": callback_function_prestretch, "onlyNodalValues":True, "filename": ""},
             ],
