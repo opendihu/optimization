@@ -250,7 +250,11 @@ class CustomSingleTaskGP(SingleTaskGP):
                         )
 
 
-os.chdir("build_release")
+try:
+    os.chdir("build_release")
+except:
+    os.mkdir("build_release")
+    os.chdir("build_release")
 
 starting_time = time.time()
 

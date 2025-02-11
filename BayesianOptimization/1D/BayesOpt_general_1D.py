@@ -1,7 +1,4 @@
-import subprocess
-import sys
 import os
-import shlex
 import csv
 import torch
 import numpy as np
@@ -19,7 +16,7 @@ from botorch.optim import optimize_acqf
 from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
 import time
-import signal
+import setup_BayesOpt_general_1D
 
 #TO DO
 
@@ -44,104 +41,38 @@ For the stopping criterion: "stopping_xy" "stopping_y"
 #Customize code here
 
 #Major changes:
-nu = 1.5
-matern = False
-rbf = False
+nu = setup_BayesOpt_general_1D.nu
+matern = setup_BayesOpt_general_1D.matern
+rbf = setup_BayesOpt_general_1D.rbf
 
-const = False
-zero = False
+const = setup_BayesOpt_general_1D.const
+zero = setup_BayesOpt_general_1D.zero
 
-fixed_noise = False
-variable_noise = False
+fixed_noise = setup_BayesOpt_general_1D.fixed_noise
+variable_noise = setup_BayesOpt_general_1D.variable_noise
 
-EI = False
-PI = False
-KG = False
-ES = False
+EI = setup_BayesOpt_general_1D.EI
+PI = setup_BayesOpt_general_1D.PI
+KG = setup_BayesOpt_general_1D.KG
+ES = setup_BayesOpt_general_1D.ES
 
-stopping_y = False
-improvement_threshold = 1e-4
-stopping_xy = False
-x_range = 5e-2
-num_consecutive_trials = 3
-
-test_function_number = 0
+stopping_y = setup_BayesOpt_general_1D.stopping_y
+improvement_threshold = setup_BayesOpt_general_1D.improvement_threshold
+stopping_xy = setup_BayesOpt_general_1D.stopping_xy
+x_range = setup_BayesOpt_general_1D.x_range
+num_consecutive_trials = setup_BayesOpt_general_1D.num_consecutive_trials
 
 #Minor changes:
-fixed_Yvar = 1e-6
-lower_bound = 0.
-sobol_on = True
-num_initial_trials = 2 #this needs to be >=2
-visualize = True
-add_points = False
-upper_bound = 1
-specific_relative_upper_bound = False
-max_upper_bound = False
+fixed_Yvar = setup_BayesOpt_general_1D.fixed_Yvar
+lower_bound = setup_BayesOpt_general_1D.lower_bound
+sobol_on = setup_BayesOpt_general_1D.sobol_on
+num_initial_trials = setup_BayesOpt_general_1D.num_initial_trials
+visualize = setup_BayesOpt_general_1D.visualize
+add_points = setup_BayesOpt_general_1D.add_points
+upper_bound = setup_BayesOpt_general_1D.upper_bound
+specific_relative_upper_bound = setup_BayesOpt_general_1D.specific_relative_upper_bound
+max_upper_bound = setup_BayesOpt_general_1D.max_upper_bound
 ########################################################################################################################
-
-#This interprets the custom inputs for the BO model
-inputs = [item.lower() for item in sys.argv]
-if len(inputs) > 0:
-    if "matern" in inputs:
-        matern = True
-        if "0.5" in inputs:
-            nu = 0.5
-        elif "1.5" in inputs:
-            nu = 1.5
-        elif "2.5" in inputs:
-            nu = 2.5
-    elif "rbf" in inputs:
-        matern = False
-        rbf = True
-    if "const" in inputs:
-        const = True
-    elif "zero" in inputs:
-        const = False
-        zero = True
-    if "fixed_noise" in inputs:
-        fixed_noise = True
-    elif "variable_noise" in inputs:
-        fixed_noise = False
-        variable_noise = True
-    if "ei" in inputs:
-        EI = True
-    elif "pi" in inputs:
-        EI = False
-        PI = True
-    elif "kg" in inputs:
-        EI = False
-        PI = False
-        KG = True
-    elif "es" in inputs:
-        EI = False
-        PI = False
-        KG = False
-        ES = True
-    if "stopping_y" in inputs:
-        stopping_y = True
-    elif "stopping_xy" in inputs:
-        stopping_y = False
-        stopping_xy = True
-    if "1" in inputs:
-        test_function_number = 1
-    elif "2" in inputs:
-        test_function_number = 2
-    elif "3" in inputs:
-        test_function_number = 3
-    elif "4" in inputs:
-        test_function_number = 4
-    elif "5" in inputs:
-        test_function_number = 5
-    elif "6" in inputs:
-        test_function_number = 6
-    elif "7" in inputs:
-        test_function_number = 7
-    elif "8" in inputs:
-        test_function_number = 8
-    elif "9" in inputs:
-        test_function_number = 9
-
-
 
 #We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
 #parameter in the filename, which we create here. 
@@ -183,30 +114,6 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
-global_individuality_parameter = global_individuality_parameter + f"_{test_function_number}"
-
-
-#This is the method that evaluates the test functions.
-def test_function(x):
-    x = x.numpy()[0]
-    if test_function_number == 1:
-        return -3*x*(x-1.3) + 0.3
-    elif test_function_number == 2:
-        return np.exp(-(5*x-3)**2) + 0.2*np.exp(-(30*x-22)**2)
-    elif test_function_number == 3:
-        return np.exp(-(5*x-5)**2) * np.sin(5*x-1.5) +x
-    elif test_function_number == 4:
-        return np.exp( -(10*x -2)**2 ) + np.exp(-(10*x-6)**2/10) + 1/((10*x)**2 +1)
-    elif test_function_number == 5:
-        return 0.5-3*x*(x-1)*np.sin(5*x)
-    elif test_function_number == 6:
-        return np.sin(5*x)**2
-    elif test_function_number == 7:
-        return x + 0.5*x**2 * np.sin(18*x)
-    elif test_function_number == 8:
-        return 1-np.abs(x-0.5)
-    elif test_function_number == 9:
-        return np.sqrt(x)-np.exp(5*(x-1))
 
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
@@ -248,8 +155,11 @@ class CustomSingleTaskGP(SingleTaskGP):
                          outcome_transform=output_transform,
                         )
 
-
-os.chdir("build_release")
+try:
+    os.chdir("build_release")
+except:
+    os.mkdir("build_release")
+    os.chdir("build_release")
 
 starting_time = time.time()
 
@@ -264,12 +174,12 @@ with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
     pass
 
 initial_y = torch.tensor([])
-for force in initial_x:
-    y = torch.tensor([[test_function(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+for input in initial_x:
+    y = torch.tensor([[setup_BayesOpt_general_1D.target_function(input*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([force.numpy()[0]*(upper_bound-lower_bound)+lower_bound, y.numpy()[0,0]])
+        writer.writerow([input.numpy()[0]*(upper_bound-lower_bound)+lower_bound, y.numpy()[0,0]])
 
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
@@ -351,7 +261,7 @@ for i in range(num_iterations):
             raw_samples=256,
         )
 
-    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[setup_BayesOpt_general_1D.target_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
@@ -463,7 +373,7 @@ while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
 
-    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[setup_BayesOpt_general_1D.target_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:

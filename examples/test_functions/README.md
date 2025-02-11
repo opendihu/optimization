@@ -20,9 +20,6 @@ This is the setup for Bayesian optimization for different test functions. These 
 
 Apart from optimizing these functions, you can evaluate different Bayesian optimization models by averaging accuracy and number of evaluations over all the test functions.
 
-## How to build
-Create a folder with the name "build_release" inside the folder "test_functions". This will contain all the results of the optimization processes.
-
 
 ## How to run?
 To evaluate a Bayesian Optimization model by averaging the results over multiple iterations, run:
