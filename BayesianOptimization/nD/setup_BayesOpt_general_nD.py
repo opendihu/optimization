@@ -1,8 +1,16 @@
+import torch
+import numpy as np
+
 def target_function(x):
-    x = x.numpy()[0]
-    return x**2
+    x = x.numpy()
+    y = np.sum(x)
+    return y
 
 #Major changes:
+dimension = 3
+
+bounds = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]], dtype=torch.double)
+
 nu = 0.5
 matern = True
 rbf = False
@@ -30,7 +38,6 @@ test_function_number = 0
 fixed_Yvar = 1e-6
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
-visualize = True
 add_points = False
 lower_bound = 0.0
 upper_bound = 1.0

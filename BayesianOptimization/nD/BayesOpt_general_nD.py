@@ -1,7 +1,4 @@
-import subprocess
-import sys
 import os
-import shlex
 import csv
 import torch
 import numpy as np
@@ -19,7 +16,7 @@ from botorch.optim import optimize_acqf
 from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
 import time
-import signal
+import setup_BayesOpt_general_nD
 
 #TO DO
 
@@ -44,104 +41,36 @@ For the stopping criterion: "stopping_xy" "stopping_y"
 #Customize code here
 
 #Major changes:
-nu = 1.5
-matern = False
-rbf = False
+dimension = setup_BayesOpt_general_nD.dimension
 
-const = False
-zero = False
+nu = setup_BayesOpt_general_nD.nu
+matern = setup_BayesOpt_general_nD.matern
+rbf = setup_BayesOpt_general_nD.rbf
 
-fixed_noise = False
-variable_noise = False
+const = setup_BayesOpt_general_nD.const
+zero = setup_BayesOpt_general_nD.zero
 
-EI = False
-PI = False
-KG = False
-ES = False
+fixed_noise = setup_BayesOpt_general_nD.fixed_noise
+variable_noise = setup_BayesOpt_general_nD.variable_noise
 
-stopping_y = False
-improvement_threshold = 1e-4
-stopping_xy = False
-x_range = 5e-2
-num_consecutive_trials = 3
+EI = setup_BayesOpt_general_nD.EI
+PI = setup_BayesOpt_general_nD.PI
+KG = setup_BayesOpt_general_nD.KG
+ES = setup_BayesOpt_general_nD.ES
 
-test_function_number = 0
+stopping_y = setup_BayesOpt_general_nD.stopping_y
+improvement_threshold = setup_BayesOpt_general_nD.improvement_threshold
+stopping_xy = setup_BayesOpt_general_nD.stopping_xy
+x_range = setup_BayesOpt_general_nD.x_range
+num_consecutive_trials = setup_BayesOpt_general_nD.num_consecutive_trials
 
 #Minor changes:
-fixed_Yvar = 1e-6
-lower_bound = 0.
-sobol_on = True
-num_initial_trials = 2 #this needs to be >=2
-visualize = True
-add_points = False
-upper_bound = 1
-specific_relative_upper_bound = False
-max_upper_bound = False
+fixed_Yvar = setup_BayesOpt_general_nD.fixed_Yvar
+bounds = setup_BayesOpt_general_nD.bounds
+sobol_on = setup_BayesOpt_general_nD.sobol_on
+num_initial_trials = setup_BayesOpt_general_nD.num_initial_trials
+add_points = setup_BayesOpt_general_nD.add_points
 ########################################################################################################################
-
-#This interprets the custom inputs for the BO model
-inputs = [item.lower() for item in sys.argv]
-if len(inputs) > 0:
-    if "matern" in inputs:
-        matern = True
-        if "0.5" in inputs:
-            nu = 0.5
-        elif "1.5" in inputs:
-            nu = 1.5
-        elif "2.5" in inputs:
-            nu = 2.5
-    elif "rbf" in inputs:
-        matern = False
-        rbf = True
-    if "const" in inputs:
-        const = True
-    elif "zero" in inputs:
-        const = False
-        zero = True
-    if "fixed_noise" in inputs:
-        fixed_noise = True
-    elif "variable_noise" in inputs:
-        fixed_noise = False
-        variable_noise = True
-    if "ei" in inputs:
-        EI = True
-    elif "pi" in inputs:
-        EI = False
-        PI = True
-    elif "kg" in inputs:
-        EI = False
-        PI = False
-        KG = True
-    elif "es" in inputs:
-        EI = False
-        PI = False
-        KG = False
-        ES = True
-    if "stopping_y" in inputs:
-        stopping_y = True
-    elif "stopping_xy" in inputs:
-        stopping_y = False
-        stopping_xy = True
-    if "1" in inputs:
-        test_function_number = 1
-    elif "2" in inputs:
-        test_function_number = 2
-    elif "3" in inputs:
-        test_function_number = 3
-    elif "4" in inputs:
-        test_function_number = 4
-    elif "5" in inputs:
-        test_function_number = 5
-    elif "6" in inputs:
-        test_function_number = 6
-    elif "7" in inputs:
-        test_function_number = 7
-    elif "8" in inputs:
-        test_function_number = 8
-    elif "9" in inputs:
-        test_function_number = 9
-
-
 
 #We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
 #parameter in the filename, which we create here. 
@@ -183,30 +112,6 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
-global_individuality_parameter = global_individuality_parameter + f"_{test_function_number}"
-
-
-#This is the method that evaluates the test functions.
-def test_function(x):
-    x = x.numpy()[0]
-    if test_function_number == 1:
-        return -3*x*(x-1.3) + 0.3
-    elif test_function_number == 2:
-        return np.exp(-(5*x-3)**2) + 0.2*np.exp(-(30*x-22)**2)
-    elif test_function_number == 3:
-        return np.exp(-(5*x-5)**2) * np.sin(5*x-1.5) +x
-    elif test_function_number == 4:
-        return np.exp( -(10*x -2)**2 ) + np.exp(-(10*x-6)**2/10) + 1/((10*x)**2 +1)
-    elif test_function_number == 5:
-        return 0.5-3*x*(x-1)*np.sin(5*x)
-    elif test_function_number == 6:
-        return np.sin(5*x)**2
-    elif test_function_number == 7:
-        return x + 0.5*x**2 * np.sin(18*x)
-    elif test_function_number == 8:
-        return 1-np.abs(x-0.5)
-    elif test_function_number == 9:
-        return np.sqrt(x)-np.exp(5*(x-1))
 
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
@@ -248,28 +153,33 @@ class CustomSingleTaskGP(SingleTaskGP):
                          outcome_transform=output_transform,
                         )
 
-
-os.chdir("build_release")
+try:
+    os.chdir("build_release")
+except:
+    os.mkdir("build_release")
+    os.chdir("build_release")
 
 starting_time = time.time()
 
 #Chooses the initial query points for BO and evaluates them
-sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
+sobol = torch.quasirandom.SobolEngine(dimension=dimension, scramble=True)
 if sobol_on:
     initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
 else:
-    initial_x = torch.linspace(0, 1, num_initial_trials, dtype=torch.double).unsqueeze(1)
+    axes = [torch.linspace(0.0, 1.0, num_initial_trials, dtype=torch.double) for _ in range(dimension)]
+    grids = torch.meshgrid(*axes, indexing='ij')
+    initial_x = torch.stack(grids, dim=-1).reshape(-1, dimension)
     
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "w"):
     pass
 
 initial_y = torch.tensor([])
-for force in initial_x:
-    y = torch.tensor([[test_function(force*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+for input in initial_x:
+    y = torch.tensor([[setup_BayesOpt_general_nD.target_function(input*(bounds[1]-bounds[0])+bounds[0])]], dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([force.numpy()[0]*(upper_bound-lower_bound)+lower_bound, y.numpy()[0,0]])
+        writer.writerow([input.numpy()[0]*(bounds[1]-bounds[0])+bounds[0], y.numpy()[0,0]])
 
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
@@ -298,8 +208,8 @@ for i in range(num_iterations):
     elif KG:
         pass
     elif ES:
-        bounds=torch.tensor([[0], [1]], dtype=torch.double)
-        candidate_set = torch.rand(1000, bounds.size(1))
+        bounds_es = torch.stack([torch.zeros(dimension, dtype=torch.double), torch.ones(dimension, dtype=torch.double)])
+        candidate_set = torch.rand(1000, bounds_es.size(1))
         candidate_set = bounds[0] + (bounds[1] - bounds[0]) * candidate_set
         acq_fct = qMaxValueEntropy(model=gp, candidate_set=candidate_set)
     else:
@@ -311,11 +221,11 @@ for i in range(num_iterations):
         NUM_FANTASIES = 128 if not SMOKE_TEST else 4
         NUM_RESTARTS = 10 if not SMOKE_TEST else 2
         RAW_SAMPLES = 128
-        bounds = torch.stack([torch.zeros(1, dtype=torch.double), torch.ones(1, dtype=torch.double)])
+        bounds_kg = torch.stack([torch.zeros(dimension, dtype=torch.double), torch.ones(dimension, dtype=torch.double)])
         acq_fct = qKnowledgeGradient(model=gp, num_fantasies=NUM_FANTASIES)
         candidates, acq_value = optimize_acqf(
             acq_function=acq_fct,
-            bounds=bounds,
+            bounds=bounds_kg,
             q=1,
             num_restarts=NUM_RESTARTS,
             raw_samples=RAW_SAMPLES,
@@ -323,7 +233,7 @@ for i in range(num_iterations):
 
         argmax_pmean, max_pmean = optimize_acqf(
             acq_function=PosteriorMean(gp),
-            bounds=bounds,
+            bounds=bounds_kg,
             q=1,
             num_restarts=NUM_RESTARTS,
             raw_samples=RAW_SAMPLES,
@@ -337,7 +247,7 @@ for i in range(num_iterations):
 
         candidate, acq_value_proper = optimize_acqf(
             acq_function=qKG_proper,
-            bounds=bounds,
+            bounds=bounds_kg,
             q=1,
             num_restarts=NUM_RESTARTS,
             raw_samples=RAW_SAMPLES,
@@ -345,18 +255,18 @@ for i in range(num_iterations):
     else:
         candidate, acq_value = optimize_acqf(
             acq_function=acq_fct,
-            bounds=torch.tensor([[0], [1]], dtype=torch.double),
+            bounds=torch.stack([torch.zeros(dimension, dtype=torch.double), torch.ones(dimension, dtype=torch.double)]),
             q=1,
             num_restarts=20,
             raw_samples=256,
         )
 
-    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[setup_BayesOpt_general_nD.target_function(candidate[0]*(bounds[1]-bounds[0])+bounds[0])]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
+        writer.writerow([candidate.numpy()[0,0]*(bounds[1]-bounds[0])+bounds[0], new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -364,27 +274,6 @@ for i in range(num_iterations):
     gp = CustomSingleTaskGP(initial_x, initial_y)
     mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
     fit_gpytorch_mll(mll)
-
-    x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
-    posterior = gp.posterior(x_query)
-
-    mean = posterior.mean.squeeze(-1).detach().numpy()
-    variance = posterior.variance.squeeze(-1)
-    stddev = torch.sqrt(variance).detach().numpy()
-
-    if visualize:
-        plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
-        plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
-        plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
-        plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-        plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.title("Optimization Process")
-        plt.gcf().suptitle(title, fontsize=12)
-        plt.legend()
-        plt.show()
 
     counter += 1
 
@@ -396,8 +285,10 @@ for i in range(num_iterations):
         elif len(initial_x) > num_initial_trials:
             no_improvement_trials += 1
         if no_improvement_trials >= num_consecutive_trials:
-            print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
+            scaled_candidate = candidate * (bounds[1] - bounds[0]) + bounds[0]
+            print(f"Trial {i + 1 + num_initial_trials}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
             print("Stopping criterion met. No significant improvement for consecutive trials.")
+            print(global_individuality_parameter)
             print("Number of total trials: ", i+1+num_initial_trials)
             break
     elif stopping_xy:
@@ -426,32 +317,9 @@ for i in range(num_iterations):
     if current_value > best_value + improvement_threshold:
         best_value = current_value
 
-    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()*(upper_bound-lower_bound)+lower_bound}, Value = {current_value}, Best Value = {best_value}")
+    scaled_candidate = candidate * (bounds[1] - bounds[0]) + bounds[0]
+    print(f"Trial {i + 1 + num_initial_trials}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
 
-    
-x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
-posterior = gp.posterior(x_query)
-
-mean = posterior.mean.squeeze(-1).detach().numpy()
-variance = posterior.variance.squeeze(-1)
-stddev = torch.sqrt(variance).detach().numpy()
-
-if visualize:
-    max_index = torch.argmax(initial_y)
-    max_x = initial_x[max_index]
-    max_y = initial_y[max_index]
-    plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
-    plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
-    plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
-    plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-    plt.scatter(max_x.numpy()*(upper_bound-lower_bound)+lower_bound, max_y.numpy(), color="green", label="Maximum", zorder=3)
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.title("Optimization Results")
-    plt.gcf().suptitle(title, fontsize=12)
-    plt.legend()
-    plt.show()
 
 if add_points:
     continuing = input("Do you want to add another query point? (y/n)")
@@ -463,12 +331,12 @@ while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
 
-    new_y = torch.tensor([[test_function(candidate[0]*(upper_bound-lower_bound)+lower_bound)]], dtype=torch.double)
+    new_y = torch.tensor([[setup_BayesOpt_general_nD.target_function(candidate[0]*(bounds[1]-bounds[0])+bounds[0])]], dtype=torch.double)
     new_yvar = torch.full_like(new_y, fixed_Yvar, dtype=torch.double)
 
     with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([candidate.numpy()[0,0]*(upper_bound-lower_bound)+lower_bound, new_y.numpy()[0,0]])
+        writer.writerow([candidate.numpy()[0,0]*(bounds[1]-bounds[0])+bounds[0], new_y.numpy()[0,0]])
 
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
@@ -481,27 +349,6 @@ while continuing == "y":
 
     print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()}, Value = {current_value}, Best Value = {best_value}")
 
-    x_query = torch.linspace(0, 1, 1000).unsqueeze(-1)
-    posterior = gp.posterior(x_query)
-
-    mean = posterior.mean.squeeze(-1).detach().numpy()
-    variance = posterior.variance.squeeze(-1)
-    stddev = torch.sqrt(variance).detach().numpy()
-
-    if visualize:
-        plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
-        plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
-        plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
-        plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
-        plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.title("Optimization Process")
-        plt.gcf().suptitle(title, fontsize=12)
-        plt.legend()
-        plt.show()
-
     continuing = input("Do you want to add another query point? (y/n)")
 
 max_index = torch.argmax(initial_y)
@@ -510,12 +357,9 @@ best_y = initial_y[max_index]
 
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(np.linspace(lower_bound, upper_bound, 1000))
-    writer.writerow(mean)
-    writer.writerow(stddev)
-    writer.writerow([counter])
-    writer.writerow([maximizer.numpy()[0]*(upper_bound-lower_bound)+lower_bound, best_y.numpy()[0]])
-    writer.writerow([time.time()-starting_time])
+    writer.writerow(["Number of trials",counter])
+    writer.writerow(["Optimizer and Optimum",(maximizer*(bounds[1]-bounds[0])+bounds[0]).numpy(), best_y.numpy()[0]])
+    writer.writerow(["Time",time.time()-starting_time])
 
 print(global_individuality_parameter)
 

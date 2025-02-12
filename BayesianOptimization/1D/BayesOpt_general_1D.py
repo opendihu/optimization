@@ -23,9 +23,9 @@ import setup_BayesOpt_general_1D
 """
 This is a file to carry out Bayesian Optimization for a dummy function.
 If you want to call this file, you have two options:
->python BayesOpt.py
+>python BayesOpt_general_1D.py
 or
->python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy 1
+>python BayesOpt_general_1D.py matern 1.5 const fixed_noise ei stopping_xy 1
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.
@@ -70,8 +70,6 @@ num_initial_trials = setup_BayesOpt_general_1D.num_initial_trials
 visualize = setup_BayesOpt_general_1D.visualize
 add_points = setup_BayesOpt_general_1D.add_points
 upper_bound = setup_BayesOpt_general_1D.upper_bound
-specific_relative_upper_bound = setup_BayesOpt_general_1D.specific_relative_upper_bound
-max_upper_bound = setup_BayesOpt_general_1D.max_upper_bound
 ########################################################################################################################
 
 #We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
