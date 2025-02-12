@@ -9,7 +9,7 @@ Python: Python 3.10.12
 Required Python libraries: botorch, torch, numpy, matplotlib, os, csv, time
 
 ## Setup
-The details of the optimization process can be set up in "setup_BayesOpt_general_1D.py". There you can change the target function to the function you want to optimize and the parameters that define the optimization model you want to use.
+The details of the optimization process can be set up in "setup_BayesOpt_general_1D.py". There you can change the target function to the function you want to optimize, the bounds and the parameters that define the optimization model you want to use.
 
 ## How to run?
 To optimize the target function inside "setup_BayesOpt_general_1D.py" run
