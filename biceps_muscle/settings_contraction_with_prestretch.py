@@ -196,6 +196,21 @@ config = {
       "snesRebuildJacobianFrequency": 2,    # how often the jacobian should be recomputed, -1 indicates NEVER rebuild, 1 means rebuild every time the Jacobian is computed within a single nonlinear solve, 2 means every second time the Jacobian is built etc. -2 means rebuild at next chance but then never again 
       "dumpFilename":        "",            # dump system matrix and right hand side after every solve
       "dumpFormat":          "matlab",      # default, ascii, matlab
+    },
+    "contractionSolver": {   # solver for the dynamic mechanics problem
+      "relativeTolerance":  1e-5,           # 1e-10 relative tolerance of the linear solver
+      "absoluteTolerance":  1e-10,          # 1e-10 absolute tolerance of the residual of the linear solver
+      "solverType":         "lu",  #"lu" if installed    # type of the linear solver: cg groppcg pipecg pipecgrr cgne nash stcg gltr richardson chebyshev gmres tcqmr fcg pipefcg bcgs ibcgs fbcgs fbcgsr bcgsl cgs tfqmr cr pipecr lsqr preonly qcg bicg fgmres pipefgmres minres symmlq lgmres lcd gcr pipegcr pgmres dgmres tsirm cgls
+      "preconditionerType": "prelu",           # type of the preconditioner
+      "maxIterations":       1e4,           # maximum number of iterations in the linear solver
+      "snesMaxFunctionEvaluations": 1e8,    # maximum number of function iterations
+      "snesMaxIterations":   10,            # maximum number of iterations in the nonlinear solver
+      "snesRelativeTolerance": 1e-5,        # relative tolerance of the nonlinear solver
+      "snesAbsoluteTolerance": 1e-5,        # absolute tolerance of the nonlinear solver
+      "snesLineSearchType": "l2",           # type of linesearch, possible values: "bt" "nleqerr" "basic" "l2" "cp" "ncglinear"
+      "snesRebuildJacobianFrequency": 2,    # how often the jacobian should be recomputed, -1 indicates NEVER rebuild, 1 means rebuild every time the Jacobian is computed within a single nonlinear solve, 2 means every second time the Jacobian is built etc. -2 means rebuild at next chance but then never again 
+      "dumpFilename":        "",            # dump system matrix and right hand side after every solve
+      "dumpFormat":          "matlab",      # default, ascii, matlab
     }
   },
   "Coupling": {
@@ -508,7 +523,7 @@ config = {
                         "setSpecificStatesCallFrequency":         variables.get_specific_states_call_frequency(fiber_no, motor_unit_no),   # set_specific_states should be called variables.stimulation_frequency times per ms
                         "setSpecificStatesFrequencyJitter":       variables.get_specific_states_frequency_jitter(fiber_no, motor_unit_no), # random value to add or substract to setSpecificStatesCallFrequency every stimulation, this is to add random jitter to the frequency
                         "setSpecificStatesRepeatAfterFirstCall":  0.01,                                                            # [ms] simulation time span for which the setSpecificStates callback will be called after a call was triggered
-                        "setSpecificStatesCallEnableBegin":       variables.get_specific_states_call_enable_begin(fiber_no, motor_unit_no),# [ms] first time when to call setSpecificStates
+                        "setSpecificStatesCallEnableBegin":       1.0, #variables.end_time, #variables.get_specific_states_call_enable_begin(fiber_no, motor_unit_no),# [ms] first time when to call setSpecificStates
                         "additionalArgument":                     fiber_no,                                       # last argument that will be passed to the callback functions set_specific_states, set_specific_parameters, etc.
                         
                         # parameters to the cellml model
@@ -625,7 +640,7 @@ config = {
             #"fiberDirection":             [0,0,1],                  # if fiberMeshNames is empty, directly set the constant fiber direction, in element coordinate system
       
             # solving
-            "solverName":                 "mechanicsSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
+            "solverName":                 "contractionSolver",         # name of the nonlinear solver configuration, it is defined under "Solvers" at the beginning of this config
             "loadFactors":                [],                # load factors for every timestep
             "loadFactorGiveUpThreshold":  1,                      # when to abort the solve
             "scaleInitialGuess":          False,                     # when load stepping is used, scale initial guess between load steps a and b by sqrt(a*b)/a. This potentially reduces the number of iterations per load step (but not always).
