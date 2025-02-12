@@ -1,7 +1,7 @@
 # General 1D Bayesian Optimization
 
 ## Description
-Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This folder contains the files to maximize a continuous function from R^n to R. Because infinity is hard to compute, the function actually has to be from an interval [a,b]x[c,d]x...x[y,z] to R. 
+Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This folder contains the files to maximize a continuous function from R^n to R. Because infinity is hard to compute, the function actually has to be from an interval [a_1,b_1]x[a_2,b_2]x...x[a_n,b_n] to R. 
 
 ## Dependendcies
 Python: Python 3.10.12
