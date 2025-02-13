@@ -1,3 +1,5 @@
+import numpy as np
+
 def target_function(x):
     x = x.numpy()[0]
     return x**2

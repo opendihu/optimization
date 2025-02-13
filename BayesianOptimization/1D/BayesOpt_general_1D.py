@@ -18,29 +18,14 @@ from botorch.models.transforms.outcome import Standardize
 import time
 import setup_BayesOpt_general_1D
 
-#TO DO
 
 """
 This is a file to carry out Bayesian Optimization for a dummy function.
-If you want to call this file, you have two options:
+To call this file, run:
 >python BayesOpt_general_1D.py
-or
->python BayesOpt_general_1D.py matern 1.5 const fixed_noise ei stopping_xy 1
-You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
-of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
-also doesn't matter.
-The options:
-For the kernel: "matern 0.5" "matern 1.5" "matern 2.5" "rbf"
-For the mean: "const" "zero"
-For the noise: "fixed_noise" "variable_noise"
-For the acquisition function: "ei" "es" "kg" "pi"
-For the stopping criterion: "stopping_xy" "stopping_y"
+To customize the optimization process and the target function, change settings in the file "setup_BayesOpt_general_1D.py".
 """
 
-########################################################################################################################
-#Customize code here
-
-#Major changes:
 nu = setup_BayesOpt_general_1D.nu
 matern = setup_BayesOpt_general_1D.matern
 rbf = setup_BayesOpt_general_1D.rbf
@@ -62,7 +47,6 @@ stopping_xy = setup_BayesOpt_general_1D.stopping_xy
 x_range = setup_BayesOpt_general_1D.x_range
 num_consecutive_trials = setup_BayesOpt_general_1D.num_consecutive_trials
 
-#Minor changes:
 fixed_Yvar = setup_BayesOpt_general_1D.fixed_Yvar
 lower_bound = setup_BayesOpt_general_1D.lower_bound
 sobol_on = setup_BayesOpt_general_1D.sobol_on
@@ -70,7 +54,6 @@ num_initial_trials = setup_BayesOpt_general_1D.num_initial_trials
 visualize = setup_BayesOpt_general_1D.visualize
 add_points = setup_BayesOpt_general_1D.add_points
 upper_bound = setup_BayesOpt_general_1D.upper_bound
-########################################################################################################################
 
 #We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
 #parameter in the filename, which we create here. 
@@ -112,7 +95,8 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
-
+current_time = time.strftime("%H%M%S")
+global_individuality_parameter = global_individuality_parameter + "_" + str(current_time)
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
 class CustomSingleTaskGP(SingleTaskGP):

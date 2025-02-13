@@ -24,9 +24,9 @@ import signal
 """
 This is a file to carry out Bayesian Optimization for the cuboid muscle simulation in OpenDiHu.
 If you want to call this file, you have two options:
->python BayesOpt.py
+>python BayesOpt_cuboid_muscle.py
 or
->python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
+>python BayesOpt_cuboid_muscle.py matern 0.5 const fixed_noise es stopping_xy
 You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
 of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
 also doesn't matter.

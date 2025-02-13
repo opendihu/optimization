@@ -16,7 +16,7 @@ To optimize the target function inside "setup_BayesOpt_general_1D.py" run
 ```
 python BayesOpt_general_1D.py
 ```
-To visualize the result of the optimization process, open the file "BayesOpt_global_individuality_parameters.csv" inside "build_release" that has been created after the optimization process, and copy the corresponding individuality parameter, for example "_matern_0.5_const_fixed_noise_ES_stopping_xy". Then run
+To visualize and print the results of the optimization process, open the file "BayesOpt_global_individuality_parameters.csv" inside "build_release" that has been created after the optimization process, and copy the corresponding individuality parameter, for example "_matern_0.5_const_fixed_noise_ES_stopping_xy_130815". Then run
 ```
-python visualize_BayesOpt_general_1D.py _matern_0.5_const_fixed_noise_ES_stopping_xy
+python visualize_BayesOpt_general_1D.py _matern_0.5_const_fixed_noise_ES_stopping_xy_130815
 ```
