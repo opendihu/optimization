@@ -159,25 +159,48 @@ elif stopping_xy:
 def simulation(force):
     force = force.numpy()[0]
     print("start simulation with force", force)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force {force} --scenario_name {force}")
+    command = shlex.split(f"mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force {force} --scenario_name {force}")
     subprocess.run(command)
 
     print("end simulation")
 
-    f = open("/out/" + str(force) + "/muscle_contraction_" + str(force) + "N.csv")
+    tractionz_rank0 = []
+    tractionz_rank1 = []
+    tractionz_rank2 = []
+    tractionz_rank3 = []
+
+    f = open("/out/" + str(force) + "/muscle_contraction_rank0.csv")
     reader = csv.reader(f)
-    tractionz = []
     for row in reader:
-        tractionz.extend([float(value) if value.strip() else 0 for value in row])
+        tractionz_rank0.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/" + str(force) + "muscle_prestretch_" + str(force) + "N.csv")
+    f = open("/out/" + str(force) + "/muscle_contraction_rank1.csv")
     reader = csv.reader(f)
     for row in reader:
-        length_after_prestretch = row[0]
+        tractionz_rank1.extend([float(value) if value.strip() else 0 for value in row])
+    f.close()
+
+    f = open("/out/" + str(force) + "/muscle_contraction_rank2.csv")
+    reader = csv.reader(f)
+    for row in reader:
+        tractionz_rank2.extend([float(value) if value.strip() else 0 for value in row])
+    f.close()
+
+    f = open("/out/" + str(force) + "/muscle_contraction_rank3.csv")
+    reader = csv.reader(f)
+    for row in reader:
+        tractionz_rank3.extend([float(value) if value.strip() else 0 for value in row])
+    f.close()
+
+    f = open("/out/" + str(force) + "muscle_prestretch_rank0.csv")
+    reader = csv.reader(f)
+    for row in reader:
+        length_after_prestretch = row[1]
     f.close()
     
-    maxtraction = max(tractionz)
+    maxtraction = max((tractionz_rank0+tractionz_rank1+tractionz_rank2+tractionz_rank3)/4)
+
     print("The maximum traction was ", maxtraction)
     f = open("muscle_bayes_" + str(force) + "N.csv", "a")
     f.write(str(force) + " " + str(maxtraction) + " " + str(length_after_prestretch))
