@@ -453,7 +453,7 @@ nz = (n_points_3D_mesh_linear_global_z-1) // 2
 variables.nx = nx
 variables.ny = ny
 variables.nz = nz
-variables.prestretch_neumann_bc = [{"element": j*mx + i, "constantVector": variables.bottom_traction, "face": "2-"} for j in range(my) for i in range(mx)]
+variables.prestretch_neumann_bc = [{"element": j*mx + i, "constantVector": [0.0, 0.0, -variables.prestretch_force], "face": "2-"} for j in range(my) for i in range(mx)]
 
 #with open("mesh","w") as f:
 #  f.write(str(variables.meshes["3Dmesh_quadratic"]))
@@ -463,7 +463,6 @@ def callback_function_prestretch(raw_data):
   if n_ranks==1:
     number_of_nodes = mx * my
     average_z_start = 0
-    average_z_end = 0
 
     z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
@@ -476,6 +475,7 @@ def callback_function_prestretch(raw_data):
     f.write(str(average_z_start))
     f.write(",")
     f.close()
+
   elif n_ranks==16:
     number_of_nodes = mx * my
     average_z_start = 0
@@ -500,25 +500,22 @@ def callback_function_contraction(raw_data):
   if n_ranks == 1:
     number_of_nodes = mx * my
     average_z_start = 0
-    average_z_end = 0
 
     z_data = raw_data[0]["data"][3]["components"][2]["values"]
 
     for i in range(number_of_nodes):
       average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(mz -1) + i]
 
     average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
  
     f = open("muscle_contraction_" + "N.csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     f.close()
+    
   elif n_ranks == 16:
     number_of_nodes = mx * my
     average_z_start = 0
-    average_z_end = 0
 
     z_data = raw_data[0]["data"][3]["components"][2]["values"]
     

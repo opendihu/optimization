@@ -24,7 +24,7 @@ pmax = 7.3                  # [N/cm^2] maximum isometric active stress
 
 # load
 constant_body_force = (0,0,-9.81e-4)   # [cm/ms^2], gravity constant for the body force
-bottom_traction = [0.0,0.0,-2.0]        # [N]
+prestretch_force = 0.0 # [N]     
 
 # Monodomain parameters
 # --------------------

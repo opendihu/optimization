@@ -40,6 +40,7 @@ else:
 
 # define command line arguments
 parser = argparse.ArgumentParser(description='static_biceps_emg')
+parser.add_argument('--prestretch_force',                    help='The magnitude of the force applied to the bottom during prestretch.', type=float,  default=variables.prestretch_force)
 parser.add_argument('--scenario_name',                       help='The name to identify this run in the log.',   default=variables.scenario_name)
 parser.add_argument('--n_subdomains', nargs=3,               help='Number of subdomains in x,y,z direction.',    type=int)
 parser.add_argument('--n_subdomains_x', '-x',                help='Number of subdomains in x direction.',        type=int, default=variables.n_subdomains_x)
@@ -115,6 +116,7 @@ if n_ranks != variables.n_subdomains:
 # output information of run
 if rank_no == 0:
   print("scenario_name: {},  n_subdomains: {} {} {},  n_ranks: {},  end_time: {}".format(variables.scenario_name, variables.n_subdomains_x, variables.n_subdomains_y, variables.n_subdomains_z, n_ranks, variables.end_time))
+  print("prestretch_force: {}".format(variables.prestretch_force))
   print("dt_0D:           {:0.0e}, diffusion_solver_type:      {}".format(variables.dt_0D, variables.diffusion_solver_type))
   print("dt_1D:           {:0.0e}, potential_flow_solver_type: {}".format(variables.dt_1D, variables.potential_flow_solver_type))
   print("dt_splitting:    {:0.0e}, emg_solver_type:            {}, emg_initial_guess_nonzero: {}".format(variables.dt_splitting, variables.emg_solver_type, variables.emg_initial_guess_nonzero))
