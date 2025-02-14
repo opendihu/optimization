@@ -471,7 +471,7 @@ def callback_function_prestretch(raw_data):
 
     average_z_start /= number_of_nodes
  
-    f = open("out/"+variables.scenario_name+"/muscle_prestretch_" + "N.csv", "a")
+    f = open("out/"+variables.scenario_name+"/muscle_prestretch.csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     f.close()
@@ -487,7 +487,7 @@ def callback_function_prestretch(raw_data):
         average_z_start += z_data[i]
       average_z_start /= number_of_nodes
   
-      f = open("out/"+variables.scenario_name+"/muscle_prestretch_rank" + str(rank_no) + "forceN.csv", "a")
+      f = open("out/"+variables.scenario_name+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
       f.write(str(average_z_start))
       f.write(",")
       f.close()
@@ -508,7 +508,7 @@ def callback_function_contraction(raw_data):
 
     average_z_start /= number_of_nodes
  
-    f = open("out/"+variables.scenario_name+"/muscle_contraction_" + "N.csv", "a")
+    f = open("out/"+variables.scenario_name+"/muscle_contraction.csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     f.close()
@@ -525,7 +525,7 @@ def callback_function_contraction(raw_data):
         average_z_start += z_data[i]
       average_z_start /= number_of_nodes
   
-      f = open("out/"+variables.scenario_name+"/muscle_contraction_rank" + str(rank_no) + "forceN.csv", "a")
+      f = open("out/"+variables.scenario_name+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
       f.write(str(average_z_start))
       f.write(",")
       f.close()
