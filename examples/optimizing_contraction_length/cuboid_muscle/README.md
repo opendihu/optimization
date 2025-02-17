@@ -1,6 +1,6 @@
 # Bayesian Optimization for a cuboid muscle model
 
-## Dependendcies
+## Dependencies
 OpenDiHu: Version aadd55a4 (https://github.com/opendihu/opendihu/tree/aadd55a47fde8031cc4629ba138e949d54c26661)
 
 Python: Python 3.10.12
