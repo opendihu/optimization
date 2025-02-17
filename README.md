@@ -3,7 +3,7 @@
 ## Description
 Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This repository has started as a Bachelor Thesis (https://github.com/opendihu/optimization/tree/Bachelor-thesis). It contains files for Bayesian Optimization that can be used by itself or be connected to OpenDiHu to use a simulation as a function evaluation. 
 
-## Dependendcies
+## Dependencies
 Python: Python 3.10.12
 
 Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, os, shlex, csv, time, signal
