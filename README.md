@@ -13,13 +13,13 @@ OpenDiHu (if used): Version 1.5 (https://github.com/opendihu/opendihu/tree/v1.5)
 ## Setup
 Inside "BayesianOptimization" are two setups for Bayesian Optimization that are both set up to optimize an easy dummy function. Inside "1D" is the setup for a one-dimensional function, inside "nD" the setup for a function from R^n to R.
 
-Inside "examples" are two categories: "isotonic_contraction" and "isometric_contraction". 
+Inside "opendihu_examples" are two categories: "isotonic_contraction" and "isometric_contraction". 
 
-In "isotonic_contraction" we take a muscle and look for the prestretch force that maximizes its contraction length. The example "optimize_prestretch_force/cuboid_muscle" in there was the main focus of the mensioned Bachelor Thesis. 
+In "isotonic_contraction" we take a muscle and simulate its contraction after activation. With this simulation we can use Bayesian Optimization to look for the prestretch force that maximizes the muscle's contraction length. 
 
-In "isometric_contraction" we take a fixed muscle and look for the prestretch that maximizes its contraction force. 
+In "isometric_contraction" we take a fixed muscle and simulate its behaviour and the generated forces with the muscle being activated, but fixed in place on both ends. With this simulation we can use Bayesian Optimization to look for the prestretch that maximizes its contraction force. 
 
-The example "test_functions" can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
+Inside "BayesOpt_examples" is the example "test_functions" which can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
 
 More details can be found in the corresponding ReadMe files.
 
