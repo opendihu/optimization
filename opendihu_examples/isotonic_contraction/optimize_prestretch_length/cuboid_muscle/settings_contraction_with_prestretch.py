@@ -127,6 +127,7 @@ def callback_function_prestretch(raw_data):
 
   for i in range(number_of_nodes):
     average_length += z_data[number_of_nodes*(mz -1) + i]
+  average_length = average_length/number_of_nodes
 
   print("length of muscle (prestretch): ", average_length)
 
