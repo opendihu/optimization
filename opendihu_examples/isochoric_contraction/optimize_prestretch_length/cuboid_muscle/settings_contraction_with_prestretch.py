@@ -131,7 +131,7 @@ def callback_function_prestretch(raw_data):
 
   print("length of muscle (prestretch): ", average_length)
 
-  f = open("length_after_prestretch_" + str(prestretch_extension) + "N.csv", "w")
+  f = open("length_after_prestretch_" + str(prestretch_extension) + "_extension.csv", "w")
   f.write(str(average_length))
   f.close()
 
@@ -165,7 +165,7 @@ def callback_function_contraction(raw_data):
     average_z_start /= number_of_nodes
     average_z_end /= number_of_nodes
  
-    f = open("muscle_contraction_" + str(prestretch_extension) + "N.csv", "a")
+    f = open("muscle_contraction_" + str(prestretch_extension) + "_extension.csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")

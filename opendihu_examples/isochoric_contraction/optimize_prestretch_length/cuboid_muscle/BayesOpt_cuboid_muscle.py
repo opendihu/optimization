@@ -20,6 +20,7 @@ from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
 import time
 import signal
+import setup_BayesOpt_cuboid_muscle
 
 
 #If you want to call this file, you have two options:
@@ -33,41 +34,38 @@ import signal
 ########################################################################################################################
 #Customize code here
 
-#Major changes:
-nu = 1.5
-matern = False
-rbf = False
+nu = setup_BayesOpt_cuboid_muscle.nu
+matern = setup_BayesOpt_cuboid_muscle.matern
+rbf = setup_BayesOpt_cuboid_muscle.rbf
 
-const = False
-zero = False
+const = setup_BayesOpt_cuboid_muscle.const
+zero = setup_BayesOpt_cuboid_muscle.zero
 
-fixed_noise = False
-variable_noise = False
+fixed_noise = setup_BayesOpt_cuboid_muscle.fixed_noise
+variable_noise = setup_BayesOpt_cuboid_muscle.variable_noise
 
-EI = False
-PI = False
-KG = False
-ES = False
+EI = setup_BayesOpt_cuboid_muscle.EI
+PI = setup_BayesOpt_cuboid_muscle.PI
+KG = setup_BayesOpt_cuboid_muscle.KG
+ES = setup_BayesOpt_cuboid_muscle.ES
 
-stopping_y = False
-improvement_threshold = 1e-4
-stopping_xy = False
-x_range = 5e-2
-num_consecutive_trials = 3
+stopping_y = setup_BayesOpt_cuboid_muscle.stopping_y
+improvement_threshold = setup_BayesOpt_cuboid_muscle.improvement_threshold
+stopping_xy = setup_BayesOpt_cuboid_muscle.stopping_xy
+x_range = setup_BayesOpt_cuboid_muscle.x_range
+num_consecutive_trials = setup_BayesOpt_cuboid_muscle.num_consecutive_trials
 
-#Minor changes:
-fixed_Yvar = 1e-6
-lower_bound = 0.
-upper_bound = 2
-
-sobol_on = True
-num_initial_trials = 2 #this needs to be >=2
-visualize = True
-add_points = False
-specific_relative_upper_bound = False
-max_upper_bound = False
-relative_prestretch_min = 1.5
-relative_prestretch_max = 1.6
+fixed_Yvar = setup_BayesOpt_cuboid_muscle.fixed_Yvar
+lower_bound = setup_BayesOpt_cuboid_muscle.lower_bound
+sobol_on = setup_BayesOpt_cuboid_muscle.sobol_on
+num_initial_trials = setup_BayesOpt_cuboid_muscle.num_initial_trials
+visualize = setup_BayesOpt_cuboid_muscle.visualize
+add_points = setup_BayesOpt_cuboid_muscle.add_points
+upper_bound = setup_BayesOpt_cuboid_muscle.upper_bound
+specific_relative_upper_bound = setup_BayesOpt_cuboid_muscle.specific_relative_upper_bound
+max_upper_bound = setup_BayesOpt_cuboid_muscle.max_upper_bound
+relative_prestretch_min = setup_BayesOpt_cuboid_muscle.relative_prestretch_min
+relative_prestretch_max = setup_BayesOpt_cuboid_muscle.relative_prestretch_max
 ########################################################################################################################
 
 inputs = [item.lower() for item in sys.argv]
@@ -164,14 +162,14 @@ def simulation(force):
 
     print("end simulation")
 
-    f = open("muscle_contraction_" + str(force) + "N.csv")
+    f = open("muscle_contraction_" + str(force) + "_extension.csv")
     reader = csv.reader(f)
     tractionz = []
     for row in reader:
         tractionz.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("length_after_prestretch_" + str(force) + "N.csv")
+    f = open("length_after_prestretch_" + str(force) + "_extension.csv")
     reader = csv.reader(f)
     for row in reader:
         length_after_prestretch = row[0]
@@ -179,7 +177,7 @@ def simulation(force):
     
     maxtraction = max(tractionz)
     print("The maximum traction was ", maxtraction)
-    f = open("muscle_bayes_" + str(force) + "N.csv", "a")
+    f = open("muscle_bayes_" + str(force) + "_extension.csv", "a")
     f.write(str(force) + " " + str(maxtraction) + " " + str(length_after_prestretch))
     f.write("\n")
     f.close()
