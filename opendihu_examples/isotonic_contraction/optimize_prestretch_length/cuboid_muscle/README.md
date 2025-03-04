@@ -13,4 +13,4 @@ To run a single simulation of stretching and contracting a muscle, go to build_r
 ```
 
 ## Optimization
-With this case we can use Bayesian Optimization to optimize the contraction length. Our function f: R -> R maps a prestretch length to the contraction length of a muscle, that has been stretched until it has reached the prestretch length before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch length that leads to the greatest contraction length of our given muscle.
+With this case we can use Bayesian Optimization to optimize the contraction length (length of the muscle before contraction process - length of the muscle after contraction process). Our function f: R -> R maps a prestretch length (increase of muscle length by stretching) to the contraction length of a muscle, that has been stretched until it has reached the prestretch length before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch length that leads to the greatest contraction length of our given muscle.
