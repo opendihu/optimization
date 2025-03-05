@@ -29,8 +29,7 @@ bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
 fb_x, fb_y = 10, 10         # number of fibers
 fb_points = 100             # number of points per fiber
-fiber_direction_1 = [0, 0, 1] # direction of fiber in element
-fiber_direction_2 = [0, 0, -1]
+fiber_direction = [0, 0, 1] # direction of fiber in element
 
 meshes = { # create 3D mechanics mesh
     "mesh3D": {
