@@ -11,7 +11,7 @@ To run a single simulation of stretching and contracting a muscle, go to build_r
 ```
 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force 10.0
 ```
-This computes everything in series and therefore will take a long time. If you can, use the alternative:
+This computes everything in serial and therefore will take a long time. If you can, use the alternative:
 ```
 mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force 10.0
 ```
