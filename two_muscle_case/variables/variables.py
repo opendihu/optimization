@@ -13,7 +13,7 @@ dt_3D = 1e-1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 40.0         # end time of the simulation 
+end_time = 2.0         # end time of the simulation 
 output_interval = dt_3D # time interval between outputs
 
 # Material parameters
@@ -29,7 +29,8 @@ bs_x, bs_y, bs_z = 2*el_x+1, 2*el_y+1, 2*el_z+1 # quadratic basis functions
 
 fb_x, fb_y = 10, 10         # number of fibers
 fb_points = 100             # number of points per fiber
-fiber_direction = [0, 0, 1] # direction of fiber in element
+fiber_direction_1 = [0, 0, 1] # direction of fiber in element
+fiber_direction_2 = [0, 0, 1]
 
 meshes = { # create 3D mechanics mesh
     "mesh3D": {
