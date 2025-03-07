@@ -20,8 +20,7 @@ n_ranks = (int)(sys.argv[-1])
 # parameters
 force = 10.0                       # [N] load on top
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
-physical_extent_1 = [3.0, 3.0, 12.0]
-physical_extent_2 = [3.0, 3.0, 12.0]
+
 constant_body_force = None                                                                      
 scenario_name = "tensile_test"
 dirichlet_bc_mode = "fix_floating"                                                              
@@ -74,28 +73,33 @@ fiber_direction_2 = [0, 0, 1]
 def get_fiber_no(fiber_x, fiber_y):
     return fiber_x + fiber_y*fb_x
 
+physical_extent = [3.0, 3.0, 12.0]
+
+physical_offset_1 = [0, 0, 0]
+physical_offset_2 = [0, 0, 12.0]
+
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
       "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent_1,            # physical size of the box
-      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
+      "physicalExtent":             physical_extent,            # physical size of the box
+      "physicalOffset":             physical_offset_1,          # offset/translation where the whole mesh begins
     },
     "3Dmesh_quadratic_2": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
       "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent_2,            # physical size of the box
-      "physicalOffset":             [0, 0, 6],                  # offset/translation where the whole mesh begins
-    },
+      "physicalExtent":             physical_extent,            # physical size of the box
+      "physicalOffset":             physical_offset_2,                  # offset/translation where the whole mesh begins
+    }
 }
 
 for fiber_x in range(fb_x):
     for fiber_y in range(fb_y):
         fiber_no = get_fiber_no(fiber_x, fiber_y)
-        x = nx * fiber_x / (fb_x - 1)
-        y = ny * fiber_y / (fb_y - 1)
-        nodePositions_1 = [[x, y, nz * i / (fb_points - 1)] for i in range(fb_points)]
-        nodePositions_2 = [[x, y, 12+nz * i / (fb_points - 1)] for i in range(fb_points)]
+        x = physical_extent[0] * fiber_x / (fb_x - 1)
+        y = physical_extent[1] * fiber_y / (fb_y - 1)
+        nodePositions_1 = [[x, y, physical_extent[2] * i / (fb_points - 1)] for i in range(fb_points)]
+        nodePositions_2 = [[x, y, physical_offset_2[2]+physical_extent[2] * i / (fb_points - 1)] for i in range(fb_points)]
         meshName_1 = "fiber{}_1".format(fiber_no)
         meshes[meshName_1] = { # create fiber meshes
             "nElements":            [fb_points - 1],
@@ -452,7 +456,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          [],
+            "mapGeometryToMeshes":          ["3Dmesh_quadratic_1"] + ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y))],
 
             "OutputWriter": [
               {
@@ -476,10 +480,8 @@ config = {
               "timeStepOutputInterval": 1,
 
               "meshName":                   "3Dmesh_quadratic_1",
-              "fiberDirectionInElement":    variables.fiber_direction_1,
               "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             [],
-              "fiberDirection":             [0,0,1],
+              "fiberMeshNames":             "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
 
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
@@ -681,7 +683,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          [],
+            "mapGeometryToMeshes":          ["3Dmesh_quadratic_2"] + ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y))],
 
             "OutputWriter": [
               {
@@ -705,11 +707,8 @@ config = {
               "timeStepOutputInterval": 1,
 
               "meshName":                   "3Dmesh_quadratic_2",
-              "fiberDirectionInElement":    variables.fiber_direction_2,
               "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             [],
-              "fiberDirection":             [0,0,1],
-
+              "fiberMeshNames":             "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
               "useAnalyticJacobian":        True,
