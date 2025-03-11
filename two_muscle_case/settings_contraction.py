@@ -369,11 +369,11 @@ config = {
                             ("parameter", 0):               "membrane/i_Stim",
                             ("parameter", 1):               "Razumova/l_hs",
                             ("parameter", 2):               ("constant", "Razumova/rel_velo"),
-                            ("connectorSlot", "vm"):        "membrane/V",
-                            ("connectorSlot", "stress"):    "Razumova/activestress",
-                            ("connectorSlot", "alpha"):     "Razumova/activation",
-                            ("connectorSlot", "lambda"):    "Razumova/l_hs",
-                            ("connectorSlot", "ldot"):      "Razumova/rel_velo"
+                            ("connectorSlot", "vm1"):        "membrane/V",
+                            ("connectorSlot", "stress1"):    "Razumova/activestress",
+                            ("connectorSlot", "alpha1"):     "Razumova/activation",
+                            ("connectorSlot", "lambda1"):    "Razumova/l_hs",
+                            ("connectorSlot", "ldot1"):      "Razumova/rel_velo"
                           },
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
@@ -409,7 +409,7 @@ config = {
                         "timeStepOutputInterval":   100,
 
                         "nAdditionalFieldVariables":    4,
-                        "additionalSlotNames":          ["stress", "alpha", "lambda", "ldot"],
+                        "additionalSlotNames":          ["stress1", "alpha1", "lambda1", "ldot1"],
 
                         "solverName":                       "diffusionSolver",
                         "timeStepWidthRelativeTolerance":   1e-10,
@@ -448,8 +448,8 @@ config = {
         "Term2": { # solid mechanics (MuscleContractionSolver)
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
-            "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
-            #"slotNames":                    ["lambda", "ldot", "gamma", "T"],
+            # "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
+            "slotNames":                    ["lambda1", "ldot1", "gamma1", "T1"],
             "dynamic":                      True,
 
             "numberTimeSteps":              1,
@@ -596,11 +596,11 @@ config = {
                             ("parameter", 0):               "membrane/i_Stim",
                             ("parameter", 1):               "Razumova/l_hs",
                             ("parameter", 2):               ("constant", "Razumova/rel_velo"),
-                            ("connectorSlot", "vm"):        "membrane/V",
-                            ("connectorSlot", "stress"):    "Razumova/activestress",
-                            ("connectorSlot", "alpha"):     "Razumova/activation",
-                            ("connectorSlot", "lambda"):    "Razumova/l_hs",
-                            ("connectorSlot", "ldot"):      "Razumova/rel_velo"
+                            ("connectorSlot", "vm2"):        "membrane/V",
+                            ("connectorSlot", "stress2"):    "Razumova/activestress",
+                            ("connectorSlot", "alpha2"):     "Razumova/activation",
+                            ("connectorSlot", "lambda2"):    "Razumova/l_hs",
+                            ("connectorSlot", "ldot2"):      "Razumova/rel_velo"
                           },
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
@@ -636,7 +636,7 @@ config = {
                         "timeStepOutputInterval":   100,
 
                         "nAdditionalFieldVariables":    4,
-                        "additionalSlotNames":          ["stress", "alpha", "lambda", "ldot"],
+                        "additionalSlotNames":          ["stress2", "alpha2", "lambda2", "ldot2"],
 
                         "solverName":                       "diffusionSolver",
                         "timeStepWidthRelativeTolerance":   1e-10,
