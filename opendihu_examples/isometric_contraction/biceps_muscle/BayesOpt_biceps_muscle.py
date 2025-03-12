@@ -168,31 +168,31 @@ def simulation(force):
     tractionz_rank2 = []
     tractionz_rank3 = []
 
-    f = open("/out/prestretch" + str(force) + "/muscle_contraction_rank0.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank0.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank0.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/prestretch" + str(force) + "/muscle_contraction_rank1.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank1.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank1.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/prestretch" + str(force) + "/muscle_contraction_rank2.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank2.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank2.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/prestretch" + str(force) + "/muscle_contraction_rank3.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank3.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank3.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/prestretch" + str(force) + "muscle_prestretch_rank0.csv")
+    f = open("out/prestretch" + str(force) + "muscle_prestretch_rank0.csv")
     reader = csv.reader(f)
     for row in reader:
         length_after_prestretch = row[1]
