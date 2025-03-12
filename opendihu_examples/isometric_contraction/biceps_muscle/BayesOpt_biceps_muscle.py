@@ -168,37 +168,38 @@ def simulation(force):
     tractionz_rank2 = []
     tractionz_rank3 = []
 
-    f = open("/out/" + str(force) + "/muscle_contraction_rank0.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank0.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank0.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/" + str(force) + "/muscle_contraction_rank1.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank1.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank1.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/" + str(force) + "/muscle_contraction_rank2.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank2.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank2.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/" + str(force) + "/muscle_contraction_rank3.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_contraction_rank3.csv")
     reader = csv.reader(f)
     for row in reader:
         tractionz_rank3.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("/out/" + str(force) + "muscle_prestretch_rank0.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_prestretch_rank0.csv")
     reader = csv.reader(f)
     for row in reader:
         length_after_prestretch = row[1]
     f.close()
     
-    maxtraction = max((tractionz_rank0+tractionz_rank1+tractionz_rank2+tractionz_rank3)/4)
+    # we look at the max in absolute value, and we assume it will be negative
+    maxtraction = min((np.array(tractionz_rank0)+np.array(tractionz_rank1)+np.array(tractionz_rank2)+np.array(tractionz_rank3))/4)
 
     print("The maximum traction was ", maxtraction)
     f = open("muscle_bayes_" + str(force) + "N.csv", "a")

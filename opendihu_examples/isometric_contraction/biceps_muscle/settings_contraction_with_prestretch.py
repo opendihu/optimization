@@ -415,8 +415,7 @@ config = {
             "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
             "constantBodyForce":           variables.constant_body_force,       # a constant force that acts on the whole body, e.g. for gravity
             
-            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/prestretch_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-            "totalForceLogFilename":       "out/"+variables.scenario_name+"/total_force.txt",                              # filename for a log file with the total force
+            "dirichletOutputFilename":     "out/prestretch"+str(variables.prestretch_force)+"/prestretch_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
             
             # define which file formats should be written
             # 1. main output writer that writes output files using the quadratic elements function space. Writes displacements, velocities and PK2 stresses.
@@ -424,7 +423,7 @@ config = {
               
               # Paraview files
               #{"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/u", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-              {"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+              {"format": "Paraview", "outputInterval": 1, "filename": "out/prestretch"+str(variables.prestretch_force)+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
               # Python callback function "postprocess"
               {"format": "PythonCallback", "outputInterval": 1, "callback": callback_function_prestretch, "onlyNodalValues":True, "filename": ""},
             ],
@@ -614,7 +613,7 @@ config = {
           "lambdaDotScalingFactor":       variables.lambda_dot_scaling_factor,     # scaling factor for the output of the lambda dot slot, i.e. the contraction velocity. Use this to scale the unit-less quantity to, e.g., micrometers per millisecond for the subcellular model.
           "slotNames":                    ["lambda", "ldot", "gamma", "T"],   # names of the data slots (lamdba, lambdaDot, gamma, traction), maximum 10 characters per slot name
           "OutputWriter" : [
-            {"format": "Paraview", "outputInterval": 1, "filename": "out/" + variables.scenario_name + "/contraction_mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+            {"format": "Paraview", "outputInterval": 1, "filename": "out/prestretch"+str(variables.prestretch_force) + "/contraction_mechanics_3D", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
           ],
           "mapGeometryToMeshes":          [],                        # the mesh names of the meshes that will get the geometry transferred
           "dynamic":                      True,                      # if the dynamic solid mechanics solver should be used, else it computes the quasi-static problem
@@ -660,8 +659,7 @@ config = {
             "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
             "constantBodyForce":           variables.constant_body_force,       # a constant force that acts on the whole body, e.g. for gravity
             
-            "dirichletOutputFilename":     "out/"+variables.scenario_name+"/contraction_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-            "totalForceLogFilename":       "out/"+variables.scenario_name+"/total_force.txt",                              # filename for a log file with the total force
+            "dirichletOutputFilename":     "out/prestretch"+str(variables.prestretch_force)+"/contraction_dirichlet_boundary_conditions",                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
             
             # define which file formats should be written
             # 1. main output writer that writes output files using the quadratic elements function space. Writes displacements, velocities and PK2 stresses.
