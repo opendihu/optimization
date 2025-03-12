@@ -199,7 +199,7 @@ def simulation(force):
     f.close()
     
     # we look at the max in absolute value, and we assume it will be negative
-    maxtraction = min((tractionz_rank0+tractionz_rank1+tractionz_rank2+tractionz_rank3)/4)
+    maxtraction = min((np.array(tractionz_rank0)+np.array(tractionz_rank1)+np.array(tractionz_rank2)+np.array(tractionz_rank3))/4)
 
     print("The maximum traction was ", maxtraction)
     f = open("muscle_bayes_" + str(force) + "N.csv", "a")
