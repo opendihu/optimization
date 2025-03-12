@@ -192,7 +192,7 @@ def simulation(force):
         tractionz_rank3.extend([float(value) if value.strip() else 0 for value in row])
     f.close()
 
-    f = open("out/prestretch" + str(force) + "muscle_prestretch_rank0.csv")
+    f = open("out/prestretch" + str(force) + "/muscle_prestretch_rank0.csv")
     reader = csv.reader(f)
     for row in reader:
         length_after_prestretch = row[1]
