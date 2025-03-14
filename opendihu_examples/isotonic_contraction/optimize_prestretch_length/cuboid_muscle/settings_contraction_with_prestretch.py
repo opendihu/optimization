@@ -129,7 +129,7 @@ def callback_function_prestretch(raw_data):
     average_length += z_data[number_of_nodes*(mz -1) + i]
   average_length = average_length/number_of_nodes
 
-  print("length of muscle (prestretch): ", average_length)
+  print("length of muscle after prestretch: ", average_length)
 
   f = open("length_after_prestretch_" + str(prestretch_extension) + "_extension.csv", "w")
   f.write(str(average_length))
@@ -142,9 +142,7 @@ def callback_function_prestretch(raw_data):
     
     strain = max(field_variables[1]["components"][2]["values"])
     stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
+   
     with open("result.csv","a") as f:
       f.write("{},{},{}\n".format(scenario_name,strain,stress))
 
