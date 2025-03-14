@@ -155,7 +155,7 @@ def callback_function_contraction(raw_data):
     average_z_start = 0
     average_z_end = 0
 
-    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
     for i in range(number_of_nodes):
       average_z_start += z_data[i]

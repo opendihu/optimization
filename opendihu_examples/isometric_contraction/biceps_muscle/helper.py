@@ -501,7 +501,7 @@ def callback_function_contraction(raw_data):
     number_of_nodes = mx * my
     average_z_start = 0
 
-    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
     for i in range(number_of_nodes):
       average_z_start += z_data[i]
@@ -517,7 +517,7 @@ def callback_function_contraction(raw_data):
     number_of_nodes = mx * my
     average_z_start = 0
 
-    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    z_data = raw_data[0]["data"][6]["components"][2]["values"]
     
     if rank_no < 4:
 
