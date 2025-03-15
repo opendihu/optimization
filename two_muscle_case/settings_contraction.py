@@ -23,8 +23,8 @@ material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 
 constant_body_force = None                                                                      
 scenario_name = "tensile_test"
-dirichlet_bc_mode = "fix_floating"                                                              
- 
+dirichlet_bc_mode = "fix_floating"
+
 if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
@@ -425,7 +425,7 @@ config = {
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
-                          "slotName":           "vm"
+                          "slotName":           "vm1"
                         }
                       }
                     } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
@@ -449,14 +449,14 @@ config = {
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
             # "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
-            "slotNames":                    ["lambda1", "ldot1", "gamma1", "T1"],
+            "slotNames":                    ["lambdaContraction1", "ldotContraction1", "gammaContraction1", "TContraction1"],
             "dynamic":                      True,
 
             "numberTimeSteps":              1,
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["3Dmesh_quadratic_1"] + ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y))],
+            "mapGeometryToMeshes":          ["3Dmesh_quadratic_1"] + ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(fb_x) for fiber_y in range(fb_y)],
 
             "OutputWriter": [
               {
@@ -652,7 +652,7 @@ config = {
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
-                          "slotName":           "vm"
+                          "slotName":           "vm2"
                         }
                       }
                     } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
@@ -675,7 +675,7 @@ config = {
         "Term2": { # solid mechanics (MuscleContractionSolver)
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
-            "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
+            "slotNames":                    ["lambdaContraction2", "ldotContraction2", "gammaContraction2", "TContraction2"],
             #"slotNames":                    ["lambda", "ldot", "gamma", "T"],
             "dynamic":                      True,
 
@@ -683,7 +683,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["3Dmesh_quadratic_2"] + ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y))],
+            "mapGeometryToMeshes":          ["3Dmesh_quadratic_2"] + ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(fb_x) for fiber_y in range(fb_y)],
 
             "OutputWriter": [
               {
