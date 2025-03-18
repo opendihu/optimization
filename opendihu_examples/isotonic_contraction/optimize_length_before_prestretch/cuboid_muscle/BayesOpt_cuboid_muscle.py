@@ -153,6 +153,7 @@ if stopping_y:
 elif stopping_xy:
     global_individuality_parameter = global_individuality_parameter + "_stopping_xy"
     title = title + "XY-Stopping"
+global_individuality_parameter = global_individuality_parameter + "_absolute_contraction_length"
 
 starting_lengths = []
 relative_contraction = []
@@ -586,7 +587,7 @@ with open("BayesOpt_global_individuality_parameters.csv", "a") as f:
 
 # Same process for relative contraction length using the information from above
 
-global_individuality_parameter = global_individuality_parameter + "_2"
+global_individuality_parameter = global_individuality_parameter + "_relative_contraction_length"
 
 initial_x = torch.tensor(starting_lengths).unsqueeze(1)
 initial_y = torch.tensor(relative_contraction).unsqueeze(1)
