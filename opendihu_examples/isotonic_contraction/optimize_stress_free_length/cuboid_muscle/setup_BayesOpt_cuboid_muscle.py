@@ -1,3 +1,6 @@
+optimize_absolute_value = True
+optimize_relative_value = True
+
 end_length = 14.0
 
 nu = 1.5
