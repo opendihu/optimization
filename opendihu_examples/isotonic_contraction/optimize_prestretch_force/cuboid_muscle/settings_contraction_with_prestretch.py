@@ -18,19 +18,15 @@ import variables
 n_ranks = (int)(sys.argv[-1])
 
 # parameters
-force = 10.0                       # [N] load on top
-material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
-physical_extent = [3.0, 3.0, 12.0]
-constant_body_force = None                                                                      
-scenario_name = "tensile_test"
-dirichlet_bc_mode = "fix_floating"                                                              
- 
+force = variables.force
+scenario_name = variables.scenario_name                                                      
+
 if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
   force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
   print("force: {}".format(force))
-    
+
   # set material parameters depending on scenario name
   if scenario_name == "compressible_mooney_rivlin":
     material_parameters = [3.176e-10, 1.813, 10]      # c1, c2, c
@@ -62,34 +58,24 @@ if len(sys.argv) > 4:
 else:
   individuality_parameter = str(time.time())
 
-nx, ny, nz = 3, 3, 12                     # number of elements
-mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
-
-fb_x, fb_y = 10, 10         # number of fibers
-fb_points = 100             # number of points per fiber
-fiber_direction = [0, 0, 1] # direction of fiber in element
-
-def get_fiber_no(fiber_x, fiber_y):
-    return fiber_x + fiber_y*fb_x
-
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             physical_extent,            # physical size of the box
+      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
+      "physicalExtent":             variables.physical_extent,            # physical size of the box
       "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
     },
 }
 
-for fiber_x in range(fb_x):
-    for fiber_y in range(fb_y):
-        fiber_no = get_fiber_no(fiber_x, fiber_y)
-        x = nx * fiber_x / (fb_x - 1)
-        y = ny * fiber_y / (fb_y - 1)
-        nodePositions = [[x, y, nz * i / (fb_points - 1)] for i in range(fb_points)]
+for fiber_x in range(variables.fb_x):
+    for fiber_y in range(variables.fb_y):
+        fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
+        x = variables.el_x * fiber_x / (variables.fb_x - 1)
+        y = variables.el_y * fiber_y / (variables.fb_y - 1)
+        nodePositions = [[x, y, variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
         meshName = "fiber{}".format(fiber_no)
         meshes[meshName] = { # create fiber meshes
-            "nElements":            [fb_points - 1],
+            "nElements":            [variables.fb_points - 1],
             "nodePositions":        nodePositions,
             "inputMeshIsGlobal":    True,
             "nRanks":               n_ranks
@@ -100,29 +86,29 @@ elasticity_dirichlet_bc = {}
 k = 0
 
 # fix z value on the whole x-y-plane
-for j in range(my):
-  for i in range(mx):
-    elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+for j in range(variables.bs_y):
+  for i in range(variables.bs_x):
+    elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
-for j in range(my):
-  elasticity_dirichlet_bc[k*mx*my + j*mx + 0][0] = 0.0
+for j in range(variables.bs_y):
+  elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
   
 # fix front edge 
-for i in range(mx):
-  elasticity_dirichlet_bc[k*mx*my + 0*mx + i][1] = 0.0
+for i in range(variables.bs_x):
+  elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
        
 # set Neumann BC, set traction at the top
-k = nz-1
+k = variables.el_z-1
 traction_vector = [0, 0, force]     # the traction force in specified in the reference configuration
 
-elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
+elasticity_neumann_bc = [{"element": k*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
 
 # callback for result
 def handle_result_prestretch(result):
   data = result[0]
 
-  number_of_nodes = mx * my
+  number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
   average_z_end = 0
 
@@ -130,7 +116,7 @@ def handle_result_prestretch(result):
 
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    average_z_end += z_data[number_of_nodes*(mz -1) + i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
   average_z_start /= number_of_nodes
   average_z_end /= number_of_nodes
@@ -463,10 +449,10 @@ config = {
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
                   
-                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(mx*my*mz)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(mx*my*mz)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
+                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
+                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
-                  "constantBodyForce":           constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
+                  "constantBodyForce":           variables.constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
                   
                   "dirichletOutputFilename":      "out/"+scenario_name+"/dirichlet_boundary_conditions",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
         

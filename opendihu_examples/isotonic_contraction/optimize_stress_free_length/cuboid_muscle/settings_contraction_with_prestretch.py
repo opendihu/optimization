@@ -86,6 +86,8 @@ for j in range(variables.bs_y):
 for i in range(variables.bs_x):
   prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
+def callback_function_prestretch(raw_data):
+  pass
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
@@ -193,7 +195,7 @@ config = {
 
                     "Term1": { # reaction term
                       "MultipleInstances": {
-                        "nInstances":   variables.variables.fb_x * variables.variables.fb_y,
+                        "nInstances":   variables.fb_x * variables.fb_y,
 
                         "instances": [{
                           "ranks": [0],
@@ -247,13 +249,13 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)] 
+                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
                       }
                     },
 
                     "Term2": { # diffusion term
                       "MultipleInstances": {
-                        "nInstances": variables.variables.fb_x * variables.variables.fb_y, 
+                        "nInstances": variables.fb_x * variables.fb_y, 
 
                         "OutputWriter": [
                           {
@@ -297,7 +299,7 @@ config = {
                               "slotName":           "vm"
                             }
                           }
-                        } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)]
+                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
                       }
                     }
                   }
@@ -400,6 +402,7 @@ config = {
                   [
                     {
                       "format": "PythonCallback",
+                      "callback": callback_function_prestretch,
                       "outputInterval": 1,
                     },
                     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
@@ -438,7 +441,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.variables.fb_x * variables.variables.fb_y,
+                    "nInstances":   variables.fb_x * variables.fb_y,
 
                     "instances": [{
                       "ranks": [0],
@@ -492,13 +495,13 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)] 
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.variables.fb_x * variables.variables.fb_y, 
+                    "nInstances": variables.fb_x * variables.fb_y, 
 
                     "OutputWriter": [
                       {
@@ -542,7 +545,7 @@ config = {
                           "slotName":           "vm"
                         }
                       }
-                    } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)]
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
                   }
                 }
               }
