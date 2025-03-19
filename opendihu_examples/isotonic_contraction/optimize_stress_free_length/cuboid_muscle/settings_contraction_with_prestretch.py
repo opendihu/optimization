@@ -8,6 +8,7 @@
 import numpy as np
 import sys, os
 import time
+import argparse
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 var_path = os.path.join(script_path, "variables")
@@ -24,10 +25,15 @@ material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 constant_body_force = None                                                                      
 scenario_name = "tensile_test"
 dirichlet_bc_mode = "fix_floating"                                                              
- 
-                                                                         
-starting_length = float(sys.argv[0])
-end_length = float(sys.argv[1])
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--stress-free', help='The length of the muscle before prestretch.', type=float,  default=12.0)
+parser.add_argument('--after-prestretch', help='The length of the muscle after prestretch.', type=float,  default=14.0)
+
+args, other_args = parser.parse_known_args(args=sys.argv[:-2])#, namespace=variables)
+
+starting_length = args.stress_free
+end_length = args.after_prestretch
 prestretch_extension = end_length - starting_length
 if prestretch_extension < 0:
   print("end_length is smaller than starting_length: Error")

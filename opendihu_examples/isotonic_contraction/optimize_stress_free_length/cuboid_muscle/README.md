@@ -9,7 +9,7 @@
 ## How to run
 To run a single simulation of stretching and contracting a muscle, go to build_release and run:
 ```
-./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py 12.0 14.0
+./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py --stress-free 12.0 --after-prestretch 14.0
 ```
 where 12.0 is the length of the muscle before prestretch and 14.0 the length after prestretch.
 
