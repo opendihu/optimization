@@ -82,8 +82,8 @@ for fiber_x in range(fb_x):
         }
 
 # set Dirichlet BC, fix bottom
-elasticity_dirichlet_bc = {}
-contraction_elasticity_dirichlet_bc = {}
+prestretch_dirichlet_bc = {}
+contraction_dirichlet_bc = {}
 
 
 prestretch_initial_displacements = [[0.0,0.0,prestretch_extension*i/(mx*my*mz-1)] for i in range(mx*my*mz)]
@@ -93,18 +93,18 @@ k = 0
 # fix z value on the whole x-y-plane
 for j in range(my):
   for i in range(mx):
-    elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
-    elasticity_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,prestretch_extension,None,None,None]
+    prestretch_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    prestretch_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,prestretch_extension,None,None,None]
 
-    contraction_elasticity_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    contraction_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(my):
-  elasticity_dirichlet_bc[k*mx*my + j*mx + 0][0] = 0.0
+  prestretch_dirichlet_bc[k*mx*my + j*mx + 0][0] = 0.0
   
 # fix front edge 
 for i in range(mx):
-  elasticity_dirichlet_bc[k*mx*my + 0*mx + i][1] = 0.0
+  prestretch_dirichlet_bc[k*mx*my + 0*mx + i][1] = 0.0
 
 def callback_function_prestretch(raw_data):
   if False:
@@ -429,7 +429,7 @@ config = {
                   "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
                   
                   # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc,             # the initial Dirichlet boundary conditions that define values for displacements u
+                  "dirichletBoundaryConditions": prestretch_dirichlet_bc,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
                   "neumannBoundaryConditions":   None,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
@@ -659,7 +659,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            contraction_elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            contraction_dirichlet_bc, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
