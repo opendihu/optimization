@@ -1,8 +1,6 @@
 # This settings file can be used for two different equations:
 # - Isotropic hyperelastic material
 # - Linear elasticity
-#
-# arguments: <scenario_name> <force>
 
 
 import numpy as np
@@ -17,14 +15,6 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-
-# parameters
-prestretch_extension = 1.0                       # [N] load on top
-material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
-
-constant_body_force = None                                                                      
-scenario_name = "tensile_test"
-dirichlet_bc_mode = "fix_floating"                                                              
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--stress-free', help='The length of the muscle before prestretch.', type=float,  default=12.0)
@@ -41,41 +31,32 @@ if prestretch_extension < 0:
 if prestretch_extension >= 10.0:
   print("end_length is too large in comparison to starting_length: Error")
   quit()
-print("scenario_name: {}".format(scenario_name))
+print("scenario_name: {}".format(variables.scenario_name))
 print("starting_length: {}".format(starting_length))
 print("prestretch extension: {}".format(prestretch_extension))
-    
 
 
-nx, ny, nz = 3, 3, 12                     # number of elements
-mx, my, mz = 2*nx+1, 2*ny+1, 2*nz+1 # quadratic basis functions
-
-fb_x, fb_y = 10, 10         # number of fibers
-fb_points = 100             # number of points per fiber
-fiber_direction = [0, 0, 1] # direction of fiber in element
-physical_extent = [3.0, 3.0, starting_length]
-
-def get_fiber_no(fiber_x, fiber_y):
-    return fiber_x + fiber_y*fb_x
+physical_extent = variables.physical_extent
+physical_extent[2] = starting_length
 
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [nx, ny, nz],               # number of quadratic elements in x, y and z direction
+      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
       "physicalExtent":             physical_extent,            # physical size of the box
       "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
     },
 }
 
-for fiber_x in range(fb_x):
-    for fiber_y in range(fb_y):
-        fiber_no = get_fiber_no(fiber_x, fiber_y)
-        x = nx * fiber_x / (fb_x - 1)
-        y = ny * fiber_y / (fb_y - 1)
-        nodePositions = [[x, y, starting_length * i / (fb_points - 1)] for i in range(fb_points)]
+for fiber_x in range(variables.fb_x):
+    for fiber_y in range(variables.fb_y):
+        fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
+        x = variables.el_x * fiber_x / (variables.fb_x - 1)
+        y = variables.el_y * fiber_y / (variables.fb_y - 1)
+        nodePositions = [[x, y, starting_length * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
         meshName = "fiber{}".format(fiber_no)
         meshes[meshName] = { # create fiber meshes
-            "nElements":            [fb_points - 1],
+            "nElements":            [variables.fb_points - 1],
             "nodePositions":        nodePositions,
             "inputMeshIsGlobal":    True,
             "nRanks":               n_ranks
@@ -85,54 +66,25 @@ for fiber_x in range(fb_x):
 prestretch_dirichlet_bc = {}
 contraction_dirichlet_bc = {}
 
-
-prestretch_initial_displacements = [[0.0,0.0,prestretch_extension*i/(mx*my*mz-1)] for i in range(mx*my*mz)]
+prestretch_initial_displacements = [[0.0,0.0,prestretch_extension*i/(variables.bs_x*variables.bs_y*variables.bs_z-1)] for i in range(variables.bs_x*variables.bs_y*variables.bs_z)]
 
 k = 0
 
 # fix z value on the whole x-y-plane
-for j in range(my):
-  for i in range(mx):
-    prestretch_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
-    prestretch_dirichlet_bc[(mz-1)*mx*my + j*mx + i] = [None,None,prestretch_extension,None,None,None]
+for j in range(variables.bs_y):
+  for i in range(variables.bs_x):
+    prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    prestretch_dirichlet_bc[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,prestretch_extension,None,None,None]
 
-    contraction_dirichlet_bc[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    contraction_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
-for j in range(my):
-  prestretch_dirichlet_bc[k*mx*my + j*mx + 0][0] = 0.0
+for j in range(variables.bs_y):
+  prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
   
 # fix front edge 
-for i in range(mx):
-  prestretch_dirichlet_bc[k*mx*my + 0*mx + i][1] = 0.0
-
-def callback_function_prestretch(raw_data):
-  if False:
-    data = raw_data[0]
-
-    number_of_nodes = mx * my
-    average_length = 0
-
-    z_data = data["data"][0]["components"][2]["values"]
-
-    for i in range(number_of_nodes):
-      average_length += z_data[number_of_nodes*(mz -1) + i]
-    average_length = average_length/number_of_nodes
-
-    print("length of muscle after prestretch: ", average_length)
-
-    f = open("length_after_prestretch_" + str(starting_length) + "_starting_length.csv", "w")
-    f.write(str(average_length))
-    f.close()
-    
-    if data["timeStepNo"] == 1:
-      field_variables = data["data"]
-      
-      strain = max(field_variables[1]["components"][2]["values"])
-      stress = max(field_variables[5]["components"][2]["values"])
-    
-      with open("result.csv","a") as f:
-        f.write("{},{},{}\n".format(scenario_name,strain,stress))
+for i in range(variables.bs_x):
+  prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
 
 def callback_function_contraction(raw_data):
@@ -146,7 +98,7 @@ def callback_function_contraction(raw_data):
 
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    average_z_end += z_data[number_of_nodes*(mz -1) + i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
     average_z_start /= number_of_nodes
     average_z_end /= number_of_nodes
@@ -167,7 +119,7 @@ def callback_function_contraction(raw_data):
 
 
 config = {
-  "scenarioName":                 scenario_name,                # scenario name to identify the simulation runs in the log file
+  "scenarioName":                 variables.scenario_name,                # scenario name to identify the simulation runs in the log file
   "logFormat":                    "csv",                        # "csv" or "json", format of the lines in the log file, csv gives smaller files
   "solverStructureDiagramFile":   "solver_structure.txt",       # output file of a diagram that shows data connection between solvers
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
@@ -241,7 +193,7 @@ config = {
 
                     "Term1": { # reaction term
                       "MultipleInstances": {
-                        "nInstances":   variables.fb_x * variables.fb_y,
+                        "nInstances":   variables.variables.fb_x * variables.variables.fb_y,
 
                         "instances": [{
                           "ranks": [0],
@@ -264,7 +216,7 @@ config = {
                             "CellML": {
                               "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
                               "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                              "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
+                              "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
 
                               "statesInitialValues":                        [],
                               "initializeStatesToEquilibrium":              False,
@@ -295,19 +247,19 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                        } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)] 
                       }
                     },
 
                     "Term2": { # diffusion term
                       "MultipleInstances": {
-                        "nInstances": variables.fb_x * variables.fb_y, 
+                        "nInstances": variables.variables.fb_x * variables.variables.fb_y, 
 
                         "OutputWriter": [
                           {
                             "format":             "Paraview",
                             "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                            "filename":           "out/" + scenario_name + "/fibers_prestretch",
+                            "filename":           "out/" + variables.scenario_name + "/fibers_prestretch",
                             "fileNumbering":      "incremental",
                             "binary":             True,
                             "fixedFormat":        False,
@@ -345,7 +297,7 @@ config = {
                               "slotName":           "vm"
                             }
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+                        } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)]
                       }
                     }
                   }
@@ -378,7 +330,7 @@ config = {
                   {
                     "format":             "Paraview",
                     "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                    "filename":           "out/" + scenario_name + "/mechanics",
+                    "filename":           "out/" + variables.scenario_name + "/mechanics",
                     "fileNumbering":      "incremental",
                     "binary":             True,
                     "fixedFormat":        False,
@@ -437,21 +389,20 @@ config = {
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
                   
                   "initialValuesDisplacements":  prestretch_initial_displacements,     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(mx*my*mz)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
+                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
-                  "constantBodyForce":           constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
+                  "constantBodyForce":           variables.constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
                   
-                  "dirichletOutputFilename":      "out/"+scenario_name+"/dirichlet_boundary_conditions",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
+                  "dirichletOutputFilename":      "out/"+variables.scenario_name+"/dirichlet_boundary_conditions",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
         
                 
                   "OutputWriter": 
                   [
                     {
                       "format": "PythonCallback",
-                      "callback": callback_function_prestretch,
                       "outputInterval": 1,
                     },
-                    {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+                    {"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
                   ],
                   "pressure":       { "OutputWriter": [] },
                   "LoadIncrements": { "OutputWriter": [] }
@@ -487,7 +438,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.fb_x * variables.fb_y,
+                    "nInstances":   variables.variables.fb_x * variables.variables.fb_y,
 
                     "instances": [{
                       "ranks": [0],
@@ -510,7 +461,7 @@ config = {
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
                           "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                          "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
+                          "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
 
                           "statesInitialValues":                        [],
                           "initializeStatesToEquilibrium":              False,
@@ -541,19 +492,19 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                    } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)] 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.fb_x * variables.fb_y, 
+                    "nInstances": variables.variables.fb_x * variables.variables.fb_y, 
 
                     "OutputWriter": [
                       {
                         "format":             "Paraview",
                         "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                        "filename":           "out/" + scenario_name + "/fibers",
+                        "filename":           "out/" + variables.scenario_name + "/fibers",
                         "fileNumbering":      "incremental",
                         "binary":             True,
                         "fixedFormat":        False,
@@ -591,7 +542,7 @@ config = {
                           "slotName":           "vm"
                         }
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+                    } for fiber_x in range(variables.variables.fb_x) for fiber_y in range(variables.variables.fb_y)]
                   }
                 }
               }
@@ -625,7 +576,7 @@ config = {
               {
                 "format":             "Paraview",
                 "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/mechanics",
+                "filename":           "out/" + variables.scenario_name + "/mechanics",
                 "fileNumbering":      "incremental",
                 "binary":             True,
                 "fixedFormat":        False,
@@ -669,9 +620,9 @@ config = {
               "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "constantBodyForce":          (0, 0, 0),
 
-              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output",
-              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log.txt",
-              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log.txt",
+              "dirichletOutputFilename":    "out/" + variables.scenario_name + "/dirichlet_output",
+              "residualNormLogFilename":    "out/" + variables.scenario_name + "/residual_norm_log.txt",
+              "totalForceLogFilename":      "out/" + variables.scenario_name + "/total_force_log.txt",
 
               "OutputWriter": [
                 {
