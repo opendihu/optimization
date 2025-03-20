@@ -2,23 +2,20 @@ import sys
 import itertools
 import numpy as np
 
+scenario_name = "incompressible_mooney_rivlin"
+
 if sys.argv[-1] != "BayesOpt.py":
     n_ranks = int(sys.argv[-1])
     rank_no = int(sys.argv[-2])
 else:
     n_ranks = 1
 
-scenario_name = "incompressible_mooney_rivlin"
-
-force = 10.0
-constant_body_force = None
-
 # Time stepping
 dt_3D = 1e-1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 40.0         # end time of the simulation 
+end_time = 20.0         # end time of the simulation 
 output_interval = dt_3D # time interval between outputs
 
 # Material parameters
@@ -36,9 +33,10 @@ fb_x, fb_y = 10, 10         # number of fibers
 fb_points = 100             # number of points per fiber
 fiber_direction = [0, 0, 1] # direction of fiber in element
 
+constant_body_force = None
+
 def get_fiber_no(fiber_x, fiber_y):
     return fiber_x + fiber_y*fb_x
-
 
 # Define directory for cellml files
 import os

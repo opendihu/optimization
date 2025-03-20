@@ -1,13 +1,12 @@
 # This settings file can be used for two different equations:
 # - Isotropic hyperelastic material
 # - Linear elasticity
-#
-# arguments: <scenario_name> <force> <individuality_parameter>
 
 
 import numpy as np
 import sys, os
 import time
+import argparse
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 var_path = os.path.join(script_path, "variables")
@@ -17,52 +16,34 @@ import variables
 
 n_ranks = (int)(sys.argv[-1])
 
-# parameters
-force = variables.force
-scenario_name = variables.scenario_name                                                      
+parser = argparse.ArgumentParser()
+parser.add_argument('--stress-free', help='The length of the muscle before prestretch.', type=float,  default=12.0)
+parser.add_argument('--after-prestretch', help='The length of the muscle after prestretch.', type=float,  default=14.0)
 
-if len(sys.argv) > 3:                                                                           
-  scenario_name = sys.argv[0]
-  force = float(sys.argv[1])
-  print("scenario_name: {}".format(scenario_name))
-  print("force: {}".format(force))
+args, other_args = parser.parse_known_args(args=sys.argv[:-2])#, namespace=variables)
 
-  # set material parameters depending on scenario name
-  if scenario_name == "compressible_mooney_rivlin":
-    material_parameters = [3.176e-10, 1.813, 10]      # c1, c2, c
-    
-  elif scenario_name == "compressible_mooney_rivlin_decoupled":
-    material_parameters = [3.176e-10, 1.813, 10.0]      # c1, c2, kappa
-    
-  elif scenario_name == "incompressible_mooney_rivlin":
-    material_parameters = [3.176e-10, 1.813]      # c1, c2
-    
-  elif scenario_name == "nearly_incompressible_mooney_rivlin":
-    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
+starting_length = args.stress_free
+end_length = args.after_prestretch
+prestretch_extension = end_length - starting_length
+if prestretch_extension < 0:
+  print("end_length is smaller than starting_length: Error")
+  quit()
+if prestretch_extension >= 10.0:
+  print("end_length is too large in comparison to starting_length: Error")
+  quit()
+print("scenario_name: {}".format(variables.scenario_name))
+print("starting_length: {}".format(starting_length))
+print("prestretch extension: {}".format(prestretch_extension))
 
-  elif scenario_name == "nearly_incompressible_mooney_rivlin_decoupled":
-    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
 
-  elif scenario_name == "linear":
-    pass
-
-  elif scenario_name == "nearly_incompressible_mooney_rivlin_febio":
-    material_parameters = [3.176e-10, 1.813, 1e3]      # c1, c2, kappa
-
-  else:
-    print("Error! Please specify the correct scenario, see settings.py for allowed values.\n")
-    quit()
-
-if len(sys.argv) > 4:
-  individuality_parameter = sys.argv[2] 
-else:
-  individuality_parameter = str(time.time())
+physical_extent = variables.physical_extent
+physical_extent[2] = starting_length
 
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
       "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             variables.physical_extent,            # physical size of the box
+      "physicalExtent":             physical_extent,            # physical size of the box
       "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
     },
 }
@@ -72,7 +53,7 @@ for fiber_x in range(variables.fb_x):
         fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
         x = variables.el_x * fiber_x / (variables.fb_x - 1)
         y = variables.el_y * fiber_y / (variables.fb_y - 1)
-        nodePositions = [[x, y, variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
+        nodePositions = [[x, y, starting_length * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
         meshName = "fiber{}".format(fiber_no)
         meshes[meshName] = { # create fiber meshes
             "nElements":            [variables.fb_points - 1],
@@ -82,71 +63,31 @@ for fiber_x in range(variables.fb_x):
         }
 
 # set Dirichlet BC, fix bottom
-elasticity_dirichlet_bc = {}
+prestretch_dirichlet_bc = {}
+contraction_dirichlet_bc = {}
+
+prestretch_initial_displacements = [[0.0,0.0,prestretch_extension*i/(variables.bs_x*variables.bs_y*variables.bs_z-1)] for i in range(variables.bs_x*variables.bs_y*variables.bs_z)]
+
 k = 0
 
 # fix z value on the whole x-y-plane
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
-    elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    prestretch_dirichlet_bc[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,prestretch_extension,None,None,None]
+
+    contraction_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(variables.bs_y):
-  elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
+  prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
   
 # fix front edge 
 for i in range(variables.bs_x):
-  elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
-       
-# set Neumann BC, set traction at the top
-k = variables.el_z-1
-traction_vector = [0, 0, force]     # the traction force in specified in the reference configuration
+  prestretch_dirichlet_bc[k*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
-elasticity_neumann_bc = [{"element": k*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
-
-# callback for result
-def handle_result_prestretch(result):
-  data = result[0]
-
-  number_of_nodes = variables.bs_x * variables.bs_y
-  average_z_start = 0
-  average_z_end = 0
-
-  z_data = data["data"][0]["components"][2]["values"]
-
-  for i in range(number_of_nodes):
-    average_z_start += z_data[i]
-    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
-
-  average_z_start /= number_of_nodes
-  average_z_end /= number_of_nodes
-
-  length_of_muscle = np.abs(average_z_end - average_z_start)
-  print("length of muscle (prestretch): ", length_of_muscle)
-
-  if data["timeStepNo"] == 0:
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "w")
-    f.write(str(length_of_muscle))
-    f.write(",")
-    f.close()
-  else:
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv", "a")
-    f.write(str(length_of_muscle))
-    f.write(",")
-    f.close()
-  
-  
-  if data["timeStepNo"] == 1:
-    field_variables = data["data"]
-    
-    strain = max(field_variables[1]["components"][2]["values"])
-    stress = max(field_variables[5]["components"][2]["values"])
-    
-    print("strain: {}, stress: {}".format(strain, stress))
-    
-    with open("result.csv","a") as f:
-      f.write("{},{},{}\n".format(scenario_name,strain,stress))
-
+def callback_function_prestretch(raw_data):
+  pass
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
@@ -157,30 +98,30 @@ def callback_function_contraction(raw_data):
 
     z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
     average_z_start /= number_of_nodes
     average_z_end /= number_of_nodes
 
-    length_of_muscle = np.abs(average_z_end - average_z_start)
-    print("length of muscle (contraction): ", length_of_muscle)
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle: ", length_of_muscle)
 
-    if t == variables.dt_3D:
-      f = open("muscle_length_contraction"+individuality_parameter+".csv", "w")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
-    else:
-      f = open("muscle_length_contraction"+individuality_parameter+".csv", "a")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
+  if t == variables.dt_3D:
+    f = open("muscle_contraction_" + str(starting_length) + "_starting_length.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_contraction_" + str(starting_length) + "_starting_length.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
 
 
 config = {
-  "scenarioName":                 scenario_name,                # scenario name to identify the simulation runs in the log file
+  "scenarioName":                 variables.scenario_name,                # scenario name to identify the simulation runs in the log file
   "logFormat":                    "csv",                        # "csv" or "json", format of the lines in the log file, csv gives smaller files
   "solverStructureDiagramFile":   "solver_structure.txt",       # output file of a diagram that shows data connection between solvers
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
@@ -277,7 +218,7 @@ config = {
                             "CellML": {
                               "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
                               "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                              "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
+                              "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
 
                               "statesInitialValues":                        [],
                               "initializeStatesToEquilibrium":              False,
@@ -320,7 +261,7 @@ config = {
                           {
                             "format":             "Paraview",
                             "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                            "filename":           "out/" + scenario_name + "/fibers_prestretch",
+                            "filename":           "out/" + variables.scenario_name + "/fibers_prestretch",
                             "fileNumbering":      "incremental",
                             "binary":             True,
                             "fixedFormat":        False,
@@ -391,7 +332,7 @@ config = {
                   {
                     "format":             "Paraview",
                     "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                    "filename":           "out/" + scenario_name + "/mechanics",
+                    "filename":           "out/" + variables.scenario_name + "/mechanics",
                     "fileNumbering":      "incremental",
                     "binary":             True,
                     "fixedFormat":        False,
@@ -442,30 +383,29 @@ config = {
                   "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
                   
                   # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc,             # the initial Dirichlet boundary conditions that define values for displacements u
+                  "dirichletBoundaryConditions": prestretch_dirichlet_bc,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   None,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
                   
-                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
+                  "initialValuesDisplacements":  prestretch_initial_displacements,     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
                   "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
                   "constantBodyForce":           variables.constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
                   
-                  "dirichletOutputFilename":      "out/"+scenario_name+"/dirichlet_boundary_conditions",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
+                  "dirichletOutputFilename":      "out/"+variables.scenario_name+"/dirichlet_boundary_conditions",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
         
                 
                   "OutputWriter": 
                   [
-                    {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-
                     {
                       "format": "PythonCallback",
-                      "callback": handle_result_prestretch,
+                      "callback": callback_function_prestretch,
                       "outputInterval": 1,
-                    }
+                    },
+                    {"format": "Paraview", "outputInterval": 1, "filename": "out/"+variables.scenario_name+"/prestretch", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
                   ],
                   "pressure":       { "OutputWriter": [] },
                   "LoadIncrements": { "OutputWriter": [] }
@@ -524,7 +464,7 @@ config = {
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
                           "meshName":               "fiber{}".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                          "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
+                          "stimulationLogFilename": "out/" + variables.scenario_name + "stimulation.log",
 
                           "statesInitialValues":                        [],
                           "initializeStatesToEquilibrium":              False,
@@ -567,7 +507,7 @@ config = {
                       {
                         "format":             "Paraview",
                         "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                        "filename":           "out/" + scenario_name + "/fibers",
+                        "filename":           "out/" + variables.scenario_name + "/fibers",
                         "fileNumbering":      "incremental",
                         "binary":             True,
                         "fixedFormat":        False,
@@ -639,7 +579,7 @@ config = {
               {
                 "format":             "Paraview",
                 "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/mechanics",
+                "filename":           "out/" + variables.scenario_name + "/mechanics",
                 "fileNumbering":      "incremental",
                 "binary":             True,
                 "fixedFormat":        False,
@@ -673,7 +613,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            contraction_dirichlet_bc, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
@@ -683,9 +623,9 @@ config = {
               "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "constantBodyForce":          (0, 0, 0),
 
-              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output",
-              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log.txt",
-              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log.txt",
+              "dirichletOutputFilename":    "out/" + variables.scenario_name + "/dirichlet_output",
+              "residualNormLogFilename":    "out/" + variables.scenario_name + "/residual_norm_log.txt",
+              "totalForceLogFilename":      "out/" + variables.scenario_name + "/total_force_log.txt",
 
               "OutputWriter": [
                 {
