@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Job name:
-#SBATCH -J Optimize_isotonic_force
+#SBATCH -J Optimize_isotonic_length
 #
 # Error and Output files
 #SBATCH -o ./%x.%j.out
@@ -25,8 +25,8 @@ echo "SLURM_NNODES"=$SLURM_NNODES
 echo "working directory="$SLURM_SUBMIT_DIR
 
 echo "Configuring enviroment variables"
-cd ../isotonic_contraction/optimize_prestretch_force/cuboid_muscle
+cd ../isotonic_contraction/optimize_prestretch_length/cuboid_muscle
 
 echo "Launching muscle"
-srun python BayesOpt_cuboid_muscle.py &> optimize_isotonic_force.log
+srun python BayesOpt_cuboid_muscle.py &> optimize_isotonic_length.log
 echo "Simulation completed."
