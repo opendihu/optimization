@@ -102,8 +102,8 @@ def callback_function_contraction(raw_data):
     average_z_start += z_data[i]
     average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
-    average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
 
   length_of_muscle = np.abs(average_z_end - average_z_start)
   print("length of muscle: ", length_of_muscle)
