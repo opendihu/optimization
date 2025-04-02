@@ -15,6 +15,7 @@ This computes everything in serial and therefore will take a long time. If you c
 ```
 mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force 10.0
 ```
+Instead of 16 rangs you can also choose any other number.
 
 ## Optimization
 With this case we can use Bayesian Optimization to optimize the contraction force. This contraction force in a single time step is the average traction in the direction of the fibers at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch force that leads to the greatest contraction force of our given muscle.
