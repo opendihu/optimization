@@ -457,77 +457,57 @@ variables.prestretch_neumann_bc = [{"element": j*mx + i, "constantVector": [0.0,
 
 #with open("mesh","w") as f:
 #  f.write(str(variables.meshes["3Dmesh_quadratic"]))
- 
-def callback_function_prestretch(raw_data):
-  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
-  if n_ranks==1:
-    number_of_nodes = mx * my
-    average_z_start = 0
 
-    z_data = raw_data[0]["data"][0]["components"][2]["values"]
-
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-
+def write_prestretch_file(number_of_nodes, z_data, average_z_start):
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
     average_z_start /= number_of_nodes
- 
-    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch.csv", "a")
+
+    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
     f.write(str(average_z_start))
     f.write(",")
     f.close()
 
-  elif n_ranks==16:
-    number_of_nodes = mx * my
-    average_z_start = 0
-    z_data = raw_data[0]["data"][0]["components"][2]["values"]
+def callback_function_prestretch(raw_data):
+  [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
+  number_of_nodes = mx * my
+  average_z_start = 0
+  z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-    if rank_no < 4:
+  if n_ranks == 2 and rank_no == 0:
+    write_prestretch_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks == 4 and rank_no < 2:
+    write_prestretch_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks % 4 == 0 and rank_no < 4:
+    write_prestretch_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks % 2 == 0 and rank_no < 2:
+    write_prestretch_file(number_of_nodes, z_data, average_z_start)
+  elif rank_no == 0:
+    write_prestretch_file(number_of_nodes, z_data, average_z_start)
 
-      for i in range(number_of_nodes):
-        average_z_start += z_data[i]
-      average_z_start /= number_of_nodes
-  
-      f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
-      f.write(str(average_z_start))
-      f.write(",")
-      f.close()
+def write_contraction_file(number_of_nodes, z_data, average_z_start):
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_start /= number_of_nodes
 
-  else:
-    sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
+    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
+    f.write(str(average_z_start))
+    f.write(",")
+    f.close()
 
 def callback_function_contraction(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
-  if n_ranks == 1:
-    number_of_nodes = mx * my
-    average_z_start = 0
+  number_of_nodes = mx * my
+  average_z_start = 0
+  z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
-    z_data = raw_data[0]["data"][6]["components"][2]["values"]
-
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-
-    average_z_start /= number_of_nodes
- 
-    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction.csv", "a")
-    f.write(str(average_z_start))
-    f.write(",")
-    f.close()
-    
-  elif n_ranks == 16:
-    number_of_nodes = mx * my
-    average_z_start = 0
-
-    z_data = raw_data[0]["data"][6]["components"][2]["values"]
-    
-    if rank_no < 4:
-
-      for i in range(number_of_nodes):
-        average_z_start += z_data[i]
-      average_z_start /= number_of_nodes
-  
-      f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
-      f.write(str(average_z_start))
-      f.write(",")
-      f.close()
-  else:
-    sys.exit("Callback function not available for this n_ranks. Try again in serial or using n_ranks = 16.")
+  if n_ranks == 2 and rank_no == 0:
+    write_contraction_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks == 4 and rank_no < 2:
+    write_contraction_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks % 4 == 0 and rank_no < 4:
+    write_contraction_file(number_of_nodes, z_data, average_z_start)
+  elif n_ranks % 2 == 0 and rank_no < 2:
+    write_contraction_file(number_of_nodes, z_data, average_z_start)
+  elif rank_no == 0:
+    write_contraction_file(number_of_nodes, z_data, average_z_start)
