@@ -12,9 +12,24 @@ It is the parameter in the filename in build_releas: "BayesOpt_outputs{individua
 
 individuality_parameter = sys.argv[1]
 
-os.chdir("build_release")
+####################################################################
+#Customize visualization file here:
 
-with open("BayesOpt_outputs"+individuality_parameter+".csv", "r") as f:
+relative_path_to_data = "build_release"
+data_file_name = "BayesOpt_outputs"+individuality_parameter+".csv"
+x_label = "x"
+y_label = "y"
+####################################################################
+
+if len(sys.argv) == 5:
+    relative_path_to_data = sys.argv[1]
+    data_file_name = sys.argv[2]
+    x_label = sys.argv[3]
+    y_label = sys.argv[4]
+
+os.chdir(relative_path_to_data)
+
+with open(data_file_name, "r") as f:
     reader = csv.reader(f, delimiter=",")
     rows = [row for row in reader]
 
@@ -41,8 +56,8 @@ stddev = np.array(stddev)
 plt.scatter(maximizer, best_f, color="green", label="Maximum", zorder=3)
 plt.plot(x, mean, color="blue", label="GP Mean")
 plt.fill_between(x, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI", color="lightblue")
-plt.xlabel("x")
-plt.ylabel("y")
+plt.xlabel(x_label)
+plt.ylabel(y_label)
 plt.title("Optimization Results")
 plt.legend()
 plt.show()
