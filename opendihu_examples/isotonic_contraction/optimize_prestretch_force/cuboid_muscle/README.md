@@ -20,4 +20,4 @@ python BayesOpt_cuboid_muscle.py
 ```
 This will find the prestretch force that results in the greatest contraction length of the muscle. We optimize the function f:R->R that maps a prestretch force to the length the muscle can contract in a certain amount of time with the given prestretch. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
 
-![](../../../../figures/Figure_optimization_linear.png)
+![](../../../../figures/isotonic_force_1.png)
