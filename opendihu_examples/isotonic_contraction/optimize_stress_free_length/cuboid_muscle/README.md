@@ -22,3 +22,5 @@ With this case we can use Bayesian Optimization to optimize both the contraction
 
 ![](../../../../figures/isotonic_stress_free_absolute_1.png)
 ![](../../../../figures/isotonic_stress_free_relative_1.png)
+
+These muscles have 100 fibers and 100 sarcomeres each. As we can see, the muscle can contract more in 40ms (this is the length of the simulation) if its starting length was shorter and it has been stretched further.

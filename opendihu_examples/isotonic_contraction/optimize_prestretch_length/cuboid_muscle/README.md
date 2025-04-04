@@ -21,3 +21,5 @@ With this case we can use Bayesian Optimization to optimize the contraction leng
 
 
 ![](../../../../figures/isotonic_length_1.png)
+
+This muscle has a starting length of 12cm with 100 fibers and 100 sarcomeres each. As we can see, the muscle can contract more in 40ms (this is the length of the simulation) if it has been stretched further before the contraction process. 
