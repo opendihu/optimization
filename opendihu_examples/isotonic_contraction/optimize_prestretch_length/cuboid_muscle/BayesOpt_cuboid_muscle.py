@@ -163,26 +163,16 @@ def simulation(force):
     print("end simulation")
 
     f = open("muscle_contraction_" + str(force) + "_extension.csv")
-    reader = csv.reader(f)
-    tractionz = []
+    reader = csv.reader(f, delimiter=",")
+    muscle_length_process = []
     for row in reader:
-        tractionz.extend([float(value) if value.strip() else 0 for value in row])
+        for j in row:
+            muscle_length_process.append(j)
+    contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
+    print("The muscle contracted ", contraction)
     f.close()
 
-    f = open("length_after_prestretch_" + str(force) + "_extension.csv")
-    reader = csv.reader(f)
-    for row in reader:
-        length_after_prestretch = row[0]
-    f.close()
-    
-    maxtraction = max(tractionz)
-    print("The maximum traction was ", maxtraction)
-    f = open("muscle_bayes_" + str(force) + "_extension.csv", "a")
-    f.write(str(force) + " " + str(maxtraction) + " " + str(length_after_prestretch))
-    f.write("\n")
-    f.close()
-    return maxtraction
-
+    return contraction
 
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):

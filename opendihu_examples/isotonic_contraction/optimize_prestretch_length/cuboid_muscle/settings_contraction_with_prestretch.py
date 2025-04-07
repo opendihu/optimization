@@ -61,7 +61,7 @@ for j in range(variables.bs_y):
     elasticity_dirichlet_bc[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,prestretch_extension,None,None,None]
 
     contraction_elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
-    contraction_elasticity_dirichlet_bc[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    #contraction_elasticity_dirichlet_bc[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(variables.bs_y):
@@ -108,20 +108,27 @@ def callback_function_contraction(raw_data):
     average_z_start = 0
     average_z_end = 0
 
-    z_data = raw_data[0]["data"][3]["components"][2]["values"]
+    z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
-    average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
- 
-    f = open("muscle_contraction_" + str(prestretch_extension) + "_extension.csv", "a")
-    f.write(str(average_z_start))
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
+
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle: ", length_of_muscle)
+
+  if t == variables.dt_3D:
+    f = open("muscle_contraction_" + str(prestretch_extension) + "_extension.csv", "w")
+    f.write(str(length_of_muscle))
     f.write(",")
-    #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
-    #f.write("\n")
+    f.close()
+  else:
+    f = open("muscle_contraction_" + str(prestretch_extension) + "_extension.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
     f.close()
 
 
