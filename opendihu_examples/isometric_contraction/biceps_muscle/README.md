@@ -17,4 +17,12 @@ mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_p
 ```
 
 ## Optimization
-With this case we can use Bayesian Optimization to optimize the contraction force. This contraction force in a single time step is the average traction in the direction of the fibers at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch force that leads to the greatest contraction force of our given muscle.
+To run an optimization process, choose the optimization model, modify the parameters inside "setup_BayesOpt_biceps_muscle.py" and run
+```
+python BayesOpt_biceps_muscle.py
+```
+With this case we can use Bayesian Optimization to optimize the contraction force. This contraction force in a single time step is the average traction in the direction of the fibers at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch force that leads to the greatest contraction force of our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
+
+```
+To Do
+```
