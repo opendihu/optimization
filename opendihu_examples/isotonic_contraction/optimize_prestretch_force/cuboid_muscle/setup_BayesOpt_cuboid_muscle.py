@@ -29,7 +29,7 @@ num_initial_trials = 2 #this needs to be >=2
 visualize = True
 add_points = False
 lower_bound = 0.0
-upper_bound = 1.0
+upper_bound = 30.0
 
 specific_relative_upper_bound = False
 max_upper_bound = False

@@ -25,7 +25,7 @@ echo "SLURM_NNODES"=$SLURM_NNODES
 echo "working directory="$SLURM_SUBMIT_DIR
 
 echo "Configuring enviroment variables"
-cd ../isometric/cuboid_muscle
+cd ../isometric_contraction/cuboid_muscle
 
 echo "Launching muscle"
 srun python BayesOpt_cuboid_muscle.py &> optimize_isometric_cuboid.log

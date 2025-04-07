@@ -22,7 +22,7 @@ num_consecutive_trials = 3
 #Minor changes:
 fixed_Yvar = 1e-6
 lower_bound = 0.
-upper_bound = 2
+upper_bound = 30
 
 sobol_on = True
 num_initial_trials = 2 #this needs to be >=2
