@@ -23,3 +23,7 @@ This will find the prestretch force that results in the greatest contraction len
 ![](../../../../figures/isotonic_force_1.png)
 
 This muscle has a starting length of 12cm with 100 fibers and 100 sarcomeres each. As we can see, the muscle can contract more in 40ms (this is the length of the simulation) if it has been stretched more before the contraction process. 
+
+![](../../../../figures/isotonic_force_relative.png)
+
+This is the same muscle as before, but now we are looking at the relativ contraction length (contraction length relative to its starting length). Here we see that the maximal relative contraction length is being attained at 0.
