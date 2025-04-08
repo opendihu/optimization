@@ -15,7 +15,7 @@ This computes everything in serial and therefore will take a long time. If you c
 ```
 mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force 10.0
 ```
-Instead of 16 ranks you can also (theoretically) choose any other number. Some numbers are not possible because during the paritioning process some paritions might end up empty, which throws an error. 
+`-n` is the number of MPI ranks that will be used. If you choose, e.g., ,`-n 4`, the domain will be partitioned into 4 subdomains. However, not all numbers of ranks are supported, since some partitions might end up empty, which  will throw an error. 
 
 ## Optimization
 With this case we can use Bayesian Optimization to optimize the contraction force. This contraction force in a single time step is the average traction in the direction of the fibers at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch force that leads to the greatest contraction force of our given muscle.
