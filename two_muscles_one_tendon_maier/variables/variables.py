@@ -92,7 +92,6 @@ approximate_exponential_function = False   # if the exponential function should 
 dynamic = True                      # if the dynamic hyperelasticity solver should be used
 
 # motor unit stimulation times
-firing_times_file = "../../../input/MU_firing_times_real.txt"
 #firing_times_file = "../../../input/MU_firing_times_immediately.txt"
 
 # partitioning
@@ -242,7 +241,8 @@ input_directory = os.path.join(os.environ.get('OPENDIHU_HOME', '../../../../../'
 # cellml_file = input_directory+"/hodgkin_huxley_1952.c"
 cellml_file = input_directory+"/hodgkin_huxley-razumova.cellml"
 fiber_distribution_file = input_directory+"/MU_fibre_distribution_multidomain_67x67_100.txt"
- 
+firing_times_file = input_directory + "/MU_firing_times_real.txt"
+
 
 # neurons and sensors
 # -------------------
