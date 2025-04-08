@@ -267,10 +267,10 @@ config = {
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
 
   "Meshes": meshes,
-  #   "MappingsBetweenMeshes": { 
+  # "MappingsBetweenMeshes": { 
   #     "3Dmesh_1" : ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
   #     "3Dmesh_2" : ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
-
+  # },
   # },
   # "MappingsBetweenMeshes": 
   #   {"fiber{}_{}".format(f,m) : ["3Dmesh_quadratic_{}".format(m)] for f in range(variables.fb_x*variables.fb_y) for m in [1,2]},
@@ -322,7 +322,7 @@ config = {
         "timeStepWidth":            variables.dt_3D,
         "logTimeStepWidthAsKey":    "dt_3D",
         "durationLogKey":           "duration_3D",
-        "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
+        "connectedSlotsTerm1To2":   None,  # transfer stress to MuscleContractionSolver gamma
         "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
         "Term1": { # fibers (FastMonodomainSolver)
@@ -464,94 +464,7 @@ config = {
           "useSinglePrecision":                                 False
         },
 
-        "Term2": { # solid mechanics (MuscleContractionSolver)
-          "MuscleContractionSolver": {
-            "Pmax":                         variables.pmax,
-            # "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
-            "slotNames":                    ["lambdaContraction1", "ldotContraction1", "gammaContraction1", "TContraction1"],
-            "dynamic":                      True,
-
-            "numberTimeSteps":              1,
-            "timeStepOutputInterval":       100,
-            "lambdaDotScalingFactor":       1,
-            "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(fb_x) for fiber_y in range(fb_y)],
-
-            "OutputWriter": [
-              {
-                "format":             "Paraview",
-                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/mechanics_1",
-                "fileNumbering":      "incremental",
-                "binary":             True,
-                "fixedFormat":        False,
-                "onlyNodalValues":    True,
-                "combineFiles":       True
-              }
-            ],
-
-            "DynamicHyperelasticitySolver": {
-              "durationLogKey":         "duration_3D",
-              "logTimeStepWidthAsKey":  "dt_3D",
-              "numberTimeSteps":        1,
-              "materialParameters":     variables.material_parameters,
-              "density":                variables.rho,
-              "timeStepOutputInterval": 1,
-
-              "meshName":                   "3Dmesh_quadratic_1",
-              "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
-
-              "solverName":                 "mechanicsSolver",
-              "displacementsScalingFactor":  1.0,
-              "useAnalyticJacobian":        True,
-              "useNumericJacobian":         False,
-              "dumpDenseMatlabVariables":   False,
-              "loadFactorGiveUpThreshold":  1,
-              "loadFactors":                [],
-              "scaleInitialGuess":          False,
-              "extrapolateInitialGuess":    True,
-              "nNonlinearSolveCalls":       1,
-
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
-              "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
-              "updateDirichletBoundaryConditionsFunction":              None,
-              "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
-              "divideNeumannBoundaryConditionValuesByTotalArea":        True,
-
-              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
-              "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
-              "constantBodyForce":          (0, 0, 0),
-
-              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_1",
-              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log_1.txt",
-              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_1.txt",
-
-              "OutputWriter": [
-                {
-                  "format": "PythonCallback",
-                  "callback": callback_function_contraction_1,
-                  "outputInterval": 1,
-                }
-              ],
-              "pressure":       { "OutputWriter": [] },
-              "dynamic":        { "OutputWriter": [] },
-              "LoadIncrements": { "OutputWriter": [] }
-            }
-          }
-        }
-      }
-    },
-    
-    "Term2": {
-      "Coupling": {
-        "timeStepWidth":            variables.dt_3D,
-        "logTimeStepWidthAsKey":    "dt_3D",
-        "durationLogKey":           "duration_3D",
-        "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
-        "connectedSlotsTerm2To1":   None,   # transfer nothing back
-
-        "Term1": { # fibers (FastMonodomainSolver)
+        "Term2": { # fibers (FastMonodomainSolver)
           "MultipleInstances": { 
             "ranksAllComputedInstances":    list(range(n_ranks)),
             "nInstances":                   1,
@@ -689,7 +602,92 @@ config = {
           "generateGPUSource":                                  True,
           "useSinglePrecision":                                 False
         },
+      },
+    },
+    "Term2": {
+      "Coupling": {
+        "timeStepWidth":            variables.dt_3D,
+        "logTimeStepWidthAsKey":    "dt_3D",
+        "durationLogKey":           "duration_3D",
+        "connectedSlotsTerm1To2":   None,  # transfer stress to MuscleContractionSolver gamma
+        "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
+        "Term1": { # solid mechanics (MuscleContractionSolver)
+          "MuscleContractionSolver": {
+            "Pmax":                         variables.pmax,
+            "slotNames":                    ["lambdaContraction1", "ldotContraction1", "gammaContraction1", "TContraction1"],
+            #"slotNames":                    ["lambda", "ldot", "gamma", "T"],
+            "dynamic":                      True,
+
+            "numberTimeSteps":              1,
+            "timeStepOutputInterval":       100,
+            "lambdaDotScalingFactor":       1,
+            "enableForceLengthRelation":    True,
+            "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(fb_x) for fiber_y in range(fb_y)],
+            "reverseMappingOrder":          True,
+
+            "OutputWriter": [
+              {
+                "format":             "Paraview",
+                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                "filename":           "out/" + scenario_name + "/mechanics_1",
+                "fileNumbering":      "incremental",
+                "binary":             True,
+                "fixedFormat":        False,
+                "onlyNodalValues":    True,
+                "combineFiles":       True
+              }
+            ],
+
+            "DynamicHyperelasticitySolver": {
+              "durationLogKey":         "duration_3D",
+              "logTimeStepWidthAsKey":  "dt_3D",
+              "numberTimeSteps":        1,
+              "materialParameters":     variables.material_parameters,
+              "density":                variables.rho,
+              "timeStepOutputInterval": 1,
+
+              "meshName":                   "3Dmesh_quadratic_1",
+              "inputMeshIsGlobal":          True,
+              "fiberMeshNames":             "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
+              "solverName":                 "mechanicsSolver",
+              "displacementsScalingFactor":  1.0,
+              "useAnalyticJacobian":        True,
+              "useNumericJacobian":         False,
+              "dumpDenseMatlabVariables":   False,
+              "loadFactorGiveUpThreshold":  1,
+              "loadFactors":                [],
+              "scaleInitialGuess":          False,
+              "extrapolateInitialGuess":    True,
+              "nNonlinearSolveCalls":       1,
+
+              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
+              "updateDirichletBoundaryConditionsFunction":              None,
+              "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
+              "divideNeumannBoundaryConditionValuesByTotalArea":        True,
+
+              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "constantBodyForce":          (0, 0, 0),
+
+              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_1",
+              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log_1.txt",
+              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_1.txt",
+
+              "OutputWriter": [
+                {
+                  "format": "PythonCallback",
+                  "callback": callback_function_contraction_1,
+                  "outputInterval": 1,
+                }
+              ],
+              "pressure":       { "OutputWriter": [] },
+              "dynamic":        { "OutputWriter": [] },
+              "LoadIncrements": { "OutputWriter": [] }
+            }
+          }
+        },
         "Term2": { # solid mechanics (MuscleContractionSolver)
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
@@ -702,7 +700,7 @@ config = {
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
             "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(fb_x) for fiber_y in range(fb_y)],
-
+            "reverseMappingOrder":          True,
             "OutputWriter": [
               {
                 "format":             "Paraview",
@@ -726,7 +724,8 @@ config = {
 
               "meshName":                   "3Dmesh_quadratic_2",
               "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+              "fiberMeshNames":             [],                       # fiber meshes that will be used to determine the fiber direction
+              "fiberDirection":             [0,0,1],  
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
               "useAnalyticJacobian":        True,
