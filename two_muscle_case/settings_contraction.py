@@ -76,7 +76,7 @@ def get_fiber_no(fiber_x, fiber_y):
 physical_extent = [3.0, 3.0, 12.0]
 
 physical_offset_1 = [0, 0, 0]
-physical_offset_2 = [0, 0, 12.0]
+physical_offset_2 = [0, 0, 14.0]
 
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
@@ -130,23 +130,23 @@ for fiber_x in range(fb_x):
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc_1 = {}
 elasticity_dirichlet_bc_2 = {}
-k = 0
-
+k1 = 0
+k2=mz-1
 # fix z value on the whole x-y-plane
 for j in range(my):
   for i in range(mx):
-    elasticity_dirichlet_bc_1[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
-    elasticity_dirichlet_bc_2[k*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_1[k1*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_2[k2*mx*my + j*mx + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(my):
-  elasticity_dirichlet_bc_1[k*mx*my + j*mx + 0][0] = 0.0
-  elasticity_dirichlet_bc_2[k*mx*my + j*mx + 0][0] = 0.0
+  elasticity_dirichlet_bc_1[k1*mx*my + j*mx + 0][0] = 0.0
+  elasticity_dirichlet_bc_2[k2*mx*my + j*mx + 0][0] = 0.0
   
 # fix front edge 
 for i in range(mx):
-  elasticity_dirichlet_bc_1[k*mx*my + 0*mx + i][1] = 0.0
-  elasticity_dirichlet_bc_2[k*mx*my + 0*mx + i][1] = 0.0
+  elasticity_dirichlet_bc_1[k1*mx*my + 0*mx + i][1] = 0.0
+  elasticity_dirichlet_bc_2[k2*mx*my + 0*mx + i][1] = 0.0
        
 # set Neumann BC, set traction at the top
 k = nz-1
@@ -513,7 +513,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_1, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
@@ -738,7 +738,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_2, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
