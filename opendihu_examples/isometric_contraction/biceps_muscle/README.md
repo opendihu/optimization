@@ -15,6 +15,7 @@ This computes everything in serial and therefore will take a long time. If you c
 ```
 mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py ramp.py --prestretch_force 10.0
 ```
+`-n` is the number of MPI ranks that will be used. If you choose, e.g., ,`-n 4`, the domain will be partitioned into 4 subdomains. However, not all numbers of ranks are supported, since some partitions might end up empty, which  will throw an error. 
 
 ## Optimization
 To run an optimization process, choose the optimization model, modify the parameters inside "setup_BayesOpt_biceps_muscle.py" and run
