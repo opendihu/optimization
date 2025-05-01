@@ -153,7 +153,8 @@ k = nz-1
 traction_vector = [0, 0, force]     # the traction force in specified in the reference configuration
 
 #elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
-elasticity_neumann_bc = {}
+elasticity_neumann_bc_1 = {}
+elasticity_neumann_bc_2 = {}
 
 # callback for result
 def handle_result_prestretch(result):
@@ -200,64 +201,78 @@ def handle_result_prestretch(result):
 
 
 def callback_function_contraction_1(raw_data):
+  global elasticity_neumann_bc_2
   t = raw_data[0]["currentTime"]
-  if True:
-    number_of_nodes = variables.bs_x * variables.bs_y
-    average_z_start = 0
-    average_z_end = 0
+  number_of_nodes = variables.bs_x * variables.bs_y
+  average_z_start = 0
+  average_z_end = 0
 
-    z_data = raw_data[0]["data"][0]["components"][2]["values"]
+  z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
-    average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
 
-    length_of_muscle = np.abs(average_z_end - average_z_start)
-    print("length of muscle 1 (contraction): ", length_of_muscle)
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle 1 (contraction): ", length_of_muscle)
 
-    if t == variables.dt_3D:
-      f = open("muscle_length_contraction"+individuality_parameter+"_1.csv", "w")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
-    else:
-      f = open("muscle_length_contraction"+individuality_parameter+"_1.csv", "a")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
+  if t == variables.dt_3D:
+    f = open("muscle_length_contraction"+individuality_parameter+"_1.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_length_contraction"+individuality_parameter+"_1.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+
+  force_data = raw_data[0]["data"][6]["components"][2]["values"]
+  for i in range(variables.bs_x):
+    for j in range(variables.bs_y):
+      force = force_data[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i]
+      traction_vector = [0,0,-force]
+      elasticity_neumann_bc_2 = {}#[{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-"}]
 
 def callback_function_contraction_2(raw_data):
+  global elasticity_neumann_bc_1
   t = raw_data[0]["currentTime"]
-  if True:
-    number_of_nodes = variables.bs_x * variables.bs_y
-    average_z_start = 0
-    average_z_end = 0
+  number_of_nodes = variables.bs_x * variables.bs_y
+  average_z_start = 0
+  average_z_end = 0
 
-    z_data = raw_data[0]["data"][0]["components"][2]["values"]
+  z_data = raw_data[0]["data"][0]["components"][2]["values"]
 
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
 
-    average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
 
-    length_of_muscle = np.abs(average_z_end - average_z_start)
-    print("length of muscle 2 (contraction): ", length_of_muscle)
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle 2 (contraction): ", length_of_muscle)
 
-    if t == variables.dt_3D:
-      f = open("muscle_length_contraction"+individuality_parameter+"_2.csv", "w")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
-    else:
-      f = open("muscle_length_contraction"+individuality_parameter+"_2.csv", "a")
-      f.write(str(length_of_muscle))
-      f.write(",")
-      f.close()
+  if t == variables.dt_3D:
+    f = open("muscle_length_contraction"+individuality_parameter+"_2.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_length_contraction"+individuality_parameter+"_2.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+
+  force_data = raw_data[0]["data"][6]["components"][2]["values"]
+  for i in range(variables.bs_x):
+    for j in range(variables.bs_y):
+      force = force_data[j*variables.bs_x + i]
+      traction_vector = [0,0,-force]
+      elasticity_neumann_bc_1 = {}#[{"element": j*variables.bs_x + i, "constantVector": traction_vector, "face": "2+"}]
 
 
 config = {
@@ -514,7 +529,7 @@ config = {
               "nNonlinearSolveCalls":       1,
 
               "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_1, #variables.dirichlet_bc,
-              "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
+              "neumannBoundaryConditions":                              elasticity_neumann_bc_1, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
@@ -739,7 +754,7 @@ config = {
               "nNonlinearSolveCalls":       1,
 
               "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_2, #variables.dirichlet_bc,
-              "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
+              "neumannBoundaryConditions":                              elasticity_neumann_bc_2, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
