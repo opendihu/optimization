@@ -130,6 +130,10 @@ for fiber_x in range(fb_x):
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc_1 = {}
 elasticity_dirichlet_bc_2 = {}
+traction_vector = [0,0,10]
+k=nz-1
+#elasticity_neumann_bc_1 = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True,} for j in range(ny) for i in range(nx)]
+
 k1 = 0
 k2=mz-1
 # fix z value on the whole x-y-plane
@@ -235,7 +239,7 @@ def callback_function_contraction_1(raw_data):
     for j in range(variables.bs_y):
       force = force_data[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i]
       traction_vector = [0,0,-force]
-      elasticity_neumann_bc_2 = {}#[{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-"}]
+      elasticity_neumann_bc_2 = [{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-", "isInReferenceConfiguration": True,}]
 
 def callback_function_contraction_2(raw_data):
   global elasticity_neumann_bc_1
@@ -272,7 +276,7 @@ def callback_function_contraction_2(raw_data):
     for j in range(variables.bs_y):
       force = force_data[j*variables.bs_x + i]
       traction_vector = [0,0,-force]
-      elasticity_neumann_bc_1 = {}#[{"element": j*variables.bs_x + i, "constantVector": traction_vector, "face": "2+"}]
+      elasticity_neumann_bc_1 = [{"element": j*variables.bs_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True,}]
 
 
 config = {
@@ -391,7 +395,7 @@ config = {
                           "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
                           "maximumNumberOfThreads":                     0,
 
-                          "setSpecificStatesCallEnableBegin":       variables.specific_states_call_enable_begin,
+                          "setSpecificStatesCallEnableBegin":       variables.specific_states_call_enable_begin_1,
                           "setSpecificStatesCallFrequency":         variables.specific_states_call_frequency,
                           "setSpecificStatesRepeatAfterFirstCall":  0.01,
                           "setSpecificStatesFrequencyJitter":       [0] ,
