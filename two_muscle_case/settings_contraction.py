@@ -154,11 +154,11 @@ for i in range(mx):
        
 # set Neumann BC, set traction at the top
 k = nz-1
-traction_vector = [0, 0, force]     # the traction force in specified in the reference configuration
+traction_vector = [0, 0, 0]     # the traction force in specified in the reference configuration
 
 #elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
-elasticity_neumann_bc_1 = {}
-elasticity_neumann_bc_2 = {}
+elasticity_neumann_bc_1 = [{"element": j*variables.bs_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for j in range(variables.bs_y) for i in range(variables.bs_x)]
+elasticity_neumann_bc_2 = [{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-", "isInReferenceConfiguration": True} for j in range(variables.bs_y) for i in range(variables.bs_x)]
 
 # callback for result
 def handle_result_prestretch(result):
@@ -239,8 +239,9 @@ def callback_function_contraction_1(raw_data):
     for j in range(variables.bs_y):
       force = force_data[(variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i]
       traction_vector = [0,0,-force]
-      elasticity_neumann_bc_2 = [{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-", "isInReferenceConfiguration": True,}]
-
+      traction_vector[2] += elasticity_neumann_bc_2[i*variables.bs_y+j]["constantVector"][2]
+      elasticity_neumann_bc_2[i*variables.bs_y+j]["constantVector"] = traction_vector
+      
 def callback_function_contraction_2(raw_data):
   global elasticity_neumann_bc_1
   t = raw_data[0]["currentTime"]
@@ -276,7 +277,9 @@ def callback_function_contraction_2(raw_data):
     for j in range(variables.bs_y):
       force = force_data[j*variables.bs_x + i]
       traction_vector = [0,0,-force]
-      elasticity_neumann_bc_1 = [{"element": j*variables.bs_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True,}]
+      traction_vector[2] += elasticity_neumann_bc_1[i*variables.bs_y+j]["constantVector"][2]
+      elasticity_neumann_bc_1[i*variables.bs_y+j]["constantVector"] = traction_vector
+      #print(elasticity_neumann_bc_1[i*variables.bs_y+j]["constantVector"])
 
 
 config = {
