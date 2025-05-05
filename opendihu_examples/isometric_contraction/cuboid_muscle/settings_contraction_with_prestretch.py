@@ -124,7 +124,7 @@ def callback_function_contraction(raw_data):
     average_z_end /= number_of_nodes
  
     f = open("muscle_contraction_" + str(force) + "N.csv", "a")
-    f.write(str(average_z_start))
+    f.write(str(np.abs(average_z_start)))
     f.write(",")
     #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
     #f.write("\n")

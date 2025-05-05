@@ -461,12 +461,13 @@ variables.prestretch_neumann_bc = [{"element": j*mx + i, "constantVector": [0.0,
 def write_prestretch_file(number_of_nodes, z_data, average_z_start):
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    average_z_start /= number_of_nodes
+    
+  average_z_start /= number_of_nodes
 
-    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
-    f.write(str(average_z_start))
-    f.write(",")
-    f.close()
+  f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
+  f.write(str(average_z_start))
+  f.write(",")
+  f.close()
 
 def callback_function_prestretch(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
@@ -488,12 +489,13 @@ def callback_function_prestretch(raw_data):
 def write_contraction_file(number_of_nodes, z_data, average_z_start):
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    average_z_start /= number_of_nodes
+    
+  average_z_start /= number_of_nodes
 
-    f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
-    f.write(str(average_z_start))
-    f.write(",")
-    f.close()
+  f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
+  f.write(str(average_z_start))
+  f.write(",")
+  f.close()
 
 def callback_function_contraction(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]

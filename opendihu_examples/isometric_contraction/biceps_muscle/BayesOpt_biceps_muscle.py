@@ -504,7 +504,7 @@ for i in range(num_iterations):
             break
     else:
         print("Wrong input, used stopping_y instead.")
-        stopping_y = True
+        stopping_xy = True
 
     current_value = new_y.item()
     if current_value > best_value + improvement_threshold:

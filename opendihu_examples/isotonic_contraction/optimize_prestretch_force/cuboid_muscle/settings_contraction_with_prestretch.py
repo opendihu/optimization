@@ -83,12 +83,15 @@ for fiber_x in range(variables.fb_x):
 
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc = {}
+contraction_dirichlet_bc = {}
 k = 0
 
 # fix z value on the whole x-y-plane
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
     elasticity_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+
+    contraction_dirichlet_bc[k*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(variables.bs_y):
@@ -673,7 +676,7 @@ config = {
               "extrapolateInitialGuess":    True,
               "nNonlinearSolveCalls":       1,
 
-              "dirichletBoundaryConditions":                            {}, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
+              "dirichletBoundaryConditions":                            contraction_dirichlet_bc, #elasticity_dirichlet_bc, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              {}, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
