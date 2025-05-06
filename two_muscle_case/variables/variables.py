@@ -9,7 +9,7 @@ else:
     n_ranks = 1
 
 # Time stepping
-dt_3D = 1e-1            # time step of 3D mechanics
+dt_3D = 1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
@@ -83,6 +83,10 @@ input_dir = os.path.join(os.environ.get('OPENDIHU_HOME', '../../../../../'), "ex
 # Fiber activation
 fiber_distribution_file = input_dir + "MU_fibre_distribution_3780.txt"
 firing_times_file = input_dir + "MU_firing_times_always.txt"
-specific_states_call_enable_begin = 1.0                     # time of first fiber activation
-specific_states_call_enable_begin_1 = 40.0
+specific_states_call_enable_begin_2 = 1.0                     # time of first fiber activation
+specific_states_call_enable_begin_1 = end_time
 specific_states_call_frequency = 1e-3                       # frequency of fiber activation
+
+tendon_damping_constant = 1
+tendon_spring_constant = 10
+tendon_spring_simulation = True
