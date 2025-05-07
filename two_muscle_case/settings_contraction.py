@@ -162,9 +162,9 @@ k = nz-1
 traction_vector = [0, 0, 0]     # the traction force in specified in the reference configuration
 
 #elasticity_neumann_bc = [{"element": k*nx*ny + j*nx + i, "constantVector": traction_vector, "face": "2+"} for j in range(ny) for i in range(nx)]
-elasticity_neumann_bc_1 = [{"element": (variables.el_z-1)*variables.el_x*variables.el_y + i*variables.el_y + j, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True}  for i in range(variables.el_x) for j in range(variables.el_y)]
-#elasticity_neumann_bc_2 = [{"element": (variables.bs_z-1)*variables.bs_x*variables.bs_y + j*variables.bs_x + i, "constantVector": traction_vector, "face": "2-", "isInReferenceConfiguration": True} for j in range(variables.bs_y) for i in range(variables.bs_x)]
-elasticity_neumann_bc_2 = {}
+elasticity_neumann_bc_1 = [{"element": (variables.el_z-1)*variables.el_x*variables.el_y + i*variables.el_y + j, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+elasticity_neumann_bc_2 = [{"element": j*variables.el_x + i, "constantVector": traction_vector, "face": "2-", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+#elasticity_neumann_bc_2 = {}
 # callback for result
 def handle_result_prestretch(result):
   data = result[0]
@@ -240,6 +240,14 @@ def callback_function_contraction_1(raw_data):
     f.write(",")
     f.close()
 
+    if not variables.tendon_spring_simulation:
+      force_data = raw_data[0]["data"][6]["components"][2]["values"]
+      for i in range(variables.el_x):
+        for j in range(variables.el_y):
+          force = force_data[i*variables.el_y + j]
+          traction_vector = [0,0,variables.tendon_damping_constant*force]
+          elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+
   #force_data = raw_data[0]["data"][6]["components"][2]["values"]
   #for i in range(variables.bs_x):
   #  for j in range(variables.bs_y):
@@ -304,6 +312,22 @@ def updateNeumannContraction_1(t):
   #for i in range(variables.el_x):
   #  for j in range(variables.el_y):
   #    print(elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"])
+  return config
+
+def updateNeumannContraction_2(t):
+  if variables.tendon_spring_simulation:
+    tendon_length_t = tendon_end_t - tendon_start_t
+    force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
+    traction_vector = [0,0,force]
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
+        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+
+  config = {
+    "InputMeshIsGlobal":  True,
+    "divideNeumannBoundaryConditionValuesByTotalArea": variables.tendon_spring_simulation,
+    "neumannBoundaryConditions":  elasticity_neumann_bc_2
+  }
   return config
 
 config = {
@@ -788,6 +812,7 @@ config = {
               "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_2, #variables.dirichlet_bc,
               "neumannBoundaryConditions":                              elasticity_neumann_bc_2, #elasticity_neumann_bc, #variables.neumann_bc,
               "updateDirichletBoundaryConditionsFunction":              None,
+              "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_2,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
 

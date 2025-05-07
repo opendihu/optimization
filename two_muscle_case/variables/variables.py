@@ -84,7 +84,7 @@ input_dir = os.path.join(os.environ.get('OPENDIHU_HOME', '../../../../../'), "ex
 fiber_distribution_file = input_dir + "MU_fibre_distribution_3780.txt"
 firing_times_file = input_dir + "MU_firing_times_always.txt"
 specific_states_call_enable_begin_2 = 1.0                     # time of first fiber activation
-specific_states_call_enable_begin_1 = end_time
+specific_states_call_enable_begin_1 = 10.0#end_time
 specific_states_call_frequency = 1e-3                       # frequency of fiber activation
 
 tendon_damping_constant = 1
