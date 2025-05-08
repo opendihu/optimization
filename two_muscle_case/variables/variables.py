@@ -32,49 +32,12 @@ fb_points = 100             # number of points per fiber
 fiber_direction_1 = [0, 0, 1] # direction of fiber in element
 fiber_direction_2 = [0, 0, 1]
 
-meshes = { # create 3D mechanics mesh
-    "mesh3D": {
-        "nElements":            [el_x, el_y, el_z],
-        "physicalExtent":       [ex_x, ex_y, ex_z],
-        "physicalOffset":       [0, 0, 0],
-        "logKey":               "mesh3D",
-        "inputMeshIsGlobal":    True,
-        "nRanks":               n_ranks
-    }
-}
+physical_extent = [3.0, 3.0, 12.0]
+physical_offset_1 = [0, 0, 0]
+physical_offset_2 = [0, 0, 14.0]
 
 def get_fiber_no(fiber_x, fiber_y):
     return fiber_x + fiber_y*fb_x
-
-for fiber_x in range(fb_x):
-    for fiber_y in range(fb_y):
-        fiber_no = get_fiber_no(fiber_x, fiber_y)
-        x = ex_x * fiber_x / (fb_x - 1)
-        y = ex_y * fiber_y / (fb_y - 1)
-        nodePositions = [[x, y, ex_z * i / (fb_points - 1)] for i in range(fb_points)]
-        meshName = "fiber{}".format(fiber_no)
-        meshes[meshName] = { # create fiber meshes
-            "nElements":            [fb_points - 1],
-            "nodePositions":        nodePositions,
-            "inputMeshIsGlobal":    True,
-            "nRanks":               n_ranks
-        }
-
-# Boundary conditions
-dirichlet_bc = {} # fix z=0 with dirichlet boundary conditions
-for x in range(bs_x):
-    for y in range(bs_y):
-        dirichlet_bc[x + y*bs_x] = [0.0, 0.0, 0.0, None, None, None]
-
-neumann_bc = [] # add pulling force to z=el_z with neumann boundary conditions
-neumann_force = 0
-for x in range(el_x):
-    for y in range(el_y):
-        neumann_bc += [{
-            "element": x + y*el_x + (el_z-1)*el_y*el_x, 
-            "constantVector": [0, 0, neumann_force], 
-            "face": "2+"
-        }]
 
 # Define directory for cellml files
 import os
