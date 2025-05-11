@@ -1,8 +1,0 @@
-# Here we see the comparison of the isotonic_force and the isotonic_length simulation. We started with prestretch forces and the corresponding contraction lengths of the force simulation and ran the prestretch extension simulations with those extensions that the prestretch force simulation created.
-Prestretch force, Contraction length of force simulation, Contraction length of corresponding length simulation
-1.3602363597601652,0.8266728897068134,0.8274900951598703
-3.856759286789397,0.8479270856451215,0.8487960318315242
-4.789836406707764,0.8564254234293092,0.8573187901095451
-4.89024471058904,0.8573684388244622,0.8582653894620424
-5.0,0.8583945607315879,0.859287112936439
-# As we can see, the error is about 1e-3.

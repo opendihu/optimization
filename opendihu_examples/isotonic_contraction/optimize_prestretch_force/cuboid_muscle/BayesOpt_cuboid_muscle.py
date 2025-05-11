@@ -194,7 +194,7 @@ def simulation(force):
     print("The muscle contracted ", contraction)
     f.close()
 
-    return contraction/length_after_prestretch
+    return contraction
 
 
 #The BO needs a Gaussian Process as statistical model, which is being created here.
