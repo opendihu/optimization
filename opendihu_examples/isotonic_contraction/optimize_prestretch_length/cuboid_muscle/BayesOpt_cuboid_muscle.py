@@ -20,63 +20,54 @@ from botorch.models.transforms.input import Normalize
 from botorch.models.transforms.outcome import Standardize
 import time
 import signal
+import setup_BayesOpt_cuboid_muscle
 
-"""
-This is a file to carry out Bayesian Optimization for the cuboid muscle simulation in OpenDiHu.
-If you want to call this file, you have two options:
->python BayesOpt.py
-or
->python BayesOpt.py matern 0.5 const fixed_noise es stopping_xy
-You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
-of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
-also doesn't matter.
-The options:
-For the kernel: "matern 0.5" "matern 1.5" "matern 2.5" "rbf"
-For the mean: "const" "zero"
-For the noise: "fixed_noise" "variable_noise"
-For the acquisition function: "ei" "es" "kg" "pi"
-For the stopping criterion: "stopping_xy" "stopping_y"
-"""
+
+#If you want to call this file, you have two options:
+#>python BayesOpt.py
+#or
+#>python BayesOpt.py matern 1.5 const fixed_noise ei stopping_xy
+#You can change these inputs to any ones of it kind, see options below. A chosen option becomes True, every other option
+#of this kind becomes False. You can leave any option out, then the current setup in here is being chosen. The order
+#also doesn't matter.
+
 ########################################################################################################################
 #Customize code here
 
-#Major changes:
-nu = 1.5
-matern = False
-rbf = False
+nu = setup_BayesOpt_cuboid_muscle.nu
+matern = setup_BayesOpt_cuboid_muscle.matern
+rbf = setup_BayesOpt_cuboid_muscle.rbf
 
-const = False
-zero = False
+const = setup_BayesOpt_cuboid_muscle.const
+zero = setup_BayesOpt_cuboid_muscle.zero
 
-fixed_noise = False
-variable_noise = False
+fixed_noise = setup_BayesOpt_cuboid_muscle.fixed_noise
+variable_noise = setup_BayesOpt_cuboid_muscle.variable_noise
 
-EI = False
-PI = False
-KG = False
-ES = False
+EI = setup_BayesOpt_cuboid_muscle.EI
+PI = setup_BayesOpt_cuboid_muscle.PI
+KG = setup_BayesOpt_cuboid_muscle.KG
+ES = setup_BayesOpt_cuboid_muscle.ES
 
-stopping_y = False
-improvement_threshold = 1e-4
-stopping_xy = False
-x_range = 5e-2
-num_consecutive_trials = 3
+stopping_y = setup_BayesOpt_cuboid_muscle.stopping_y
+improvement_threshold = setup_BayesOpt_cuboid_muscle.improvement_threshold
+stopping_xy = setup_BayesOpt_cuboid_muscle.stopping_xy
+x_range = setup_BayesOpt_cuboid_muscle.x_range
+num_consecutive_trials = setup_BayesOpt_cuboid_muscle.num_consecutive_trials
 
-#Minor changes:
-fixed_Yvar = 1e-6
-lower_bound = 0.0
-sobol_on = True
-num_initial_trials = 2 #this needs to be >=2
-visualize = True
-add_points = False
-upper_bound = 30
-specific_relative_upper_bound = False
-max_upper_bound = False
-relative_prestretch_min = 1.5
-relative_prestretch_max = 1.6
+fixed_Yvar = setup_BayesOpt_cuboid_muscle.fixed_Yvar
+lower_bound = setup_BayesOpt_cuboid_muscle.lower_bound
+sobol_on = setup_BayesOpt_cuboid_muscle.sobol_on
+num_initial_trials = setup_BayesOpt_cuboid_muscle.num_initial_trials
+visualize = setup_BayesOpt_cuboid_muscle.visualize
+add_points = setup_BayesOpt_cuboid_muscle.add_points
+upper_bound = setup_BayesOpt_cuboid_muscle.upper_bound
+specific_relative_upper_bound = setup_BayesOpt_cuboid_muscle.specific_relative_upper_bound
+max_upper_bound = setup_BayesOpt_cuboid_muscle.max_upper_bound
+relative_prestretch_min = setup_BayesOpt_cuboid_muscle.relative_prestretch_min
+relative_prestretch_max = setup_BayesOpt_cuboid_muscle.relative_prestretch_max
 ########################################################################################################################
 
-#This interprets the custom inputs for the BO model
 inputs = [item.lower() for item in sys.argv]
 if len(inputs) > 0:
     if "matern" in inputs:
@@ -121,8 +112,7 @@ if len(inputs) > 0:
         stopping_xy = True
 
 
-#We need to write the generated data into files. To see the difference between the resulting files, we add a individuality 
-#parameter in the filename, which we create here. 
+
 global_individuality_parameter = ""
 title = ""
 if matern:
@@ -163,30 +153,21 @@ elif stopping_xy:
     title = title + "XY-Stopping"
 
 
-#This is the method that evaluates the function we want to optimize.
+
 def simulation(force):
     force = force.numpy()[0]
     print("start simulation with force", force)
-    individuality_parameter = str(int(time.time()))+str(force)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force} {individuality_parameter}")
+    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force}")
     subprocess.run(command)
 
     print("end simulation")
 
-    f = open("muscle_length_prestretch"+individuality_parameter+".csv")
-    reader = csv.reader(f, delimiter=",")
-    for row in reader:
-        prestretch = float(row[1]) - float(row[0])
-        print("The muscle was stretched ", prestretch)
-    f.close()
-
-    f = open("muscle_length_contraction"+individuality_parameter+".csv")
+    f = open("muscle_contraction_" + str(force) + "_extension.csv")
     reader = csv.reader(f, delimiter=",")
     muscle_length_process = []
     for row in reader:
         for j in row:
             muscle_length_process.append(j)
-        
     contraction = float(muscle_length_process[0]) - float(muscle_length_process[-2])
     print("The muscle contracted ", contraction)
     f.close()
@@ -194,7 +175,6 @@ def simulation(force):
     return contraction
 
 
-#The BO needs a Gaussian Process as statistical model, which is being created here.
 class CustomSingleTaskGP(SingleTaskGP):
     def __init__(self, train_X, train_Y):
         train_Yvar = torch.full_like(train_Y, fixed_Yvar, dtype=torch.double)
@@ -240,13 +220,13 @@ def handler(signum, frame):
     raise TimeoutException()
 
 
-#This is the function that only stretches a muscle.
+
 def find_relative_prestretch(force):
     individuality_parameter = str(int(time.time()))+"_"+str(force)
     command = shlex.split(f"./incompressible_mooney_rivlin_prestretch_only ../prestretch_tensile_test.py incompressible_mooney_rivlin_prestretch_only {force} {individuality_parameter}")
     
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(15) #After 15 seconds without feedback, the alarm activates
+    signal.alarm(10)
 
     try:
         subprocess.run(command)
@@ -265,8 +245,6 @@ def find_relative_prestretch(force):
 
     return relative_prestretch
 
-
-#To find out how far we can stretch the muscle without breaking, we use this function.
 def find_max_upper_bound():
     lower_guess = 0
     upper_guess = 10
@@ -289,12 +267,10 @@ def find_max_upper_bound():
 
     return lower_guess
     
-
-#If we want to see whith which force we have to stretch the muscle to get a certain length, we can use this function.
 def find_specific_upper_bound():
     lower_guess = 0
     upper_guess = 10
-    relative_prestretch_low = 1
+    relative_prestretch_low = 0
     relative_prestretch_up = find_relative_prestretch(upper_guess)
 
     while (relative_prestretch_low < relative_prestretch_min or relative_prestretch_low > relative_prestretch_max) and (relative_prestretch_up < relative_prestretch_min or relative_prestretch_up > relative_prestretch_max):
@@ -320,7 +296,6 @@ def find_specific_upper_bound():
 
 os.chdir("build_release")
 
-#Finds the upper bound
 if specific_relative_upper_bound:
     upper_bound = find_specific_upper_bound()
 elif max_upper_bound:
@@ -328,7 +303,6 @@ elif max_upper_bound:
 
 starting_time = time.time()
 
-#Chooses the initial query points for BO and evaluates them
 sobol = torch.quasirandom.SobolEngine(dimension=1, scramble=True)
 if sobol_on:
     initial_x = sobol.draw(num_initial_trials, dtype=torch.double)
@@ -349,16 +323,15 @@ for force in initial_x:
     initial_y = torch.cat([initial_y, y])
 initial_yvar = torch.full_like(initial_y, fixed_Yvar, dtype=torch.double)
 
-initial_x_vals = initial_x.clone()
-initial_y_vals = initial_y.clone()
 
-#Initializes the GP and calculates its posterior distribution
 gp = CustomSingleTaskGP(initial_x, initial_y)
 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
 fit_gpytorch_mll(mll)
 
+print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
+#print("Outputscale:", gp.covar_module.outputscale.item())
+print("Noise:", gp.likelihood.noise.mean().item())
 
-#This starts the optimization loop. It is being carried out 100 times, unless the stopping criterion is being triggered.
 num_iterations = 100
 best_value = -float('inf')
 no_improvement_trials = 0
@@ -446,15 +419,18 @@ for i in range(num_iterations):
     variance = posterior.variance.squeeze(-1)
     stddev = torch.sqrt(variance).detach().numpy()
 
+    print("Lengthscale:", gp.covar_module.base_kernel.lengthscale.item())
+    #print("Outputscale:", gp.covar_module.outputscale.item())
+    print("Noise:", gp.likelihood.noise.mean().item())
+
     if visualize:
         plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
         plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("prestretch extension (cm)")
+        plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
@@ -511,17 +487,12 @@ variance = posterior.variance.squeeze(-1)
 stddev = torch.sqrt(variance).detach().numpy()
 
 if visualize:
-    max_index = torch.argmax(initial_y)
-    max_x = initial_x[max_index]
-    max_y = initial_y[max_index]
     plt.scatter(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", label="Trials", zorder=3)
     plt.plot(initial_x.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y.numpy(), color="red", linestyle="", markersize=3)
     plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
     plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-    plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-    plt.scatter(max_x.numpy()*(upper_bound-lower_bound)+lower_bound, max_y.numpy(), color="green", label="Maximum", zorder=3)
-    plt.xlabel("prestretch force")
-    plt.ylabel("contraction of muscle")
+    plt.xlabel("prestretch extension (cm)")
+    plt.ylabel("muscle force (N)")
     plt.title("Optimization Results")
     plt.gcf().suptitle(title, fontsize=8)
     plt.legend()
@@ -532,7 +503,6 @@ if add_points:
 else:
     continuing = "n"
 
-#In case you want to add another point:
 while continuing == "y":
     candidate = input("Which point do you want to add?")
     candidate = torch.tensor([[float(candidate)]], dtype=torch.double)
@@ -568,9 +538,8 @@ while continuing == "y":
         plt.plot(x_query*(upper_bound-lower_bound)+lower_bound, mean)
         plt.scatter(candidate.numpy()*(upper_bound-lower_bound)+lower_bound, new_y.numpy(), color="green", s=30, zorder=5, label="New query point")
         plt.fill_between(x_query.numpy().squeeze()*(upper_bound-lower_bound)+lower_bound, mean - 2 * stddev, mean + 2 * stddev, alpha=0.3, label="GP 95% CI")
-        plt.scatter(initial_x_vals.numpy()*(upper_bound-lower_bound)+lower_bound, initial_y_vals.numpy(), color="orange", label="Initial values", zorder=3)
-        plt.xlabel("prestretch force")
-        plt.ylabel("contraction of muscle")
+        plt.xlabel("prestretch extension (cm)")
+        plt.ylabel("muscle force (N)")
         plt.title("Optimization Process")
         plt.gcf().suptitle(title, fontsize=8)
         plt.legend()
