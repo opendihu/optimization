@@ -489,7 +489,6 @@ def callback_function_prestretch(raw_data):
 def write_contraction_file(number_of_nodes, z_data, average_z_start):
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    
   average_z_start /= number_of_nodes
 
   f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
