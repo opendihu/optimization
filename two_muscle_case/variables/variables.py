@@ -22,6 +22,9 @@ rho = 10                                                    # density of the mus
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am * Cm)
 
+force = 10.0
+scenario_name = "incompressible_mooney_rivlin"
+
 # Meshes
 ex_x, ex_y, ex_z = 3.0, 3.0, 12.0               # extent of muscle
 el_x, el_y, el_z = 3, 3, 12                     # number of elements
@@ -52,4 +55,4 @@ specific_states_call_frequency = 1e-3                       # frequency of fiber
 
 tendon_damping_constant = 1
 tendon_spring_constant = 10
-tendon_spring_simulation = True
+tendon_spring_simulation = False

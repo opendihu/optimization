@@ -30,6 +30,9 @@ tendon_length_t = tendon_length_0
 tendon_start_t = variables.physical_extent[2]
 tendon_end_t = variables.physical_offset_2[2]
 
+force_data_muscle_1 = []
+force_data_muscle_2 = []
+
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
@@ -141,7 +144,7 @@ def handle_result_prestretch(result):
 
 
 def callback_function_contraction_1(raw_data):
-  global elasticity_neumann_bc_2, tendon_start_t
+  global elasticity_neumann_bc_2, tendon_start_t, force_data_muscle_1
   t = raw_data[0]["currentTime"]
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
@@ -171,18 +174,11 @@ def callback_function_contraction_1(raw_data):
     f.write(",")
     f.close()
 
-    if not variables.tendon_spring_simulation:
-      force_data = raw_data[0]["data"][6]["components"][2]["values"]
-      for i in range(variables.el_x):
-        for j in range(variables.el_y):
-          force = force_data[i*variables.el_y + j]
-          traction_vector = [0,0,variables.tendon_damping_constant*force]
-          elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
-
+  force_data_muscle_1 = raw_data[0]["data"][6]["components"][2]["values"]
 
       
 def callback_function_contraction_2(raw_data):
-  global elasticity_neumann_bc_1, tendon_end_t
+  global elasticity_neumann_bc_1, tendon_end_t, force_data_muscle_2
   t = raw_data[0]["currentTime"]
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
@@ -212,17 +208,17 @@ def callback_function_contraction_2(raw_data):
     f.write(",")
     f.close()
 
-  if not variables.tendon_spring_simulation:
-    force_data = raw_data[0]["data"][6]["components"][2]["values"]
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        force = force_data[i*variables.el_y + j]
-        traction_vector = [0,0,variables.tendon_damping_constant*force]
-        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
-    
+  force_data_muscle_2 = raw_data[0]["data"][6]["components"][2]["values"]    
 
 
 def updateNeumannContraction_1(t):
+  if not variables.tendon_spring_simulation:
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
+        force = force_data_muscle_2[i*variables.el_y + j]
+        traction_vector = [0,0,variables.tendon_damping_constant*force]
+        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
+
   if variables.tendon_spring_simulation:
     tendon_length_t = tendon_end_t - tendon_start_t
     force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
@@ -241,6 +237,13 @@ def updateNeumannContraction_1(t):
 
 
 def updateNeumannContraction_2(t):
+  if not variables.tendon_spring_simulation:
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
+        force = force_data_muscle_1[i*variables.el_y + j]
+        traction_vector = [0,0,variables.tendon_damping_constant*force]
+        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+
   if variables.tendon_spring_simulation:
     tendon_length_t = tendon_end_t - tendon_start_t
     force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
