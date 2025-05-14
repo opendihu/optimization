@@ -461,7 +461,6 @@ variables.prestretch_neumann_bc = [{"element": j*mx + i, "constantVector": [0.0,
 def write_prestretch_file(number_of_nodes, z_data, average_z_start):
   for i in range(number_of_nodes):
     average_z_start += z_data[i]
-    
   average_z_start /= number_of_nodes
 
   f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_prestretch_rank" + str(rank_no) + ".csv", "a")
