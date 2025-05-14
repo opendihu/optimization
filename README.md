@@ -17,7 +17,7 @@ Inside "BayesianOptimization" is the setup for a 1D Bayesian Optimization that i
 
 Inside "opendihu_examples" are two categories: "isotonic_contraction" and "isometric_contraction". 
 
-In "isotonic_contraction" we take a muscle and simulate its contraction after activation with their ends being free. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes the muscle's contraction length. 
+In "isotonic_contraction" we take a muscle and simulate its contraction after activation with one end fixed and one end free. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes the muscle's contraction length. 
 
 In "isometric_contraction" we take a muscle and simulate its behaviour and the generated forces with the muscle being activated, but fixed in place on both ends. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes its contraction force. 
 
