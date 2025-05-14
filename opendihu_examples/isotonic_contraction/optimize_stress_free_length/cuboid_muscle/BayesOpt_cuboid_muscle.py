@@ -166,7 +166,6 @@ relative_contraction = []
 
 
 def simulation(starting_length):
-    relative_contraction.append(0/starting_length)
     starting_length = starting_length.numpy()[0]
     print("start simulation with starting_length", starting_length)
     command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py --stress-free {starting_length} --after-prestretch {end_lenth}")
@@ -184,7 +183,7 @@ def simulation(starting_length):
     print("The muscle contracted ", contraction)
     f.close()
 
-    
+    relative_contraction.append(contraction/starting_length)
 
     return contraction
 

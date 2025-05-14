@@ -173,10 +173,13 @@ def simulation(force):
 
     print("end simulation")
 
+    length_after_prestretch = 0
+
     f = open("muscle_length_prestretch"+individuality_parameter+".csv")
     reader = csv.reader(f, delimiter=",")
     for row in reader:
         prestretch = float(row[1]) - float(row[0])
+        length_after_prestretch = float(row[1])
         print("The muscle was stretched ", prestretch)
     f.close()
 

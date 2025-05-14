@@ -18,4 +18,12 @@ mpirun -n 16 ./muscle_contraction_with_prestretch ../settings_contraction_with_p
 `-n` is the number of MPI ranks that will be used. If you choose, e.g., ,`-n 4`, the domain will be partitioned into 4 subdomains. However, not all numbers of ranks are supported, since some partitions might end up empty, which  will throw an error. 
 
 ## Optimization
-With this case we can use Bayesian Optimization to optimize the contraction force. This contraction force in a single time step is the average traction in the direction of the fibers at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch force that leads to the greatest contraction force of our given muscle.
+To run an optimization process, choose the optimization model, modify the parameters inside "setup_BayesOpt_biceps_muscle.py" and run
+```
+python BayesOpt_biceps_muscle.py
+```
+In this case we can use Bayesian Optimization to optimize the contraction force. This contraction force is measured by the average traction in the direction of the fibers (here approximated as [0,0,1]) at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. Each function evaluation requires simulation of the muscle contraction. This way the optimization process outputs the prestretch force that leads to the greatest contraction force for our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
+
+![](../../../figures/isometric_biceps.png)
+
+The muscle's contraction force is the greatest if it has been stretched with about 9.4N before the contraction process and rapidly decreases with larger prestretch forces. 
