@@ -212,19 +212,18 @@ def callback_function_contraction_2(raw_data):
 
 
 def updateNeumannContraction_1(t):
-  if not variables.tendon_spring_simulation:
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        force = force_data_muscle_2[i*variables.el_y + j]
-        traction_vector = [0,0,variables.tendon_damping_constant*force]
-        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
-
   if variables.tendon_spring_simulation:
     tendon_length_t = tendon_end_t - tendon_start_t
     force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
     traction_vector = [0,0,force]
     for i in range(variables.el_x):
       for j in range(variables.el_y):
+        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
+  else:
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
+        force = force_data_muscle_2[i*variables.el_y + j]
+        traction_vector = [0,0,variables.tendon_damping_constant*force]
         elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
 
   config = {
@@ -237,19 +236,18 @@ def updateNeumannContraction_1(t):
 
 
 def updateNeumannContraction_2(t):
-  if not variables.tendon_spring_simulation:
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        force = force_data_muscle_1[i*variables.el_y + j]
-        traction_vector = [0,0,variables.tendon_damping_constant*force]
-        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
-
   if variables.tendon_spring_simulation:
     tendon_length_t = tendon_end_t - tendon_start_t
     force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
     traction_vector = [0,0,force]
     for i in range(variables.el_x):
       for j in range(variables.el_y):
+        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+  else:
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
+        force = force_data_muscle_1[i*variables.el_y + j]
+        traction_vector = [0,0,variables.tendon_damping_constant*force]
         elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
 
   config = {
