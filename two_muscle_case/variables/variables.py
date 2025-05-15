@@ -115,4 +115,4 @@ specific_states_call_frequency = 1e-3                       # frequency of fiber
 
 tendon_damping_constant = 0.8
 tendon_spring_constant = 10
-tendon_spring_simulation = False
+tendon_spring_simulation = True
