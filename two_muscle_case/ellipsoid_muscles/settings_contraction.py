@@ -436,7 +436,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range (variables.n_fibers_left)],
+            "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_left)],
 
             "OutputWriter": [
               {
