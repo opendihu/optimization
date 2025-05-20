@@ -71,7 +71,7 @@ for fiber in fdata_left:
 	npos = [[fdict[ii]['x'],fdict[ii]['y'],fdict[ii]['z']] for ii in range(len(fdict)-1) ]
 	meshName = "fiber{}_1".format(fiber_idx)
 	meshes[meshName] = {
-			"nElements":		    [fb_points_left-1],
+			"nElements":		    [len(npos)-1],
 			"nodePositions":	    npos,
 			"inputMeshIsGlobal":	True,
 			"nRanks":				n_ranks
@@ -93,7 +93,7 @@ for fiber in fdata_right:
 	npos = [[fdict[ii]['x'],fdict[ii]['y'],fdict[ii]['z']] for ii in range(len(fdict)-1) ]
 	meshName = "fiber{}_2".format(fiber_idx)
 	meshes[meshName] = {
-			"nElements":		    [fb_points_right-1],
+			"nElements":		    [len(npos)-1],
 			"nodePositions":	    npos,
 			"inputMeshIsGlobal":	True,
 			"nRanks":				n_ranks
