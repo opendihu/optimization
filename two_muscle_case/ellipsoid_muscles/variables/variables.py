@@ -17,7 +17,7 @@ dt_3D = 1            # time step of 3D mechanics
 dt_splitting = 2e-3     # time step of strang splitting
 dt_1D = 2e-3            # time step of 1D fiber diffusion
 dt_0D = 1e-3            # time step of 0D cellml problem
-end_time = 40.0         # end time of the simulation 
+end_time = 100.0         # end time of the simulation 
 output_interval = dt_3D # time interval between outputs
 
 # Material parameters
@@ -111,8 +111,8 @@ fiber_distribution_file = input_dir + "MU_fibre_distribution_3780.txt"
 firing_times_file = input_dir + "MU_firing_times_always.txt"
 specific_states_call_enable_begin_2 = 1.0                     # time of first fiber activation
 specific_states_call_enable_begin_1 = end_time#end_time
-specific_states_call_frequency = 1e-3                       # frequency of fiber activation
+specific_states_call_frequency = 1e-5                       # frequency of fiber activation
 
 tendon_damping_constant = 0.8
 tendon_spring_constant = 10
-tendon_spring_simulation = True
+tendon_spring_simulation = False
