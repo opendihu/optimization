@@ -23,52 +23,17 @@ if len(sys.argv) > 3:
 if len(sys.argv) > 4:
   individuality_parameter = sys.argv[2] 
 else:
-  individuality_parameter = str(time.time())
+  individuality_parameter = str(int(time.time()))
 
-tendon_length_0 = variables.physical_offset_2[2] - variables.physical_extent[2]
+tendon_length_0 = variables.physical_offset[2] + variables.zmin - variables.zmax
 tendon_length_t = tendon_length_0
-tendon_start_t = variables.physical_extent[2]
-tendon_end_t = variables.physical_offset_2[2]
+tendon_end_t = variables.physical_offset[2] + variables.zmin
+tendon_start_t = variables.zmax
 
 force_data_muscle_1 = []
 force_data_muscle_2 = []
 
-meshes = { # create 3D mechanics mesh
-    "3Dmesh_quadratic_1": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             variables.physical_extent,            # physical size of the box
-      "physicalOffset":             variables.physical_offset_1,          # offset/translation where the whole mesh begins
-    },
-    "3Dmesh_quadratic_2": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             variables.physical_extent,            # physical size of the box
-      "physicalOffset":             variables.physical_offset_2,                  # offset/translation where the whole mesh begins
-    }
-}
-
-for fiber_x in range(variables.fb_x):
-    for fiber_y in range(variables.fb_y):
-        fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
-        x = variables.physical_extent[0] * fiber_x / (variables.fb_x - 1)
-        y = variables.physical_extent[1] * fiber_y / (variables.fb_y - 1)
-        nodePositions_1 = [[x, y, variables.physical_extent[2] * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
-        nodePositions_2 = [[x, y, variables.physical_offset_2[2]+variables.physical_extent[2] * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
-        meshName_1 = "fiber{}_1".format(fiber_no)
-        meshes[meshName_1] = { # create fiber meshes
-            "nElements":            [variables.fb_points - 1],
-            "nodePositions":        nodePositions_1,
-            "inputMeshIsGlobal":    True,
-            "nRanks":               n_ranks
-        }
-        meshName_2 = "fiber{}_2".format(fiber_no)
-        meshes[meshName_2] = { # create fiber meshes
-            "nElements":            [variables.fb_points - 1],
-            "nodePositions":        nodePositions_2,
-            "inputMeshIsGlobal":    True,
-            "nRanks":               n_ranks
-        }
+meshes = variables.meshes
 
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc_1 = {}
@@ -220,10 +185,13 @@ def updateNeumannContraction_1(t):
       for j in range(variables.el_y):
         elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
   else:
+    traction_vector = [0,0,0]
     for i in range(variables.el_x):
       for j in range(variables.el_y):
         force = force_data_muscle_2[i*variables.el_y + j]
-        traction_vector = [0,0,variables.tendon_damping_constant*force]
+        traction_vector[2] += variables.tendon_damping_constant*force/(variables.el_y*variables.el_x)
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
         elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
 
   config = {
@@ -244,10 +212,13 @@ def updateNeumannContraction_2(t):
       for j in range(variables.el_y):
         elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
   else:
+    traction_vector = [0,0,0]
     for i in range(variables.el_x):
       for j in range(variables.el_y):
         force = force_data_muscle_1[i*variables.el_y + j]
-        traction_vector = [0,0,variables.tendon_damping_constant*force]
+        traction_vector[2] += variables.tendon_damping_constant*force/(variables.el_y*variables.el_x)
+    for i in range(variables.el_x):
+      for j in range(variables.el_y):
         elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
 
   config = {
@@ -335,7 +306,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.fb_x * variables.fb_y,
+                    "nInstances":   variables.n_fibers_left,
 
                     "instances": [{
                       "ranks": [0],
@@ -357,7 +328,7 @@ config = {
 
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                          "meshName":               "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "meshName":               "fiber{}_1".format(fiber), 
                           "stimulationLogFilename": "out/" + scenario_name + "stimulation.log",
 
                           "statesInitialValues":                        [],
@@ -389,13 +360,13 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                    } for fiber in range(variables.n_fibers_left)] 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.fb_x * variables.fb_y, 
+                    "nInstances": variables.n_fibers_left,
 
                     "OutputWriter": [
                       {
@@ -432,14 +403,14 @@ config = {
                         "OutputWriter":                     [],
 
                         "FiniteElementMethod": {
-                          "meshName":           "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "meshName":           "fiber{}_1".format(fiber),
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
                           "slotName":           "vm1"
                         }
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+                    } for fiber in range(variables.n_fibers_left)]
                   }
                 }
               }
@@ -467,7 +438,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+            "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_left)],
 
             "OutputWriter": [
               {
@@ -492,8 +463,7 @@ config = {
 
               "meshName":                   "3Dmesh_quadratic_1",
               "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
-
+              "fiberDirection":             [0,0,1],
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
               "useAnalyticJacobian":        True,
@@ -562,7 +532,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.fb_x * variables.fb_y,
+                    "nInstances":   variables.n_fibers_right,
 
                     "instances": [{
                       "ranks": [0],
@@ -584,7 +554,7 @@ config = {
 
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                          "meshName":               "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "meshName":               "fiber{}_2".format(fiber), 
                           "stimulationLogFilename": "out/" + scenario_name + "stimulation_2.log",
 
                           "statesInitialValues":                        [],
@@ -616,13 +586,13 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                    } for fiber in range(variables.n_fibers_right)] 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.fb_x * variables.fb_y, 
+                    "nInstances": variables.n_fibers_right, 
 
                     "OutputWriter": [
                       {
@@ -659,14 +629,14 @@ config = {
                         "OutputWriter":                     [],
 
                         "FiniteElementMethod": {
-                          "meshName":           "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "meshName":           "fiber{}_2".format(fiber),
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
                           "slotName":           "vm2"
                         }
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]
+                    } for fiber in range(variables.n_fibers_right)]
                   }
                 }
               }
@@ -694,7 +664,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+            "mapGeometryToMeshes":          ["fiber{}_2".format(fiber) for fiber in range(variables.n_fibers_right)],
 
             "OutputWriter": [
               {
@@ -719,7 +689,7 @@ config = {
 
               "meshName":                   "3Dmesh_quadratic_2",
               "inputMeshIsGlobal":          True,
-              "fiberMeshNames":             "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+              "fiberDirection":             [0,0,1],
               "solverName":                 "mechanicsSolver",
               "displacementsScalingFactor":  1.0,
               "useAnalyticJacobian":        True,
