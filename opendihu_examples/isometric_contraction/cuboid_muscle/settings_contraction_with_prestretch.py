@@ -32,16 +32,16 @@ meshes = { # create 3D mechanics mesh
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
       "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
       "physicalExtent":             variables.physical_extent,            # physical size of the box
-      "physicalOffset":             [0, 0, 0],                  # offset/translation where the whole mesh begins
+      "physicalOffset":             [7, 14, -56],                  # offset/translation where the whole mesh begins
     },
 }
 
 for fiber_x in range(variables.fb_x):
     for fiber_y in range(variables.fb_y):
         fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
-        x = variables.el_x * fiber_x / (variables.fb_x - 1)
-        y = variables.el_y * fiber_y / (variables.fb_y - 1)
-        nodePositions = [[x, y, variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
+        x = 4 * fiber_x / (variables.fb_x - 1)
+        y = 5 * fiber_y / (variables.fb_y - 1)
+        nodePositions = [[7+x, 14+y, -56+variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
         meshName = "fiber{}".format(fiber_no)
         meshes[meshName] = { # create fiber meshes
             "nElements":            [variables.fb_points - 1],
