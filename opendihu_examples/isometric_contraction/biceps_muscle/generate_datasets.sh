@@ -27,5 +27,5 @@ echo "working directory="$SLURM_SUBMIT_DIR
 echo "Configuring enviroment variables"
 
 echo "Launching muscle"
-srun python generate_datasets.py &> Generate_datasets.log
+python generate_datasets.py &> Generate_datasets.log
 echo "Simulation completed."
