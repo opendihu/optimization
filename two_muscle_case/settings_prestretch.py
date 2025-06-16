@@ -61,16 +61,20 @@ for i in range(variables.bs_x):
   elasticity_dirichlet_bc_1[k1*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
   elasticity_dirichlet_bc_2[k2*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
-prestretch_traction_vector = [0,0,5]
-traction_vector = [0, 0, 0] #prestretch
+prestretch_force = 5
+prestretch_traction_vector_left = [0,0,-prestretch_force]
+prestretch_traction_vector_right = [0,0,prestretch_force]
 
-prestretch_neumann_bc_1 = [{"element": i*variables.el_y + j, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
-prestretch_neumann_bc_2 = [{"element": (variables.el_z-1)*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+kk1 = 0
+kk2=variables.el_z-1
 
+prestretch_neumann_bc_1 = [{"element": kk1*variables.el_x*variables.el_y + i*variables.el_y + j, "constantVector": prestretch_traction_vector_left, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+prestretch_neumann_bc_2 = [{"element": kk2*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": prestretch_traction_vector_right, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
 
+traction_vector = [0,0,0]
 
-elasticity_neumann_bc_1 = [{"element": (variables.el_z-1)*variables.el_x*variables.el_y + i*variables.el_y + j, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
-elasticity_neumann_bc_2 = [{"element": j*variables.el_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+elasticity_neumann_bc_1 = [{"element": kk2*variables.el_x*variables.el_y + i*variables.el_y + j, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
+elasticity_neumann_bc_2 = [{"element": kk1*variables.el_x*variables.el_y + i*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+", "isInReferenceConfiguration": True} for i in range(variables.el_x) for j in range(variables.el_y)]
 
 
 
@@ -472,19 +476,6 @@ config = {
             "enableForceLengthRelation":    True,
             "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_left)],
 
-            "OutputWriter": [
-              {
-                "format":             "Paraview",
-                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/prestretch_mechanics_1",
-                "fileNumbering":      "incremental",
-                "binary":             True,
-                "fixedFormat":        False,
-                "onlyNodalValues":    True,
-                "combineFiles":       True
-              }
-            ],
-
             "HyperelasticitySolver": {
               "durationLogKey":         "duration_3D",
               "logTimeStepWidthAsKey":  "dt_3D",
@@ -518,11 +509,12 @@ config = {
               "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
               "constantBodyForce":          (0, 0, 0),
 
-              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_1",
+              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_prestretch_1",
               "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log_1.txt",
               "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_1.txt",
 
               "OutputWriter": [
+                {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch_m1", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
               ],
               "pressure":       { "OutputWriter": [] },
               "dynamic":        { "OutputWriter": [] },
@@ -693,19 +685,6 @@ config = {
             "enableForceLengthRelation":    True,
             "mapGeometryToMeshes":          ["fiber{}_2".format(fiber) for fiber in range(variables.n_fibers_right)],
 
-            "OutputWriter": [
-              {
-                "format":             "Paraview",
-                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                "filename":           "out/" + scenario_name + "/prestretch_mechanics_2",
-                "fileNumbering":      "incremental",
-                "binary":             True,
-                "fixedFormat":        False,
-                "onlyNodalValues":    True,
-                "combineFiles":       True
-              }
-            ],
-
             "HyperelasticitySolver": {
               "durationLogKey":         "duration_3D",
               "logTimeStepWidthAsKey":  "dt_3D",
@@ -744,6 +723,7 @@ config = {
               "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_2.txt",
 
               "OutputWriter": [
+                {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/prestretch_m2", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
               ],
               "pressure":       { "OutputWriter": [] },
               "dynamic":        { "OutputWriter": [] },
