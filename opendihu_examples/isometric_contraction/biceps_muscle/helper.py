@@ -485,9 +485,9 @@ def callback_function_prestretch(raw_data):
   elif rank_no == 0:
     write_prestretch_file(number_of_nodes, z_data, average_z_start)
 
-def write_contraction_file(number_of_nodes, z_data, average_z_start):
+def write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start):
   for i in range(number_of_nodes):
-    average_z_start += z_data[i]
+    average_z_start += np.sqrt(x_data[i]**2 + y_data[i]**2 + z_data[i]**2)
   average_z_start /= number_of_nodes
 
   f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
@@ -499,15 +499,17 @@ def callback_function_contraction(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
   number_of_nodes = mx * my
   average_z_start = 0
+  x_data = raw_data[0]["data"][6]["components"][0]["values"]
+  y_data = raw_data[0]["data"][6]["components"][1]["values"]
   z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
   if n_ranks == 2 and rank_no == 0:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start)
   elif n_ranks == 4 and rank_no < 2:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start)
   elif n_ranks % 4 == 0 and rank_no < 4:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start)
   elif n_ranks % 2 == 0 and rank_no < 2:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start)
   elif rank_no == 0:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data, average_z_start)

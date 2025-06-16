@@ -6,7 +6,7 @@ import os
 
 os.chdir("build_release")
 
-forces = np.linspace(0,10,21)
+forces = np.linspace(9.5,10,6)
 
 for force in forces:
 
