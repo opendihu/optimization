@@ -308,7 +308,8 @@ config = {
     "Term1": {
 
   "Coupling": { # prestretch
-    "numberTimeSteps": 1,
+    "timeStepWidth": variables.end_time,
+    "endTime": variables.end_time,
     "connectedSlotsTerm1To2": None,
     "connectedSlotsTerm2To1": None,
     "Term1": {
@@ -403,7 +404,7 @@ config = {
                       {
                         "format":             "Paraview",
                         "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                        "filename":           "out/" + scenario_name + "/fibers_1",
+                        "filename":           "out/" + scenario_name + "/prestretch_fibers_1",
                         "fileNumbering":      "incremental",
                         "binary":             True,
                         "fixedFormat":        False,
@@ -458,7 +459,7 @@ config = {
           "useSinglePrecision":                                 False
         },
 
-        "Term2": { # solid mechanics (MuscleContractionSolver) m1 orestretch
+        "Term2": { # solid mechanics (MuscleContractionSolver) m1 prestretch
           "MuscleContractionSolver": {
             "Pmax":                         variables.pmax,
             # "slotNames":                    ["lambdaContraction", "ldotContraction", "gammaContraction", "TContraction"],
@@ -534,7 +535,7 @@ config = {
     
     "Term2": {
       "Coupling": {
-        "timeStepWidth":            variables.dt_3D,
+        "numberTimeSteps":          1,
         "logTimeStepWidthAsKey":    "dt_3D",
         "durationLogKey":           "duration_3D",
         "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
@@ -624,7 +625,7 @@ config = {
                       {
                         "format":             "Paraview",
                         "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                        "filename":           "out/" + scenario_name + "/fibers_2",
+                        "filename":           "out/" + scenario_name + "/prestretch_fibers_2",
                         "fileNumbering":      "incremental",
                         "binary":             True,
                         "fixedFormat":        False,
@@ -730,7 +731,7 @@ config = {
               "dirichletBoundaryConditions":                            prestretch_dirichlet_bc_2,
               "neumannBoundaryConditions":                              prestretch_neumann_bc_2,
               "updateDirichletBoundaryConditionsFunction":              None,
-              "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_2,
+              "updateNeumannBoundaryConditionsFunction":                None,
               "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
               "divideNeumannBoundaryConditionValuesByTotalArea":        True,
 
