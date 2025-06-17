@@ -373,18 +373,6 @@ config = {
                 "enableForceLengthRelation":    True,
                 "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
 
-                "OutputWriter": [
-                  {
-                    "format":             "Paraview",
-                    "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                    "filename":           "out/" + scenario_name + "/mechanics1",
-                    "fileNumbering":      "incremental",
-                    "binary":             True,
-                    "fixedFormat":        False,
-                    "onlyNodalValues":    True,
-                    "combineFiles":       True
-                  }
-                ],
                 "HyperelasticitySolver": {
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
                   
@@ -461,7 +449,7 @@ config = {
     },
     "Term2": {
       "Coupling": {
-            "numberTimeSteps":              2,
+            "numberTimeSteps":              1,
             "logTimeStepWidthAsKey":    "dt_3D",
             "durationLogKey":           "duration_3D",
             "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
@@ -619,18 +607,6 @@ config = {
                 "enableForceLengthRelation":    True,
                 "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
 
-                "OutputWriter": [
-                  {
-                    "format":             "Paraview",
-                    "outputInterval":     1,#int(1.0 / variables.dt_3D * variables.output_interval),
-                    "filename":           "out/" + scenario_name + "/mechanics2",
-                    "fileNumbering":      "incremental",
-                    "binary":             True,
-                    "fixedFormat":        False,
-                    "onlyNodalValues":    True,
-                    "combineFiles":       True
-                  }
-                ],
                 "HyperelasticitySolver": {
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
                   
