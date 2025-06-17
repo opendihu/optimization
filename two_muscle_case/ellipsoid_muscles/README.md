@@ -11,5 +11,3 @@ To run a single simulation of contracting the muscles, go to build_release and r
 ```
 ./two_muscles_contraction ../settings_contraction.py
 ```
-
-For the simulation of a spring between the muscles, go to variables/variables.py and set ```tendon_spring_simulation = True```. For direct force transfer, set ```tendon_spring_simulation = False```.
