@@ -30,9 +30,6 @@ tendon_length_t = tendon_length_0
 tendon_end_t = variables.physical_offset[2] + variables.zmin
 tendon_start_t = variables.zmax
 
-force_data_muscle_1 = []
-force_data_muscle_2 = []
-
 meshes = variables.meshes
 
 # set Dirichlet BC, fix bottom
@@ -139,13 +136,6 @@ def callback_function_contraction_1(raw_data):
     f.write(",")
     f.close()
 
-  force_data_muscle_1 = raw_data[0]["data"][6]["components"][2]["values"]
-  
-  #f = open("force_data_1_2.csv", "a")
-  #f.write(str(force_data_muscle_1[:variables.el_x*variables.el_y]))
-  #f.write("\n")
-  #f.close()
-
       
 def callback_function_contraction_2(raw_data):
   global tendon_end_t, force_data_muscle_2
@@ -178,68 +168,40 @@ def callback_function_contraction_2(raw_data):
     f.write(",")
     f.close()
 
-  force_data_muscle_2 = raw_data[0]["data"][6]["components"][2]["values"]    
-
-  #f = open("force_data_2_2.csv", "a")
-  #f.write(str(force_data_muscle_2[:variables.el_x*variables.el_y]))
-  #f.write("\n")
-  #f.close()
-
 
 def updateNeumannContraction_1(t):
-  if variables.tendon_spring_simulation:
-    tendon_length_t = tendon_end_t - tendon_start_t
-    if tendon_length_t > tendon_length_0:
-      force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
-    else:
-      force = 0
-    traction_vector = [0,0,force]
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
+  tendon_length_t = tendon_end_t - tendon_start_t
+  if tendon_length_t > tendon_length_0:
+    force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
   else:
-    traction_vector = [0,0,0]
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        force = force_data_muscle_2[i*variables.el_y + j]
-        traction_vector[2] += variables.tendon_damping_constant*force/(variables.el_y*variables.el_x)
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
+    force = 0
+  traction_vector = [0,0,force]
+  for i in range(variables.el_x):
+    for j in range(variables.el_y):
+      elasticity_neumann_bc_1[i*variables.el_y+j]["constantVector"] = traction_vector
 
   config = {
     "InputMeshIsGlobal":  True,
-    "divideNeumannBoundaryConditionValuesByTotalArea": variables.tendon_spring_simulation,
+    "divideNeumannBoundaryConditionValuesByTotalArea": True,
     "neumannBoundaryConditions":  elasticity_neumann_bc_1
-  }
+    }
   return config
 
 
-
 def updateNeumannContraction_2(t):
-  if variables.tendon_spring_simulation:
-    tendon_length_t = tendon_end_t - tendon_start_t    
-    if tendon_length_t > tendon_length_0:
-      force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
-    else:
-      force = 0
-    traction_vector = [0,0,-force]
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+  tendon_length_t = tendon_end_t - tendon_start_t    
+  if tendon_length_t > tendon_length_0:
+    force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
   else:
-    traction_vector = [0,0,0]
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        force = force_data_muscle_1[i*variables.el_y + j]
-        traction_vector[2] += variables.tendon_damping_constant*force/(variables.el_y*variables.el_x)
-    for i in range(variables.el_x):
-      for j in range(variables.el_y):
-        elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
-
+    force = 0
+  traction_vector = [0,0,-force]
+  for i in range(variables.el_x):
+    for j in range(variables.el_y):
+      elasticity_neumann_bc_2[i*variables.el_y+j]["constantVector"] = traction_vector
+  
   config = {
     "InputMeshIsGlobal":  True,
-    "divideNeumannBoundaryConditionValuesByTotalArea": variables.tendon_spring_simulation,
+    "divideNeumannBoundaryConditionValuesByTotalArea": True,
     "neumannBoundaryConditions":  elasticity_neumann_bc_2
   }
   return config

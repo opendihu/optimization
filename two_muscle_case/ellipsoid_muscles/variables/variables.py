@@ -113,6 +113,4 @@ specific_states_call_enable_begin_2 = 1.0                     # time of first fi
 specific_states_call_enable_begin_1 = end_time
 specific_states_call_frequency = 1e-5                       # frequency of fiber activation
 
-tendon_damping_constant = 0.8
 tendon_spring_constant = 10
-tendon_spring_simulation = True
