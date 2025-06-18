@@ -201,7 +201,8 @@ config = {
     }
   },
   "Coupling": {
-    "numberTimeSteps":              1,
+    "timeStepWidth": variables.end_time,
+    "endTime": variables.end_time,
     "connectedSlotsTerm1To2": None,
     "connectedSlotsTerm2To1": None,
 "Term1":{
@@ -918,6 +919,7 @@ config = {
                     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/contraction1", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
                   ],
                   "pressure":       { "OutputWriter": [] },
+                  "dynamic":        { "OutputWriter": [] },
                   "LoadIncrements": { "OutputWriter": [] }
                 }
               }
@@ -1155,6 +1157,7 @@ config = {
                      },
                   ],
                   "pressure":       { "OutputWriter": [] },
+                  "dynamic":        { "OutputWriter": [] },
                   "LoadIncrements": { "OutputWriter": [] }
                 }
               }
