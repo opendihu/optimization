@@ -71,8 +71,8 @@ for fiber_x in range(variables.fb_x):
         }
 
 # set Dirichlet BC, fix bottom
-elasticity_dirichlet_bc_1 = {}
-elasticity_dirichlet_bc_2 = {}
+elasticity_dirichlet_bc_left = {}
+elasticity_dirichlet_bc_right = {}
 
 k_1 = variables.bs_z-1
 k_2 = 0
@@ -80,25 +80,25 @@ k_2 = 0
 # fix z value on the whole x-y-plane
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
-    elasticity_dirichlet_bc_1[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
-    elasticity_dirichlet_bc_2[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(variables.bs_y):
-  elasticity_dirichlet_bc_1[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
+  elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
 
 for j in range(variables.bs_y):
-  elasticity_dirichlet_bc_2[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
+  elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
   
 # fix front edge 
 for i in range(variables.bs_x):
-  elasticity_dirichlet_bc_1[k_1*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
+  elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
        
 for i in range(variables.bs_x):
-  elasticity_dirichlet_bc_2[k_2*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
+  elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
 # set Neumann BC, set traction at the top
 k_1 = 0
@@ -106,8 +106,8 @@ k_2 = variables.el_z-1
 traction_vector_1 = [0, 0, -force]     # the traction force in specified in the reference configuration
 traction_vector_2 = [0, 0, force]
 
-elasticity_neumann_bc_1 = [{"element": k_1*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
-elasticity_neumann_bc_2 = [{"element": k_2*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_left = [{"element": k_1*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_right = [{"element": k_2*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
 
 def callback_function_prestretch_1(raw_data):
   data = raw_data[0]
@@ -416,9 +416,9 @@ config = {
                   "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
                   
                   # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_1,             # the initial Dirichlet boundary conditions that define values for displacements u
+                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_left,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_1,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_left,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
@@ -650,9 +650,9 @@ config = {
                   "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
                   
                   # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_2,             # the initial Dirichlet boundary conditions that define values for displacements u
+                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_right,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_2,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_right,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
