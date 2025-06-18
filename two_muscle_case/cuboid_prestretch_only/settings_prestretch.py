@@ -209,8 +209,7 @@ config = {
   },
 
   "Coupling": {
-    "timeStepWidth": variables.end_time,
-    "endTime": variables.end_time,
+    "numberTimeSteps":              1,
     "connectedSlotsTerm1To2": None,
     "connectedSlotsTerm2To1": None,
     "Term1": {
