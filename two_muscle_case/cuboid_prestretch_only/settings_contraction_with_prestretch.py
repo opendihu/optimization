@@ -698,7 +698,7 @@ config = {
     "connectedSlotsTerm2To1": None,
     "Term1": {
       "Coupling": {
-            "numberTimeSteps":              1,
+            "timeStepWidth":            variables.dt_3D,
             "logTimeStepWidthAsKey":    "dt_3D",
             "durationLogKey":           "duration_3D",
             "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
@@ -713,8 +713,7 @@ config = {
                   "ranks": [0],
 
                   "StrangSplitting": {
-                    "numberTimeSteps":              1,
-
+                    "timeStepWidth":            variables.dt_splitting,
                     "logTimeStepWidthAsKey":    "dt_splitting",
                     "durationLogKey":           "duration_splitting",
                     "timeStepOutputInterval":   100,
@@ -729,7 +728,7 @@ config = {
                           "ranks": [0],
 
                           "Heun": {
-                            "numberTimeSteps":              1,
+                            "timeStepWidth":            variables.dt_0D,
                             "logTimeStepWidthAsKey":    "dt_0D",
                             "durationLogKey":           "duration_0D",
                             "timeStepOutputInterval":   100,
@@ -791,7 +790,7 @@ config = {
                           "ranks": [0],
 
                           "ImplicitEuler": {
-                            "numberTimeSteps":              1,
+                            "timeStepWidth":            variables.dt_1D,
                             "logTimeStepWidthAsKey":    "dt_1D",
                             "durationLogKey":           "duration_1D",
                             "timeStepOutputInterval":   100,
@@ -820,8 +819,8 @@ config = {
                         "OutputWriter": [
                           {
                             "format":             "Paraview",
-                            "outputInterval":     1,
-                            "filename":           "out/" + scenario_name + "/fibers_1",
+                            "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                            "filename":           "out/" + scenario_name + "/fibers1",
                             "fileNumbering":      "incremental",
                             "binary":             True,
                             "fixedFormat":        False,
@@ -858,6 +857,7 @@ config = {
                 "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
 
                 "DynamicHyperelasticitySolver": {
+                  "numberTimeSteps":        1,
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
                   
                   "materialParameters":         variables.material_parameters,          # material parameters of the Mooney-Rivlin material
@@ -929,7 +929,7 @@ config = {
     },
     "Term2": {
       "Coupling": {
-            "numberTimeSteps":              1,
+            "timeStepWidth":            variables.dt_3D,
             "logTimeStepWidthAsKey":    "dt_3D",
             "durationLogKey":           "duration_3D",
             "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
@@ -944,8 +944,7 @@ config = {
                   "ranks": [0],
 
                   "StrangSplitting": {
-                    "numberTimeSteps":              1,
-
+                    "timeStepWidth":            variables.dt_splitting,
                     "logTimeStepWidthAsKey":    "dt_splitting",
                     "durationLogKey":           "duration_splitting",
                     "timeStepOutputInterval":   100,
@@ -960,7 +959,7 @@ config = {
                           "ranks": [0],
 
                           "Heun": {
-                            "numberTimeSteps":              1,
+                            "timeStepWidth":            variables.dt_0D,
                             "logTimeStepWidthAsKey":    "dt_0D",
                             "durationLogKey":           "duration_0D",
                             "timeStepOutputInterval":   100,
@@ -1019,7 +1018,7 @@ config = {
                           "ranks": [0],
 
                           "ImplicitEuler": {
-                            "numberTimeSteps":              1,
+                            "timeStepWidth":            variables.dt_1D,
                             "logTimeStepWidthAsKey":    "dt_1D",
                             "durationLogKey":           "duration_1D",
                             "timeStepOutputInterval":   100,
@@ -1048,7 +1047,7 @@ config = {
                         "OutputWriter": [
                           {
                             "format":             "Paraview",
-                            "outputInterval":     1,
+                            "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
                             "filename":           "out/" + scenario_name + "/fibers2",
                             "fileNumbering":      "incremental",
                             "binary":             True,
@@ -1088,6 +1087,7 @@ config = {
                 "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
 
                 "DynamicHyperelasticitySolver": {
+                  "numberTimeSteps":        1,
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
                   
                   "materialParameters":         variables.material_parameters,          # material parameters of the Mooney-Rivlin material
