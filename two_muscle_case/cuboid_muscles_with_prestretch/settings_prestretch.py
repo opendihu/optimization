@@ -74,40 +74,40 @@ for fiber_x in range(variables.fb_x):
 elasticity_dirichlet_bc_left = {}
 elasticity_dirichlet_bc_right = {}
 
-k_1 = variables.bs_z-1
-k_2 = 0
+k_left = variables.bs_z-1
+k_right = 0
 
 # fix z value on the whole x-y-plane
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
-    elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_left[k_left*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 for j in range(variables.bs_y):
   for i in range(variables.bs_x):
-    elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
+    elasticity_dirichlet_bc_right[k_right*variables.bs_x*variables.bs_y + j*variables.bs_x + i] = [None,None,0.0,None,None,None]
 
 # fix left edge 
 for j in range(variables.bs_y):
-  elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
+  elasticity_dirichlet_bc_left[k_left*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
 
 for j in range(variables.bs_y):
-  elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
+  elasticity_dirichlet_bc_right[k_right*variables.bs_x*variables.bs_y + j*variables.bs_x + 0][0] = 0.0
   
 # fix front edge 
 for i in range(variables.bs_x):
-  elasticity_dirichlet_bc_left[k_1*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
+  elasticity_dirichlet_bc_left[k_left*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
        
 for i in range(variables.bs_x):
-  elasticity_dirichlet_bc_right[k_2*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
+  elasticity_dirichlet_bc_right[k_right*variables.bs_x*variables.bs_y + 0*variables.bs_x + i][1] = 0.0
 
 # set Neumann BC, set traction at the top
-k_1 = 0
-k_2 = variables.el_z-1
+k_left = 0
+k_right = variables.el_z-1
 traction_vector_1 = [0, 0, -force]     # the traction force in specified in the reference configuration
 traction_vector_2 = [0, 0, force]
 
-elasticity_neumann_bc_left = [{"element": k_1*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
-elasticity_neumann_bc_right = [{"element": k_2*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_left = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_right = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
 
 def callback_function_prestretch_1(raw_data):
   data = raw_data[0]
