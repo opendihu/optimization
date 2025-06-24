@@ -292,7 +292,7 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
                       }
                     },
 
@@ -534,7 +534,7 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
                       }
                     },
 
@@ -698,163 +698,162 @@ config = {
     "connectedSlotsTerm2To1": None,
     "Term1": {
       "Coupling": {
-            "timeStepWidth":            variables.dt_3D,
-            "logTimeStepWidthAsKey":    "dt_3D",
-            "durationLogKey":           "duration_3D",
-            "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
-            "connectedSlotsTerm2To1":   None,   # transfer nothing back
+        "timeStepWidth":            variables.dt_3D,
+        "logTimeStepWidthAsKey":    "dt_3D",
+        "durationLogKey":           "duration_3D",
+        "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
+        "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
-            "Term1": { # fibers (FastMonodomainSolver)
-              "MultipleInstances": { 
-                "ranksAllComputedInstances":    list(range(n_ranks)),
-                "nInstances":                   1,
+        "Term1": { # fibers (FastMonodomainSolver)
+          "MultipleInstances": { 
+            "ranksAllComputedInstances":    list(range(n_ranks)),
+            "nInstances":                   1,
 
-                "instances": [{
-                  "ranks": [0],
+            "instances": [{
+              "ranks": [0],
 
-                  "StrangSplitting": {
-                    "timeStepWidth":            variables.dt_splitting,
-                    "logTimeStepWidthAsKey":    "dt_splitting",
-                    "durationLogKey":           "duration_splitting",
-                    "timeStepOutputInterval":   100,
-                    "connectedSlotsTerm1To2":   None,
-                    "connectedSlotsTerm2To1":   None,
+              "StrangSplitting": {
+                "timeStepWidth":            variables.dt_splitting,
+                "logTimeStepWidthAsKey":    "dt_splitting",
+                "durationLogKey":           "duration_splitting",
+                "timeStepOutputInterval":   100,
+                "connectedSlotsTerm1To2":   None, #{0:0,1:1,2:2,3:3,4:4},
+                "connectedSlotsTerm2To1":   None, #{0:0,1:1,2:2,3:3,4:4},
 
-                    "Term1": { # reaction term
-                      "MultipleInstances": {
-                        "nInstances":   variables.fb_x * variables.fb_y,
+                "Term1": { # reaction term
+                  "MultipleInstances": {
+                    "nInstances":   variables.fb_x * variables.fb_y,
 
-                        "instances": [{
-                          "ranks": [0],
+                    "instances": [{
+                      "ranks": [0],
 
-                          "Heun": {
-                            "timeStepWidth":            variables.dt_0D,
-                            "logTimeStepWidthAsKey":    "dt_0D",
-                            "durationLogKey":           "duration_0D",
-                            "timeStepOutputInterval":   100,
+                      "Heun": {
+                        "timeStepWidth":            variables.dt_0D,
+                        "logTimeStepWidthAsKey":    "dt_0D",
+                        "durationLogKey":           "duration_0D",
+                        "timeStepOutputInterval":   100,
 
-                            "initialValues":                [],
-                            "dirichletBoundaryConditions":  {},
-                            "dirichletOutputFilename":      None,
-                            "inputMeshIsGlobal":            True,
-                            "checkForNanInf":               False,
-                            "nAdditionalFieldVariables":    0,
-                            "additionalSlotNames":          [],
-                            "OutputWriter":                 [],
+                        "initialValues":                [],
+                        "dirichletBoundaryConditions":  {},
+                        "dirichletOutputFilename":      None,
+                        "inputMeshIsGlobal":            True,
+                        "checkForNanInf":               False,
+                        "nAdditionalFieldVariables":    0,
+                        "additionalSlotNames":          [],
+                        "OutputWriter":                 [],
 
-                            "CellML": {
-                              "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                              "meshName":               "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                              "stimulationLogFilename": "out/" + scenario_name + "stimulation1.log",
+                        "CellML": {
+                          "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
+                          "meshName":               "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "stimulationLogFilename": "out/" + scenario_name + "stimulation1.log",
 
-                              "statesInitialValues":                        [],
-                              "initializeStatesToEquilibrium":              False,
-                              "initializeStatesToEquilibriumTimeStepWidth": 1e-4,
-                              "optimizationType":                           "vc",
-                              "approximateExponentialFunction":             True,
-                              "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
-                              "maximumNumberOfThreads":                     0,
+                          "statesInitialValues":                        [],
+                          "initializeStatesToEquilibrium":              False,
+                          "initializeStatesToEquilibriumTimeStepWidth": 1e-4,
+                          "optimizationType":                           "vc",
+                          "approximateExponentialFunction":             True,
+                          "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
+                          "maximumNumberOfThreads":                     0,
 
-                              "setSpecificStatesCallEnableBegin":       variables.end_time,
-                              "setSpecificStatesCallFrequency":         variables.specific_states_call_frequency,
-                              "setSpecificStatesRepeatAfterFirstCall":  0.01,
-                              "setSpecificStatesFrequencyJitter":       [0] ,
-                              "setSpecificStatesCallInterval":          0,
-                              "setSpecificStatesFunction":              None,
-                              "additionalArgument":                     None, 
+                          "setSpecificStatesCallEnableBegin":       variables.specific_states_call_enable_begin_1,
+                          "setSpecificStatesCallFrequency":         variables.specific_states_call_frequency,
+                          "setSpecificStatesRepeatAfterFirstCall":  0.01,
+                          "setSpecificStatesFrequencyJitter":       [0] ,
+                          "setSpecificStatesCallInterval":          0,
+                          "setSpecificStatesFunction":              None,
+                          "additionalArgument":                     None, 
 
-                              "mappings": {
-                                ("parameter", 0):               "membrane/i_Stim",
-                                ("parameter", 1):               "Razumova/l_hs",
-                                ("parameter", 2):               ("constant", "Razumova/rel_velo"),
-                                ("connectorSlot", "vm_1"):        "membrane/V",
-                                ("connectorSlot", "stress_1"):    "Razumova/activestress",
-                                ("connectorSlot", "alpha_1"):     "Razumova/activation",
-                                ("connectorSlot", "lambda_1"):    "Razumova/l_hs",
-                                ("connectorSlot", "ldot_1"):      "Razumova/rel_velo"
-                              },
-                              "parametersInitialValues": [0.0, 1.0, 0.0],
-                            },
-                          }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                          "mappings": {
+                            ("parameter", 0):               "membrane/i_Stim",
+                            ("parameter", 1):               "Razumova/l_hs",
+                            ("parameter", 2):               ("constant", "Razumova/rel_velo"),
+                            ("connectorSlot", "vm1"):        "membrane/V",
+                            ("connectorSlot", "stress1"):    "Razumova/activestress",
+                            ("connectorSlot", "alpha1"):     "Razumova/activation",
+                            ("connectorSlot", "lambda1"):    "Razumova/l_hs",
+                            ("connectorSlot", "ldot1"):      "Razumova/rel_velo"
+                          },
+                          "parametersInitialValues": [0.0, 1.0, 0.0],
+                        },
                       }
-                    },
-
-                    "Term2": { # diffusion term
-                      "MultipleInstances": {
-                        "nInstances": variables.fb_x * variables.fb_y, 
-
-
-
-                        "instances": [{
-                          "ranks": [0],
-
-                          "ImplicitEuler": {
-                            "timeStepWidth":            variables.dt_1D,
-                            "logTimeStepWidthAsKey":    "dt_1D",
-                            "durationLogKey":           "duration_1D",
-                            "timeStepOutputInterval":   100,
-
-                            "nAdditionalFieldVariables":    4,
-                            "additionalSlotNames":          ["stress_1", "alpha_1", "lambda_1", "ldot_1"],
-
-                            "solverName":                       "diffusionSolver",
-                            "timeStepWidthRelativeTolerance":   1e-10,
-
-                            "dirichletBoundaryConditions":      {},
-                            "dirichletOutputFilename":          None,
-                            "inputMeshIsGlobal":                True,
-                            "checkForNanInf":                   False,
-                            "OutputWriter":                     [],
-
-                            "FiniteElementMethod": {
-                              "meshName":           "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
-                              "inputMeshIsGlobal":  True,
-                              "solverName":         "diffusionSolver",
-                              "prefactor":          variables.diffusion_prefactor,
-                              "slotName":           "vm_1"
-                            }
-                          }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
-                        "OutputWriter": [
-                          {
-                            "format":             "Paraview",
-                            "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                            "filename":           "out/" + scenario_name + "/fibers1",
-                            "fileNumbering":      "incremental",
-                            "binary":             True,
-                            "fixedFormat":        False,
-                            "onlyNodalValues":    True,
-                            "combineFiles":       True
-                          }
-                        ],
-                      }
-                    }
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
                   }
-                }]
-              },
+                },
 
-              "fiberDistributionFile":                              variables.fiber_distribution_file,
-              "firingTimesFile":                                    variables.firing_times_file,
-              "valueForStimulatedPoint":                            20.0,
-              "onlyComputeIfHasBeenStimulated":                     True,
-              "disableComputationWhenStatesAreCloseToEquilibrium":  True,
-              "neuromuscularJunctionRelativeSize":                  0.0,################################change for no randomness
-              "generateGPUSource":                                  True,
-              "useSinglePrecision":                                 False
-            },
+                "Term2": { # diffusion term
+                  "MultipleInstances": {
+                    "nInstances": variables.fb_x * variables.fb_y, 
 
-            "Term2": { # solid mechanics (MuscleContractionSolver)
-              "MuscleContractionSolver": {
-                "Pmax":                         variables.pmax,
-                "slotNames":                    ["lambda_1", "ldot_1", "gamma_1", "T_1"],
-                "dynamic":                      True,
 
-                "numberTimeSteps":              1,
-                "timeStepOutputInterval":       100,
-                "lambdaDotScalingFactor":       1,
-                "enableForceLengthRelation":    True,
-                "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                    "instances": [{
+                      "ranks": [0],
+
+                      "ImplicitEuler": {
+                        "timeStepWidth":            variables.dt_1D,
+                        "logTimeStepWidthAsKey":    "dt_1D",
+                        "durationLogKey":           "duration_1D",
+                        "timeStepOutputInterval":   100,
+
+                        "nAdditionalFieldVariables":    4,
+                        "additionalSlotNames":          ["stress1", "alpha1", "lambda1", "ldot1"],
+
+                        "solverName":                       "diffusionSolver",
+                        "timeStepWidthRelativeTolerance":   1e-10,
+
+                        "dirichletBoundaryConditions":      {},
+                        "dirichletOutputFilename":          None,
+                        "inputMeshIsGlobal":                True,
+                        "checkForNanInf":                   False,
+                        "OutputWriter":                     [],
+
+                        "FiniteElementMethod": {
+                          "meshName":           "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "inputMeshIsGlobal":  True,
+                          "solverName":         "diffusionSolver",
+                          "prefactor":          variables.diffusion_prefactor,
+                          "slotName":           "vm1"
+                        }
+                      }
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                    "OutputWriter": [
+                      {
+                        "format":             "Paraview",
+                        "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                        "filename":           "out/" + scenario_name + "/fibers1",
+                        "fileNumbering":      "incremental",
+                        "binary":             True,
+                        "fixedFormat":        False,
+                        "onlyNodalValues":    True,
+                        "combineFiles":       True
+                      }
+                    ],
+                  }
+                }
+              }
+            }]
+          },
+
+          "fiberDistributionFile":                              variables.fiber_distribution_file,
+          "firingTimesFile":                                    variables.firing_times_file,
+          "valueForStimulatedPoint":                            20.0,
+          "onlyComputeIfHasBeenStimulated":                     True,
+          "disableComputationWhenStatesAreCloseToEquilibrium":  True,
+          "neuromuscularJunctionRelativeSize":                  0.0,################################change for no randomness
+          "generateGPUSource":                                  True,
+          "useSinglePrecision":                                 False
+        },
+
+        "Term2": { # solid mechanics (MuscleContractionSolver)
+          "MuscleContractionSolver": {
+            "Pmax":                         variables.pmax,
+            "slotNames":                    ["lambdaContraction1", "ldotContraction1", "gammaContraction1", "TContraction1"],
+            "dynamic":                      True,
+
+            "numberTimeSteps":              1,
+            "timeStepOutputInterval":       100,
+            "lambdaDotScalingFactor":       1,
+            "enableForceLengthRelation":    True,
+            "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
 
                 "DynamicHyperelasticitySolver": {
                   "numberTimeSteps":        1,
@@ -929,170 +928,170 @@ config = {
     },
     "Term2": {
       "Coupling": {
-            "timeStepWidth":            variables.dt_3D,
-            "logTimeStepWidthAsKey":    "dt_3D",
-            "durationLogKey":           "duration_3D",
-            "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
-            "connectedSlotsTerm2To1":   None,   # transfer nothing back
+        "timeStepWidth":            variables.dt_3D,
+        "logTimeStepWidthAsKey":    "dt_3D",
+        "durationLogKey":           "duration_3D",
+        "connectedSlotsTerm1To2":   {1:2},  # transfer stress to MuscleContractionSolver gamma
+        "connectedSlotsTerm2To1":   None,   # transfer nothing back
 
-            "Term1": { # fibers (FastMonodomainSolver)
-              "MultipleInstances": { 
-                "ranksAllComputedInstances":    list(range(n_ranks)),
-                "nInstances":                   1,
+        "Term1": { # fibers (FastMonodomainSolver)
+          "MultipleInstances": { 
+            "ranksAllComputedInstances":    list(range(n_ranks)),
+            "nInstances":                   1,
 
-                "instances": [{
-                  "ranks": [0],
+            "instances": [{
+              "ranks": [0],
 
-                  "StrangSplitting": {
-                    "timeStepWidth":            variables.dt_splitting,
-                    "logTimeStepWidthAsKey":    "dt_splitting",
-                    "durationLogKey":           "duration_splitting",
-                    "timeStepOutputInterval":   100,
-                    "connectedSlotsTerm1To2":   None,
-                    "connectedSlotsTerm2To1":   None,
+              "StrangSplitting": {
+                "timeStepWidth":            variables.dt_splitting,
+                "logTimeStepWidthAsKey":    "dt_splitting",
+                "durationLogKey":           "duration_splitting",
+                "timeStepOutputInterval":   100,
+                "connectedSlotsTerm1To2":   None, #{0:0,1:1,2:2,3:3,4:4},
+                "connectedSlotsTerm2To1":   None, #{0:0,1:1,2:2,3:3,4:4},
 
-                    "Term1": { # reaction term
-                      "MultipleInstances": {
-                        "nInstances":   variables.fb_x * variables.fb_y,
+                "Term1": { # reaction term
+                  "MultipleInstances": {
+                    "nInstances":   variables.fb_x * variables.fb_y,
 
-                        "instances": [{
-                          "ranks": [0],
+                    "instances": [{
+                      "ranks": [0],
 
-                          "Heun": {
-                            "timeStepWidth":            variables.dt_0D,
-                            "logTimeStepWidthAsKey":    "dt_0D",
-                            "durationLogKey":           "duration_0D",
-                            "timeStepOutputInterval":   100,
+                      "Heun": {
+                        "timeStepWidth":            variables.dt_0D,
+                        "logTimeStepWidthAsKey":    "dt_0D",
+                        "durationLogKey":           "duration_0D",
+                        "timeStepOutputInterval":   100,
 
-                            "initialValues":                [],
-                            "dirichletBoundaryConditions":  {},
-                            "dirichletOutputFilename":      None,
-                            "inputMeshIsGlobal":            True,
-                            "checkForNanInf":               False,
-                            "nAdditionalFieldVariables":    0,
-                            "additionalSlotNames":          [],
-                            "OutputWriter":                 [],
+                        "initialValues":                [],
+                        "dirichletBoundaryConditions":  {},
+                        "dirichletOutputFilename":      None,
+                        "inputMeshIsGlobal":            True,
+                        "checkForNanInf":               False,
+                        "nAdditionalFieldVariables":    0,
+                        "additionalSlotNames":          [],
+                        "OutputWriter":                 [],
 
-                            "CellML": {
-                              "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                              "meshName":               "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)), 
-                              "stimulationLogFilename": "out/" + scenario_name + "stimulation2.log",
+                        "CellML": {
+                          "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
+                          "meshName":               "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "stimulationLogFilename": "out/" + scenario_name + "stimulation_2.log",
 
-                              "statesInitialValues":                        [],
-                              "initializeStatesToEquilibrium":              False,
-                              "initializeStatesToEquilibriumTimeStepWidth": 1e-4,
-                              "optimizationType":                           "vc",
-                              "approximateExponentialFunction":             True,
-                              "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
-                              "maximumNumberOfThreads":                     0,
+                          "statesInitialValues":                        [],
+                          "initializeStatesToEquilibrium":              False,
+                          "initializeStatesToEquilibriumTimeStepWidth": 1e-4,
+                          "optimizationType":                           "vc",
+                          "approximateExponentialFunction":             True,
+                          "compilerFlags":                              "-fPIC -O3 -march=native -Wno-deprecated_declarations -shared",
+                          "maximumNumberOfThreads":                     0,
 
-                              "setSpecificStatesCallEnableBegin":       variables.end_time,
-                              "setSpecificStatesCallFrequency":         variables.specific_states_call_frequency,
-                              "setSpecificStatesRepeatAfterFirstCall":  0.01,
-                              "setSpecificStatesFrequencyJitter":       [0] ,
-                              "setSpecificStatesCallInterval":          0,
-                              "setSpecificStatesFunction":              None,
-                              "additionalArgument":                     None, 
+                          "setSpecificStatesCallEnableBegin":       variables.specific_states_call_enable_begin_2,
+                          "setSpecificStatesCallFrequency":         variables.specific_states_call_frequency,
+                          "setSpecificStatesRepeatAfterFirstCall":  0.01,
+                          "setSpecificStatesFrequencyJitter":       [0] ,
+                          "setSpecificStatesCallInterval":          0,
+                          "setSpecificStatesFunction":              None,
+                          "additionalArgument":                     None, 
 
-                              "mappings": {
-                                ("parameter", 0):               "membrane/i_Stim",
-                                ("parameter", 1):               "Razumova/l_hs",
-                                ("parameter", 2):               ("constant", "Razumova/rel_velo"),
-                                ("connectorSlot", "vm_2"):        "membrane/V",
-                                ("connectorSlot", "stress_2"):    "Razumova/activestress",
-                                ("connectorSlot", "alpha_2"):     "Razumova/activation",
-                                ("connectorSlot", "lambda_2"):    "Razumova/l_hs",
-                                ("connectorSlot", "ldot_2"):      "Razumova/rel_velo"
-                              },
-                              "parametersInitialValues": [0.0, 1.0, 0.0],
-                            },
-                          }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)] 
+                          "mappings": {
+                            ("parameter", 0):               "membrane/i_Stim",
+                            ("parameter", 1):               "Razumova/l_hs",
+                            ("parameter", 2):               ("constant", "Razumova/rel_velo"),
+                            ("connectorSlot", "vm2"):        "membrane/V",
+                            ("connectorSlot", "stress2"):    "Razumova/activestress",
+                            ("connectorSlot", "alpha2"):     "Razumova/activation",
+                            ("connectorSlot", "lambda2"):    "Razumova/l_hs",
+                            ("connectorSlot", "ldot2"):      "Razumova/rel_velo"
+                          },
+                          "parametersInitialValues": [0.0, 1.0, 0.0],
+                        },
                       }
-                    },
-
-                    "Term2": { # diffusion term
-                      "MultipleInstances": {
-                        "nInstances": variables.fb_x * variables.fb_y, 
-                        "instances": [{
-                          "ranks": [0],
-
-                          "ImplicitEuler": {
-                            "timeStepWidth":            variables.dt_1D,
-                            "logTimeStepWidthAsKey":    "dt_1D",
-                            "durationLogKey":           "duration_1D",
-                            "timeStepOutputInterval":   100,
-
-                            "nAdditionalFieldVariables":    4,
-                            "additionalSlotNames":          ["stress_2", "alpha_2", "lambda_2", "ldot_2"],
-
-                            "solverName":                       "diffusionSolver",
-                            "timeStepWidthRelativeTolerance":   1e-10,
-
-                            "dirichletBoundaryConditions":      {},
-                            "dirichletOutputFilename":          None,
-                            "inputMeshIsGlobal":                True,
-                            "checkForNanInf":                   False,
-                            "OutputWriter":                     [],
-
-                            "FiniteElementMethod": {
-                              "meshName":           "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
-                              "inputMeshIsGlobal":  True,
-                              "solverName":         "diffusionSolver",
-                              "prefactor":          variables.diffusion_prefactor,
-                              "slotName":           "vm_2"
-                            }
-                          }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
-                        "OutputWriter": [
-                          {
-                            "format":             "Paraview",
-                            "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
-                            "filename":           "out/" + scenario_name + "/fibers2",
-                            "fileNumbering":      "incremental",
-                            "binary":             True,
-                            "fixedFormat":        False,
-                            "onlyNodalValues":    True,
-                            "combineFiles":       True
-                          }
-                        ],
-
-                        
-                      }
-                    }
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
                   }
-                }]
-              },
+                },
 
-              "fiberDistributionFile":                              variables.fiber_distribution_file,
-              "firingTimesFile":                                    variables.firing_times_file,
-              "valueForStimulatedPoint":                            20.0,
-              "onlyComputeIfHasBeenStimulated":                     True,
-              "disableComputationWhenStatesAreCloseToEquilibrium":  True,
-              "neuromuscularJunctionRelativeSize":                  0.0,################################change for no randomness
-              "generateGPUSource":                                  True,
-              "useSinglePrecision":                                 False
-            },
+                "Term2": { # diffusion term
+                  "MultipleInstances": {
+                    "nInstances": variables.fb_x * variables.fb_y, 
 
-            "Term2": { # solid mechanics (MuscleContractionSolver)
-              "MuscleContractionSolver": {
-                "Pmax":                         variables.pmax,
-                "slotNames":                    ["lambda_2", "ldot_2", "gamma_2", "T_2"],
-                "dynamic":                      True,
+                    "instances": [{
+                      "ranks": [0],
 
-                "numberTimeSteps":              1,
-                "timeStepOutputInterval":       100,
-                "lambdaDotScalingFactor":       1,
-                "enableForceLengthRelation":    True,
-                "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                      "ImplicitEuler": {
+                        "timeStepWidth":            variables.dt_1D,
+                        "logTimeStepWidthAsKey":    "dt_1D",
+                        "durationLogKey":           "duration_1D",
+                        "timeStepOutputInterval":   100,
 
-                "DynamicHyperelasticitySolver": {
+                        "nAdditionalFieldVariables":    4,
+                        "additionalSlotNames":          ["stress2", "alpha2", "lambda2", "ldot2"],
+
+                        "solverName":                       "diffusionSolver",
+                        "timeStepWidthRelativeTolerance":   1e-10,
+
+                        "dirichletBoundaryConditions":      {},
+                        "dirichletOutputFilename":          None,
+                        "inputMeshIsGlobal":                True,
+                        "checkForNanInf":                   False,
+                        "OutputWriter":                     [],
+
+                        "FiniteElementMethod": {
+                          "meshName":           "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "inputMeshIsGlobal":  True,
+                          "solverName":         "diffusionSolver",
+                          "prefactor":          variables.diffusion_prefactor,
+                          "slotName":           "vm2"
+                        }
+                      }
+                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                    "OutputWriter": [
+                      {
+                        "format":             "Paraview",
+                        "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                        "filename":           "out/" + scenario_name + "/fibers2",
+                        "fileNumbering":      "incremental",
+                        "binary":             True,
+                        "fixedFormat":        False,
+                        "onlyNodalValues":    True,
+                        "combineFiles":       True
+                      }
+                    ],
+                  }
+                }
+              }
+            }]
+          },
+
+          "fiberDistributionFile":                              variables.fiber_distribution_file,
+          "firingTimesFile":                                    variables.firing_times_file,
+          "valueForStimulatedPoint":                            20.0,
+          "onlyComputeIfHasBeenStimulated":                     True,
+          "disableComputationWhenStatesAreCloseToEquilibrium":  True,
+          "neuromuscularJunctionRelativeSize":                  0.0,################################change for no randomness
+          "generateGPUSource":                                  True,
+          "useSinglePrecision":                                 False
+        },
+
+        "Term2": { # solid mechanics (MuscleContractionSolver)
+          "MuscleContractionSolver": {
+            "Pmax":                         variables.pmax,
+            "slotNames":                    ["lambdaContraction2", "ldotContraction2", "gammaContraction2", "TContraction2"],
+            #"slotNames":                    ["lambda", "ldot", "gamma", "T"],
+            "dynamic":                      True,
+
+            "numberTimeSteps":              1,
+            "timeStepOutputInterval":       100,
+            "lambdaDotScalingFactor":       1,
+            "enableForceLengthRelation":    True,
+            "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+
+            "DynamicHyperelasticitySolver": {
                   "numberTimeSteps":        1,
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
                   
                   "materialParameters":         variables.material_parameters,          # material parameters of the Mooney-Rivlin material
                   "displacementsScalingFactor": 1.0,                          # scaling factor for displacements, only set to sth. other than 1 only to increase visual appearance for very small displacements
-                  "residualNormLogFilename":    "log_residual_norm.txt",      # log file where residual norm values of the nonlinear solver will be written
+                  "residualNormLogFilename":    "log_residual_norm.txt",      # lofor fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]g file where residual norm values of the nonlinear solver will be written
                   "useAnalyticJacobian":        True,                         # whether to use the analytically computed jacobian matrix in the nonlinear solver (fast)
                   "useNumericJacobian":         False,                        # whether to use the numerically computed jacobian matrix in the nonlinear solver (slow), only works with non-nested matrices, if both numeric and analytic are enable, it uses the analytic for the preconditioner and the numeric as normal jacobian
                     
