@@ -14,4 +14,4 @@ To run a single simulation of stretching and contracting the muscles, go to buil
 To run a single simulation of only prestretch, go to build_release and run:
 ```
 ./muscle_prestretch ../settings_prestretch.py incompressible_mooney_rivlin 2
-```
+```To modify the prestretch force, change the input parameter `2`.
