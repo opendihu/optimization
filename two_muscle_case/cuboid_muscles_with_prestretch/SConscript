@@ -13,6 +13,5 @@ if not env['no_examples']:
   # create the main executable
   env.Program(target = 'muscle_contraction_with_prestretch', source = "src/contraction_with_prestretch.cpp")
   env.Program(target = 'muscle_prestretch', source = "src/muscle_prestretch.cpp")
-  #env.Program(target = 'incompressible_mooney_rivlin_prestretch_only', source = "src/incompressible_mooney_rivlin_prestretch_only.cpp")
   #env.Program(target = 'compressible_mooney_rivlin', source = "src/compressible_mooney_rivlin.cpp")
   #env.Program(target = 'nearly_incompressible_mooney_rivlin', source = "src/nearly_incompressible_mooney_rivlin.cpp")
