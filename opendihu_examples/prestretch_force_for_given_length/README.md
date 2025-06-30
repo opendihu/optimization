@@ -6,6 +6,9 @@
 - It uses the electrophysiology CellML model "hodgkin_huxley-razumova" and the incompressible mechanics model "Mooney-Rivlin".
 - No preCICE involved. 
 
+## Goal
+We want to stretch a muscle with a force, such that we reach a given length. We use a bisection method to find this force. We guess a force and check how close we are to the given length, and then change our next guess depending on that.
+
 ## How to run
 To run a single simulation of stretching a muscle, go to build_release and run:
 ```
