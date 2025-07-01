@@ -35,7 +35,8 @@ Pairing the EI acquisition function with the RBF-kernel or the Matérn kernel wi
 
 ![](../figures/EI_matern_1.5.png)
 
-As we can see, there are no large areas with high uncertainty where there could be a hidden maximum. Also the mean function is very smooth. These are the critique points at the general recommendation, so this combination is better than that in this regard. But there are also disadvantages. For one, there are a lot of evaluations needed, about 3 more than the general recommendation. Also, the found maximum is not very accurate. That happens because of the low uncertainty around the found maximum, which tells the acquisition function, that it's not very likely that there might be a higher value there.
+As we can see, the new parameter setup leads to a more smooth function without local maxima and reduces the area with high uncertainty. Hence, the new setup is better than the generally recommended setup for this case. 
+But there are also disadvantages. For one, more function evaluations are needed (3 more than in the previous setup). Also, the found maximum is not very accurate. That happens because of the low uncertainty around the found maximum, which tells the acquisition function that it is not very likely that there might be a higher value there.
 
 #### Knowledge Gradient
 This acquisition function is extremely computationally expensive. Therefore this is not recommended.
