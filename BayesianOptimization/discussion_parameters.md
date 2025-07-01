@@ -1,5 +1,5 @@
 ## Options for Bayesian Optimization
-Bayesian Optimzation can optimize very diverse functions depending on its parameters. These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. 
+Bayesian Optimization can optimize very diverse functions depending on its parameters. These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. 
 
 - The options for the kernel are the RBF-kernel and the Matérn kernel with $\nu\in${0.5, 1.5, 2.5}.
 - The possible mean functions are the constant mean and the zero mean.
