@@ -53,3 +53,5 @@ firing_times_file = input_dir + "MU_firing_times_always.txt"
 specific_states_call_enable_begin_1 = 1.0                     # time of first fiber activation
 specific_states_call_enable_begin_2 = 1.0
 specific_states_call_frequency = 1e-3                       # frequency of fiber activation
+
+tendon_spring_constant = 500

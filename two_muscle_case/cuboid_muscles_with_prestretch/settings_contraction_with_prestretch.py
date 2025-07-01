@@ -27,6 +27,10 @@ if len(sys.argv) > 3:
   print("scenario_name: {}".format(scenario_name))
   print("force: {}".format(force))
 
+tendon_start_t = variables.physical_extent_1[2] + variables.physical_offset_1[2]
+tendon_end_t = variables.physical_offset_2[2] - variables.physical_offset_1[2]
+tendon_length_0 = tendon_end_t - tendon_start_t
+
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
       "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
@@ -99,8 +103,14 @@ k_right = variables.el_z-1
 traction_vector_1 = [0, 0, -force]     # the traction force in specified in the reference configuration
 traction_vector_2 = [0, 0, force]
 
-elasticity_neumann_bc_left = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
-elasticity_neumann_bc_right = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_left_prestretch = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_right_prestretch = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+
+k_left = variables.el_z-1
+k_right = 0
+traction_vector = [0,0,0]
+elasticity_neumann_bc_left_contraction = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_right_contraction = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
 
 def callback_function_prestretch_1(raw_data):
   data = raw_data[0]
@@ -156,6 +166,109 @@ def callback_function_prestretch_2(raw_data):
     
     with open("result.csv","a") as f:
       f.write("{},{},{}\n".format(scenario_name,strain,stress))
+
+
+def callback_function_contraction_1(raw_data):
+  global tendon_start_t
+  t = raw_data[0]["currentTime"]
+  number_of_nodes = variables.bs_x * variables.bs_y
+  average_z_start = 0
+  average_z_end = 0
+
+  z_data = raw_data[0]["data"][0]["components"][2]["values"]
+
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
+  tendon_start_t = average_z_end
+
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle 1 (contraction): ", length_of_muscle)
+
+  if t == variables.dt_3D:
+    f = open("muscle_length_contraction_1.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_length_contraction_1.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+
+      
+def callback_function_contraction_2(raw_data):
+  global tendon_end_t
+  t = raw_data[0]["currentTime"]
+  number_of_nodes = variables.bs_x * variables.bs_y
+  average_z_start = 0
+  average_z_end = 0
+
+  z_data = raw_data[0]["data"][0]["components"][2]["values"]
+
+  for i in range(number_of_nodes):
+    average_z_start += z_data[i]
+    average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+
+  average_z_start /= number_of_nodes
+  average_z_end /= number_of_nodes
+  tendon_end_t = average_z_start
+
+  length_of_muscle = np.abs(average_z_end - average_z_start)
+  print("length of muscle 2 (contraction): ", length_of_muscle)
+
+  if t == variables.dt_3D:
+    f = open("muscle_length_contraction_2.csv", "w")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+  else:
+    f = open("muscle_length_contraction_2.csv", "a")
+    f.write(str(length_of_muscle))
+    f.write(",")
+    f.close()
+
+
+def updateNeumannContraction_1(t):
+  tendon_length_t = tendon_end_t - tendon_start_t
+  if tendon_length_t > tendon_length_0:
+    force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
+  else:
+    force = 0
+  traction_vector = [0,0,force]
+  for i in range(variables.el_x):
+    for j in range(variables.el_y):
+      elasticity_neumann_bc_left_contraction[i*variables.el_y+j]["constantVector"] = traction_vector
+
+  config = {
+    "InputMeshIsGlobal":  True,
+    "divideNeumannBoundaryConditionValuesByTotalArea": True,
+    "neumannBoundaryConditions":  elasticity_neumann_bc_left_contraction
+    }
+  return config
+
+
+def updateNeumannContraction_2(t):
+  tendon_length_t = tendon_end_t - tendon_start_t    
+  if tendon_length_t > tendon_length_0:
+    force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
+  else:
+    force = 0
+  traction_vector = [0,0,-force]
+  for i in range(variables.el_x):
+    for j in range(variables.el_y):
+      elasticity_neumann_bc_right_contraction[i*variables.el_y+j]["constantVector"] = traction_vector
+  
+  config = {
+    "InputMeshIsGlobal":  True,
+    "divideNeumannBoundaryConditionValuesByTotalArea": True,
+    "neumannBoundaryConditions":  elasticity_neumann_bc_right_contraction
+  }
+  return config
+
 
 
 config = {
@@ -416,7 +529,7 @@ config = {
                   # boundary and initial conditions
                   "dirichletBoundaryConditions": elasticity_dirichlet_bc_left,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_right,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_right_prestretch,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
@@ -659,7 +772,7 @@ config = {
                   # boundary and initial conditions
                   "dirichletBoundaryConditions": elasticity_dirichlet_bc_right,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_left,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_left_prestretch,               # Neumann boundary conditions that define traction forces on surfaces of elements
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
@@ -901,7 +1014,9 @@ config = {
                   # boundary and initial conditions
                   "dirichletBoundaryConditions": elasticity_dirichlet_bc_left,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   None,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_left_contraction,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_1,
+                  "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
@@ -917,6 +1032,11 @@ config = {
                   "OutputWriter": 
                   [
                     {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/contraction1", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
+                    {
+                      "format": "PythonCallback",
+                      "callback": callback_function_contraction_1,
+                      "outputInterval": 1,
+                    }
                   ],
                   "pressure":       { "OutputWriter": [] },
                   "dynamic":        { "OutputWriter": [] },
@@ -1131,7 +1251,9 @@ config = {
                   # boundary and initial conditions
                   "dirichletBoundaryConditions": elasticity_dirichlet_bc_right,             # the initial Dirichlet boundary conditions that define values for displacements u
                   "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   None,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "neumannBoundaryConditions":   elasticity_neumann_bc_right_contraction,               # Neumann boundary conditions that define traction forces on surfaces of elements
+                  "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_2,
+                  "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
                   "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
                   "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
                   "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
@@ -1154,7 +1276,12 @@ config = {
                      "onlyNodalValues":True, 
                      "combineFiles":True, 
                      "fileNumbering": "incremental",
-                     },
+                    },
+                    {
+                      "format": "PythonCallback",
+                      "callback": callback_function_contraction_2,
+                      "outputInterval": 1,
+                    }
                   ],
                   "pressure":       { "OutputWriter": [] },
                   "dynamic":        { "OutputWriter": [] },
