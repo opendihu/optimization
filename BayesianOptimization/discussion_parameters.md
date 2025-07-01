@@ -12,7 +12,7 @@ The optimal parameter setup is different for every case, and it is difficult to 
 A tentative recommendation is provided in  Lukas Bauer's bachelor thesis (see [tag](https://github.com/opendihu/optimization/releases/tag/Bachelor-thesis)): Matérn kernel with $\nu$=0.5, the constant mean function, fixed noise, the ES acquisition function and the xy-stopping criterion. 
 
 ## Biceps case
-There is the [isometric biceps case](../opendihu_examples/isometric_contraction/biceps_muscle/) for which we want to discuss special parameters. If we use the recommended parameters, we get the following optimization plot: 
+Next we discuss the parameters setup for the [isometric biceps case](../opendihu_examples/isometric_contraction/biceps_muscle/). If we use the parameters according to the general recommendation, we get the following optimization plot: 
 
 ![](../figures/isometric_biceps.png)
 
