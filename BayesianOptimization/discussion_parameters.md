@@ -1,5 +1,5 @@
 ## Options for Bayesian Optimization
-Bayesian Optimization can optimize very diverse functions depending on its parameters. These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. 
+Bayesian Optimization can optimize very diverse functions depending on its parameters. These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. The options come from the python package [botorch](https://botorch.org/) which we are using.
 
 - The options for the kernel are the RBF-kernel and the Matérn kernel with $\nu\in${0.5, 1.5, 2.5}.
 - The possible mean functions are the constant mean and the zero mean.
@@ -42,7 +42,7 @@ But there are also disadvantages. For one, more function evaluations are needed 
 This acquisition function is not recommended because it is extremely computationally expensive. 
 
 #### Probability of Improvement
-With every kernel this acquisition function has the same problem. It doesn't choose any risk at all, but also doesn't get any reward. It always sticks close to the highest already evaluated point and therefore doesn't find the maximum in a reasonable amount of evaluations.
+This kernel has the same problem with all acquisition functions. It uses a low risk - low reward method, because it always sticks close to the highest already evaluated point and therefore does not find the maximum in a reasonable amount of evaluations.
 
 #### Conclusion
 Depending on how important the critique points of large areas of high uncertainty and a non-smooth mean function are to the user, we have three possible recommendations. Either we stick with the general recommendation and ignore the critique points, or we use the modified ES acquisition function to reduce the large areas of high uncertainty. If the critique points are very important, the recommendation is the EI acquisition function with Matérn kernel and $\nu$=1.5.
