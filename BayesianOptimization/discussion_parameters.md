@@ -18,7 +18,7 @@ Next we discuss the parameters setup for the [isometric biceps case](../opendihu
 
 We have found a maximum this way, which is good, but there are some disadvantages of this optimization process.
 - There are very large areas of high uncertainty in which we do not know if we might have a hidden maximum
-- The mean function is not very smooth and the trials are in local maxima, which is not very realistic
+- The mean function is not smooth and has local maxima at the trial points, which looks suspicious
 
 The question now is, if there is a parameter setup that finds the same (or a better) maximum without those disadvantages.
 
