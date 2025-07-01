@@ -3,7 +3,7 @@ Bayesian Optimization can optimize very diverse functions depending on its param
 
 - The options for the kernel are the RBF-kernel and the Matérn kernel with $\nu\in${0.5, 1.5, 2.5}.
 - The possible mean functions are the constant mean and the zero mean.
-- The noise can be chosen fixed or variable.
+- The noise can be set to constant or variable.
 - The implemented acquisition functions are the Expected Improvement (EI), Probability of Improvement (PI), Knowledge Gradient (KG) and Entropy Search (ES).
 - The rest are minor changes like the stopping criterion or the initial values.
 
