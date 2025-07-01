@@ -8,7 +8,8 @@ Bayesian Optimization can optimize very diverse functions depending on its param
 - The rest are minor changes like the stopping criterion or the initial values.
 
 ## General recommendation
-The discussion about the best parameter setup for every case can be complicated and there is generally no best option. There has been a Bachelor thesis that discusses the best parameters for nice functions. The corresponding GitHub repository can be found [here](https://github.com/opendihu/optimization/releases/tag/Bachelor-thesis). The general recommendation of this Bachelor thesis is the Matérn kernel with $\nu$=0.5, the constant mean function, fixed noise, the ES acquisition function and the xy-stopping criterion. But this recommendation is just for the general case of nice functions. If we have a special function of which we have some information, there might be a better option.
+The optimal parameter setup is different for every case, and it is difficult to provide a general recommendation. 
+A tentative recommendation is provided in  Lukas Bauer's bachelor thesis (see [tag](https://github.com/opendihu/optimization/releases/tag/Bachelor-thesis)): Matérn kernel with $\nu$=0.5, the constant mean function, fixed noise, the ES acquisition function and the xy-stopping criterion. 
 
 ## Biceps case
 There is the [isometric biceps case](../opendihu_examples/isometric_contraction/biceps_muscle/) for which we want to discuss special parameters. If we use the recommended parameters, we get the following optimization plot: 
