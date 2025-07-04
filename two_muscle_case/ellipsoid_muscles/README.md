@@ -11,5 +11,3 @@ To run a single simulation of contracting the muscles, go to build_release and r
 ```
 ./two_muscles_contraction ../settings_contraction.py
 ```
-
-## Results
