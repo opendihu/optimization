@@ -11,3 +11,24 @@ To run a single simulation of contracting the muscles, go to build_release and r
 ```
 ./two_muscles_contraction ../settings_contraction.py
 ```
+
+## Results
+To answer the question how coupled ellipsoid muscles behave we have a few results.
+
+The first plot shows the difference between a single muscle and a coupled muscle: 
+
+![](../../figures/comparison_coupled_ellipsoid_muscle_single_muscle.png)
+
+The blue plot is the length over time of an ellipsoid muscle that contracts while being connected to another ellipsoid muscle via a spring with constant $k=500$. The orange plot is the length over time of a single ellipsoid without connections to other muscles. As we can see, the connection dampens the muscle's bouncing effect after the completed contraction. Also, the connected muscle does not contract as much as the single one does.
+
+If we now look at two connected ellipsoid muscles with a spring constant $k=500$, we get the following plot for the lengths over time of the connected muscles:
+
+![](../../figures/1ms_k_500_ellipsoid.png)
+
+The orange line here is the same as the blue line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The spike-effect in the blue line happens because the time steps are chosen quite large.
+
+If we now look at two coupled muscles with the smaller constant $k=10$, we get the following plot:
+
+![](../../figures/k_tendon_10_ellipsoid.png)
+
+We do not get the spike-effect, but with a small constant the muscles bounce much more after the contraction than with a larger constant. We can also see that the muscle can contract much more in comparison to the case in the plot before.
