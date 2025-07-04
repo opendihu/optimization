@@ -1,5 +1,7 @@
 ## Options for Bayesian Optimization
-Bayesian Optimization can optimize very diverse functions depending on its parameters. These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. The options come from the python package [botorch](https://botorch.org/) which we are using.
+Bayesian Optimization can be successfully applied to very diverse functions. However, the optimization results strongly depend on the optimization setup. We use  the python package [botorch](https://botorch.org/), which provides a wide range of tuning options that the user can choose , e.g., there are different options for the kernel, the noise, the acquisition function, etc. 
+
+These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```. 
 
 - The options for the kernel are the RBF-kernel and the Matérn kernel with $\nu\in${0.5, 1.5, 2.5}.
 - The possible mean functions are the constant mean and the zero mean.
