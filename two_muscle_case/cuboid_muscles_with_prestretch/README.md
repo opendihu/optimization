@@ -2,7 +2,7 @@
 
 ## Setup
 - Two dummy cuboid muscle geometries. 
-- The solvers for both stretching and contraction are coupled mechanics solver and fastmonodomain solver. In the prestretch process we set dynamic to `False` and add boundary conditions that simulate the muscles being fixed at one side (the inner side) and being pulled at from the other side (the outer side). In the contraction process we set dynamic to `True` and fix the outer ends of the muscles and let the inner ends free to contract. 
+- The solvers for both stretching and contraction are coupled mechanics solver and fastmonodomain solver. In the prestretch process we set dynamic to `False` and add boundary conditions that simulate the muscles being fixed at one side (the inner side) and being pulled at from the other side (the outer side). In the contraction process we set dynamic to `True`, fix the outer end of the muscles and apply a Neumann boundary condition at the inner end of the muscles. The force in the Neumann boundary condition is updated at every timestep and it is different for each muscle. We compute the force such that it mimics the effect of an immaginary tendon connecting the two muscle. We assume the tendon behaves like a spring and compute the force using Hooke's law: $F_{tendon} = k_{tendon} (l − l_0 )$. The spring's constant is $10N/cm$ by default, but can be modified in ```variables/variables.py``` by changing ```tendon_spring_constant``` to the desired value.
 - It uses the electrophysiology CellML model "hodgkin_huxley-razumova" and the incompressible mechanics model "Mooney-Rivlin".
 - No preCICE involved. 
 
