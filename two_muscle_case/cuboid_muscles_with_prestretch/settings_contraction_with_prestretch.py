@@ -28,8 +28,8 @@ if len(sys.argv) > 3:
   print("force: {}".format(force))
 
 tendon_start_t = variables.physical_extent_1[2] + variables.physical_offset_1[2]
-tendon_end_t = variables.physical_offset_2[2] - variables.physical_offset_1[2]
-tendon_length_0 = tendon_end_t - tendon_start_t
+tendon_end_t = variables.physical_offset_2[2]
+tendon_length_0 = variables.physical_offset_2[2] - variables.physical_extent_1[2] - variables.physical_offset_1[2]
 
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
@@ -109,8 +109,8 @@ elasticity_neumann_bc_right_prestretch = [{"element": k_right*variables.el_x*var
 k_left = variables.el_z-1
 k_right = 0
 traction_vector = [0,0,0]
-elasticity_neumann_bc_left_contraction = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
-elasticity_neumann_bc_right_contraction = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_left_contraction = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
+elasticity_neumann_bc_right_contraction = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
 
 def callback_function_prestretch_1(raw_data):
   data = raw_data[0]
@@ -171,6 +171,7 @@ def callback_function_prestretch_2(raw_data):
 def callback_function_contraction_1(raw_data):
   global tendon_start_t
   t = raw_data[0]["currentTime"]
+  print("time t=",t)
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
   average_z_end = 0
@@ -203,6 +204,7 @@ def callback_function_contraction_1(raw_data):
 def callback_function_contraction_2(raw_data):
   global tendon_end_t
   t = raw_data[0]["currentTime"]
+  print("time t=",t)
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
   average_z_end = 0
@@ -252,7 +254,7 @@ def updateNeumannContraction_1(t):
 
 
 def updateNeumannContraction_2(t):
-  tendon_length_t = tendon_end_t - tendon_start_t    
+  tendon_length_t = tendon_end_t - tendon_start_t
   if tendon_length_t > tendon_length_0:
     force = variables.tendon_spring_constant * (tendon_length_t-tendon_length_0)
   else:
