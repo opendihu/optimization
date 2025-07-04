@@ -27,3 +27,5 @@ In this case we can use Bayesian Optimization to optimize the contraction force.
 ![](../../../figures/isometric_biceps.png)
 
 The muscle's contraction force is the greatest if it has been stretched with about 9.4N before the contraction process and rapidly decreases with larger prestretch forces. 
+
+A discussion about the optimization parameters can be found [`here`](../../../BayesianOptimization/discussion_parameters.md).
