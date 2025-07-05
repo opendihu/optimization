@@ -109,26 +109,28 @@ def callback_function_prestretch(raw_data):
 
 def callback_function_contraction(raw_data):
   t = raw_data[0]["currentTime"]
-  if True:
-    number_of_nodes = variables.bs_x * variables.bs_y
-    average_z_start = 0
-    average_z_end = 0
+  number_of_nodes = variables.bs_x * variables.bs_y
 
-    z_data = raw_data[0]["data"][6]["components"][2]["values"]
+  x_data = raw_data[0]["data"][6]["components"][0]["values"]
+  y_data = raw_data[0]["data"][6]["components"][1]["values"]
+  z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
-    for i in range(number_of_nodes):
-      average_z_start += z_data[i]
-      average_z_end += z_data[number_of_nodes*(variables.bs_z -1) + i]
+  average_x_data = 0
+  average_y_data = 0
+  average_z_data = 0
+  for i in range(number_of_nodes):
+    average_x_data += x_data[i]
+    average_y_data += y_data[i]
+    average_z_data += z_data[i]
+  average_x_data = average_x_data/number_of_nodes
+  average_y_data = average_y_data/number_of_nodes
+  average_z_data = average_z_data/number_of_nodes
+  average_data_norm = np.sqrt( average_x_data**2 + average_y_data**2 + average_z_data**2 )
 
-    average_z_start /= number_of_nodes
-    average_z_end /= number_of_nodes
- 
-    f = open("muscle_contraction_" + str(force) + "N.csv", "a")
-    f.write(str(np.abs(average_z_start)))
-    f.write(",")
-    #f.write(str(t) + " " + str(average_z_start) + " " + str(average_z_end) + "")
-    #f.write("\n")
-    f.close()
+  f = open("muscle_contraction_" + str(force) + "N.csv", "a")
+  f.write(str(average_data_norm))
+  f.write(",")
+  f.close()
 
 
 config = {

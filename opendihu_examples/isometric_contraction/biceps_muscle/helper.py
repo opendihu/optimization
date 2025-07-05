@@ -485,29 +485,38 @@ def callback_function_prestretch(raw_data):
   elif rank_no == 0:
     write_prestretch_file(number_of_nodes, z_data, average_z_start)
 
-def write_contraction_file(number_of_nodes, z_data, average_z_start):
+def write_contraction_file(number_of_nodes, x_data, y_data, z_data):
+  average_x_data = 0
+  average_y_data = 0
+  average_z_data = 0
   for i in range(number_of_nodes):
-    average_z_start += z_data[i]
-  average_z_start /= number_of_nodes
+    average_x_data += x_data[i]
+    average_y_data += y_data[i]
+    average_z_data += z_data[i]
+  average_x_data = average_x_data/number_of_nodes
+  average_y_data = average_y_data/number_of_nodes
+  average_z_data = average_z_data/number_of_nodes
+  average_data_norm = np.sqrt( average_x_data**2 + average_y_data**2 + average_z_data**2 )
 
   f = open("out/prestretch"+str(variables.prestretch_force)+"/muscle_contraction_rank" + str(rank_no) + ".csv", "a")
-  f.write(str(average_z_start))
+  f.write(str(average_data_norm))
   f.write(",")
   f.close()
 
 def callback_function_contraction(raw_data):
   [mx, my, mz] = variables.meshes["3Dmesh_quadratic"]["nPointsLocal"]
   number_of_nodes = mx * my
-  average_z_start = 0
+  x_data = raw_data[0]["data"][6]["components"][0]["values"]
+  y_data = raw_data[0]["data"][6]["components"][1]["values"]
   z_data = raw_data[0]["data"][6]["components"][2]["values"]
 
   if n_ranks == 2 and rank_no == 0:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data)
   elif n_ranks == 4 and rank_no < 2:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data)
   elif n_ranks % 4 == 0 and rank_no < 4:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data)
   elif n_ranks % 2 == 0 and rank_no < 2:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data)
   elif rank_no == 0:
-    write_contraction_file(number_of_nodes, z_data, average_z_start)
+    write_contraction_file(number_of_nodes, x_data, y_data, z_data)
