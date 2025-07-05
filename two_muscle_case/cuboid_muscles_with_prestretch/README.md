@@ -9,9 +9,10 @@
 ## How to run
 To run a single simulation of stretching and contracting the muscles, go to build_release and run:
 ```
-./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 2
+./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 2 5
 ```
 To run a single simulation of only prestretch, go to build_release and run:
 ```
-./muscle_prestretch ../settings_prestretch.py incompressible_mooney_rivlin 2
-```To modify the prestretch force, change the input parameter `2`.
+./muscle_prestretch ../settings_prestretch.py incompressible_mooney_rivlin 2 5
+```
+To modify the prestretch forces, change the input parameters `2` and `5`. The first parameter corresponds to muscle 1, the second one to muscle 2. If only one force parameter is given, both muscles use the same prestretch force.
