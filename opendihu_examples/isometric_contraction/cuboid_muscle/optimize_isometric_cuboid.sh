@@ -16,7 +16,7 @@
 # Wall clock limit:#SBATCH --time=60:00:00
 ## Compute resources
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=16
 
 echo "SLURM_NNODES"=$SLURM_NNODES
 
@@ -26,6 +26,6 @@ echo "Configuring enviroment variables"
 
 echo "Launching muscle"
 
-srun python BayesOpt_cuboid_muscle.py &> optimize_isometric_cuboid.log
+python BayesOpt_cuboid_muscle.py &> optimize_isometric_cuboid.log
 
 echo "Simulation completed."
