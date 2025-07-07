@@ -41,7 +41,7 @@ As we can see, the new parameter setup leads to a more smooth function without l
 But there are also disadvantages. For one, more function evaluations are needed (3 more than in the previous setup). Also, the found maximum is not very accurate. That happens because of the low uncertainty around the found maximum, which tells the acquisition function that it is not very likely that there might be a higher value there.
 
 #### Knowledge Gradient
-This acquisition function is not recommended because it is extremely computationally expensive. 
+Computing the Knowledge Gradient acquisition function is very expensive and thus not recommended.
 
 #### Probability of Improvement
 This kernel has the same problem with all acquisition functions. It uses a low risk - low reward method, because it always sticks close to the highest already evaluated point and therefore does not find the maximum in a reasonable amount of evaluations.
