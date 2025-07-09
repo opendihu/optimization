@@ -27,11 +27,10 @@ if len(sys.argv) > 3:
   print("scenario_name: {}".format(scenario_name))
   print("force: {}".format(force))
 
+tendon_length_0 = variables.physical_offset[2] + variables.zmin - variables.zmax
+tendon_length_t = tendon_length_0
+tendon_end_t = variables.physical_offset[2] + variables.zmin
 tendon_start_t = variables.zmax
-tendon_end_t = variables.physical_offset[2]
-tendon_length_0 = variables.physical_offset[2] - variables.zmax
-
-
 
 
 # set Dirichlet BC, fix bottom
