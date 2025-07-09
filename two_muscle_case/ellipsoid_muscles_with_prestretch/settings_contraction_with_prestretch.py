@@ -313,7 +313,7 @@ config = {
 
                     "Term1": { # reaction term
                       "MultipleInstances": {
-                        "nInstances":   variables.n_fibers_left,
+                        "nInstances":   variables.n_fibers_right,
 
                         "instances": [{
                           "ranks": [0],
@@ -367,7 +367,7 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber in range(variables.n_fibers_left)], 
+                        } for fiber in range(variables.n_fibers_right)], 
                       }
                     },
 
@@ -1165,7 +1165,7 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_right)],
+            "mapGeometryToMeshes":          ["fiber{}_2".format(fiber) for fiber in range(variables.n_fibers_right)],
 
             "DynamicHyperelasticitySolver": {
                   "numberTimeSteps":        1,

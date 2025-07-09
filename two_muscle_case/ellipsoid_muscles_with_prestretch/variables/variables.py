@@ -26,7 +26,7 @@ rho = 10                                                    # density of the mus
 material_parameters = [3.176e-10, 1.813, 1.075e-2, 1.0]     # [c1, c2, b, d]
 diffusion_prefactor = 3.828 / (500.0 * 0.58)                # Conductivity / (Am * Cm)
 
-force = 10.0
+force = 0.0
 scenario_name = "incompressible_mooney_rivlin"
 
 # 3D Meshes
