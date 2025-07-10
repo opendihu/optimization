@@ -19,13 +19,13 @@ The first plot shows the difference between a single muscle and a coupled muscle
 
 ![](../../figures/comparison_coupled_ellipsoid_muscle_single_muscle_k_500.png)
 
-The blue plot is the length over time of an ellipsoid muscle that contracts while being connected to another ellipsoid muscle via a spring with constant $k=500$. The orange plot is the length over time of a single ellipsoid without connections to other muscles. As we can see, the connection dampens the muscle's bouncing effect after the completed contraction. Also, the connected muscle does not contract as much as the single one does.
+The solid orange line is the length over time of an ellipsoid muscle that contracts while being connected to another ellipsoid muscle via a spring with constant $k=500$. The dashed orange line is the length over time of a single ellipsoid without connections to other muscles. As we can see, the connection dampens the muscle's bouncing effect after the completed contraction. Also, the connected muscle does not contract as much as the single one does.
 
 If we now look at two connected ellipsoid muscles with a spring constant $k=500$, we get the following plot for the lengths over time of the connected muscles:
 
 ![](../../figures/1ms_k_500_ellipsoid.png)
 
-The orange line here is the same as the blue line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The small oscillations starting at $t=50$ms are unphysical. Reducing the timestep does not eliminate the oscillations.
+The orange line here is the same as the solid orange line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The small oscillations starting at $t=50$ms are unphysical. Reducing the timestep does not eliminate the oscillations.
 
 If we now look at two coupled muscles with the smaller constant $k=10$, we get the following plot:
 
