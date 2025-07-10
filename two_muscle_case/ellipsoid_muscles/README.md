@@ -25,7 +25,7 @@ If we now look at two connected ellipsoid muscles with a spring constant $k=500$
 
 ![](../../figures/1ms_k_500_ellipsoid.png)
 
-The orange line here is the same as the blue line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The small oscillations starting at $t=50$ms are unexpected and probably do not represent reality. The large time step width is unrelated to this effect.
+The orange line here is the same as the blue line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The small oscillations starting at $t=50$ms are unphysical. Reducing the timestep does not eliminate the oscillations.
 
 If we now look at two coupled muscles with the smaller constant $k=10$, we get the following plot:
 
