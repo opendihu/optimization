@@ -2,7 +2,7 @@
 # - Isotropic hyperelastic material
 # - Linear elasticity
 #
-# arguments: <scenario_name> <force_1> <force_2>
+# arguments: <scenario_name> <force>
 
 
 import numpy as np
@@ -18,71 +18,20 @@ import variables
 n_ranks = (int)(sys.argv[-1])
 
 # parameters
-force_1 = variables.force
-force_2 = variables.force
-scenario_name = variables.scenario_name                                                          
+force = variables.force
+scenario_name = variables.scenario_name
 
-if len(sys.argv) > 4:                                                                           
+if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
-  force_1 = float(sys.argv[1])
-  force_2 = float(sys.argv[2])
+  force = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
-  print("force 1: {}".format(force_1))
-  print("force 2: {}".format(force_2))
-elif len(sys.argv) > 3:                                                                           
-  scenario_name = sys.argv[0]
-  force_1 = float(sys.argv[1])
-  force_2 = float(sys.argv[1])
-  print("scenario_name: {}".format(scenario_name))
-  print("force 1: {}".format(force_1))
-  print("force 2: {}".format(force_2))
+  print("force: {}".format(force))
 
-tendon_start_t = variables.physical_extent_1[2] + variables.physical_offset_1[2]
-tendon_end_t = variables.physical_offset_2[2]
-tendon_length_0 = variables.physical_offset_2[2] - variables.physical_extent_1[2] - variables.physical_offset_1[2]
+tendon_length_0 = variables.physical_offset[2] + variables.zmin - variables.zmax
+tendon_length_t = tendon_length_0
+tendon_end_t = variables.physical_offset[2] + variables.zmin
+tendon_start_t = variables.zmax
 
-meshes = { # create 3D mechanics mesh
-    "3Dmesh_quadratic_1": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             variables.physical_extent_1,            # physical size of the box
-      "physicalOffset":             variables.physical_offset_1,                  # offset/translation where the whole mesh begins
-    },
-    "3Dmesh_quadratic_2": { 
-      "inputMeshIsGlobal":          True,                       # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-      "nElements":                  [variables.el_x, variables.el_y, variables.el_z],               # number of quadratic elements in x, y and z direction
-      "physicalExtent":             variables.physical_extent_2,            # physical size of the box
-      "physicalOffset":             variables.physical_offset_2,                  # offset/translation where the whole mesh begins
-    },
-}
-
-for fiber_x in range(variables.fb_x):
-    for fiber_y in range(variables.fb_y):
-        fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
-        x = variables.el_x * fiber_x / (variables.fb_x - 1)
-        y = variables.el_y * fiber_y / (variables.fb_y - 1)
-        nodePositions_1 = [[x, y, variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
-        meshName = "fiber{}_1".format(fiber_no)
-        meshes[meshName] = { # create fiber meshes
-            "nElements":            [variables.fb_points - 1],
-            "nodePositions":        nodePositions_1,
-            "inputMeshIsGlobal":    True,
-            "nRanks":               n_ranks
-        }
-
-for fiber_x in range(variables.fb_x):
-    for fiber_y in range(variables.fb_y):
-        fiber_no = variables.get_fiber_no(fiber_x, fiber_y)
-        x = variables.el_x * fiber_x / (variables.fb_x - 1)
-        y = variables.el_y * fiber_y / (variables.fb_y - 1)
-        nodePositions_2 = [[x, y, variables.physical_offset_2[2] + variables.el_z * i / (variables.fb_points - 1)] for i in range(variables.fb_points)]
-        meshName = "fiber{}_2".format(fiber_no)
-        meshes[meshName] = { # create fiber meshes
-            "nElements":            [variables.fb_points - 1],
-            "nodePositions":        nodePositions_2,
-            "inputMeshIsGlobal":    True,
-            "nRanks":               n_ranks
-        }
 
 # set Dirichlet BC, fix bottom
 elasticity_dirichlet_bc_left = {}
@@ -110,8 +59,8 @@ for i in range(variables.bs_x):
 # set Neumann BC, set traction at the top
 k_left = 0
 k_right = variables.el_z-1
-traction_vector_1 = [0, 0, -force_1]     # the traction force in specified in the reference configuration
-traction_vector_2 = [0, 0, force_2]
+traction_vector_1 = [0, 0, -force]     # the traction force in specified in the reference configuration
+traction_vector_2 = [0, 0, force]
 
 elasticity_neumann_bc_left_prestretch = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
 elasticity_neumann_bc_right_prestretch = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
@@ -134,7 +83,7 @@ def callback_function_prestretch_1(raw_data):
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
   average_length = average_length/number_of_nodes
 
-  f = open("length_after_prestretch_1_" + str(force_1) + "N.csv", "w")
+  f = open("length_after_prestretch_1_" + str(force) + "N.csv", "w")
   f.write(str(average_length))
   f.close()
   
@@ -162,7 +111,7 @@ def callback_function_prestretch_2(raw_data):
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
   average_length = average_length/number_of_nodes
 
-  f = open("length_after_prestretch_2_" + str(force_2) + "N.csv", "w")
+  f = open("length_after_prestretch_2_" + str(force) + "N.csv", "w")
   f.write(str(average_length))
   f.close()
   
@@ -289,7 +238,7 @@ config = {
   "solverStructureDiagramFile":   "solver_structure.txt",       # output file of a diagram that shows data connection between solvers
   "mappingsBetweenMeshesLogFile": "mappings_between_meshes_log.txt",    # log file for mappings 
 
-  "Meshes": meshes,
+  "Meshes": variables.meshes,
   "Solvers": {
     "linearElasticitySolver": {           # solver for linear elasticity
       "relativeTolerance":  1e-10,
@@ -363,7 +312,7 @@ config = {
 
                     "Term1": { # reaction term
                       "MultipleInstances": {
-                        "nInstances":   variables.fb_x * variables.fb_y,
+                        "nInstances":   variables.n_fibers_right,
 
                         "instances": [{
                           "ranks": [0],
@@ -385,7 +334,7 @@ config = {
 
                             "CellML": {
                               "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                              "meshName":               "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                              "meshName":               "fiber{}_2".format(fiber), 
                               "stimulationLogFilename": "out/" + scenario_name + "stimulation2.log",
 
                               "statesInitialValues":                        [],
@@ -417,13 +366,13 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
+                        } for fiber in range(variables.n_fibers_right)], 
                       }
                     },
 
                     "Term2": { # diffusion term
                       "MultipleInstances": {
-                        "nInstances": variables.fb_x * variables.fb_y, 
+                        "nInstances": variables.n_fibers_right, 
                         "instances": [{
                           "ranks": [0],
 
@@ -446,14 +395,14 @@ config = {
                             "OutputWriter":                     [],
 
                             "FiniteElementMethod": {
-                              "meshName":           "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                              "meshName":           "fiber{}_2".format(fiber),
                               "inputMeshIsGlobal":  True,
                               "solverName":         "diffusionSolver",
                               "prefactor":          variables.diffusion_prefactor,
                               "slotName":           "vm_2"
                             }
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                        } for fiber in range(variables.n_fibers_right)],
                         "OutputWriter": [
                           {
                             "format":             "Paraview",
@@ -494,7 +443,7 @@ config = {
                 "timeStepOutputInterval":       100,
                 "lambdaDotScalingFactor":       1,
                 "enableForceLengthRelation":    True,
-                "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                "mapGeometryToMeshes":          ["fiber{}_2".format(fiber) for fiber in range(variables.n_fibers_right)],
 
                 "HyperelasticitySolver": {
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
@@ -605,7 +554,7 @@ config = {
 
                     "Term1": { # reaction term
                       "MultipleInstances": {
-                        "nInstances":   variables.fb_x * variables.fb_y,
+                        "nInstances":   variables.n_fibers_left,
 
                         "instances": [{
                           "ranks": [0],
@@ -627,7 +576,7 @@ config = {
 
                             "CellML": {
                               "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                              "meshName":               "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                              "meshName":               "fiber{}_1".format(fiber), 
                               "stimulationLogFilename": "out/" + scenario_name + "stimulation1.log",
 
                               "statesInitialValues":                        [],
@@ -659,13 +608,13 @@ config = {
                               "parametersInitialValues": [0.0, 1.0, 0.0],
                             },
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
+                        } for fiber in range(variables.n_fibers_left)], 
                       }
                     },
 
                     "Term2": { # diffusion term
                       "MultipleInstances": {
-                        "nInstances": variables.fb_x * variables.fb_y, 
+                        "nInstances": variables.n_fibers_left, 
 
 
 
@@ -691,14 +640,14 @@ config = {
                             "OutputWriter":                     [],
 
                             "FiniteElementMethod": {
-                              "meshName":           "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                              "meshName":           "fiber{}_1".format(fiber),
                               "inputMeshIsGlobal":  True,
                               "solverName":         "diffusionSolver",
                               "prefactor":          variables.diffusion_prefactor,
                               "slotName":           "vm_1"
                             }
                           }
-                        } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                        } for fiber in range(variables.n_fibers_left)],
                         "OutputWriter": [
                           {
                             "format":             "Paraview",
@@ -737,7 +686,7 @@ config = {
                 "timeStepOutputInterval":       100,
                 "lambdaDotScalingFactor":       1,
                 "enableForceLengthRelation":    True,
-                "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                "mapGeometryToMeshes":          ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_left)],
 
                 "HyperelasticitySolver": {
                   "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
@@ -847,7 +796,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.fb_x * variables.fb_y,
+                    "nInstances":   variables.n_fibers_left,
 
                     "instances": [{
                       "ranks": [0],
@@ -869,7 +818,7 @@ config = {
 
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                          "meshName":               "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "meshName":               "fiber{}_1".format(fiber), 
                           "stimulationLogFilename": "out/" + scenario_name + "stimulation1.log",
 
                           "statesInitialValues":                        [],
@@ -901,13 +850,13 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
+                    } for fiber in range(variables.n_fibers_left)], 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.fb_x * variables.fb_y, 
+                    "nInstances": variables.n_fibers_left, 
 
 
                     "instances": [{
@@ -932,14 +881,14 @@ config = {
                         "OutputWriter":                     [],
 
                         "FiniteElementMethod": {
-                          "meshName":           "fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "meshName":           "fiber{}_1".format(fiber),
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
                           "slotName":           "vm1"
                         }
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                    } for fiber in range(variables.n_fibers_left)],
                     "OutputWriter": [
                       {
                         "format":             "Paraview",
@@ -978,82 +927,69 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_1".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+            "mapGeometryToMeshes":         ["fiber{}_1".format(fiber) for fiber in range(variables.n_fibers_left)],
+            
+            "OutputWriter": [
+              {
+                "format":             "Paraview",
+                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                "filename":           "out/" + scenario_name + "/contraction_mechanics_1",
+                "fileNumbering":      "incremental",
+                "binary":             True,
+                "fixedFormat":        False,
+                "onlyNodalValues":    True,
+                "combineFiles":       True
+              }
+            ],
 
-                "DynamicHyperelasticitySolver": {
-                  "numberTimeSteps":        1,
-                  "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
-                  
-                  "materialParameters":         variables.material_parameters,          # material parameters of the Mooney-Rivlin material
-                  "displacementsScalingFactor": 1.0,                          # scaling factor for displacements, only set to sth. other than 1 only to increase visual appearance for very small displacements
-                  "residualNormLogFilename":    "log_residual_norm.txt",      # log file where residual norm values of the nonlinear solver will be written
-                  "useAnalyticJacobian":        True,                         # whether to use the analytically computed jacobian matrix in the nonlinear solver (fast)
-                  "useNumericJacobian":         False,                        # whether to use the numerically computed jacobian matrix in the nonlinear solver (slow), only works with non-nested matrices, if both numeric and analytic are enable, it uses the analytic for the preconditioner and the numeric as normal jacobian
-                    
-                  "dumpDenseMatlabVariables":   False,                        # whether to have extra output of matlab vectors, x,r, jacobian matrix (very slow)
-                  # if useAnalyticJacobian,useNumericJacobian and dumpDenseMatlabVariables all all three true, the analytic and numeric jacobian matrices will get compared to see if there are programming errors for the analytic jacobian
-                  
-                  # mesh
-                  "meshName":                   "3Dmesh_quadratic_1",           # mesh with quadratic Lagrange ansatz functions
-                  "inputMeshIsGlobal":          True,                         # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-                  
-                  #"fiberMeshNames":             [],                           # fiber meshes that will be used to determine the fiber direction
-                  #"fiberDirection":             [0,0,1],                      # if fiberMeshNames is empty, directly set the constant fiber direction, in element coordinate system
-                  
-                  # nonlinear solver
-                  "relativeTolerance":          1e-5,                         # 1e-10 relative tolerance of the linear solver
-                  "absoluteTolerance":          1e-10,                        # 1e-10 absolute tolerance of the residual of the linear solver       
-                  "solverType":                 "preonly",                    # type of the linear solver: cg groppcg pipecg pipecgrr cgne nash stcg gltr richardson chebyshev gmres tcqmr fcg pipefcg bcgs ibcgs fbcgs fbcgsr bcgsl cgs tfqmr cr pipecr lsqr preonly qcg bicg fgmres pipefgmres minres symmlq lgmres lcd gcr pipegcr pgmres dgmres tsirm cgls
-                  "preconditionerType":         "lu",                         # type of the preconditioner
-                  "maxIterations":              1e4,                          # maximum number of iterations in the linear solver
-                  "snesMaxFunctionEvaluations": 1e8,                          # maximum number of function iterations
-                  "snesMaxIterations":          100,                           # maximum number of iterations in the nonlinear solver
-                  "snesRelativeTolerance":      1e-5,                         # relative tolerance of the nonlinear solver
-                  "snesLineSearchType":         "l2",                         # type of linesearch, possible values: "bt" "nleqerr" "basic" "l2" "cp" "ncglinear"
-                  "snesAbsoluteTolerance":      1e-5,                         # absolute tolerance of the nonlinear solver
-                  "snesRebuildJacobianFrequency": 1,                          # how often the jacobian should be recomputed, -1 indicates NEVER rebuild, 1 means rebuild every time the Jacobian is computed within a single nonlinear solve, 2 means every second time the Jacobian is built etc. -2 means rebuild at next chance but then never again 
-                  
-                  #"dumpFilename": "out/r{}/m".format(sys.argv[-1]),          # dump system matrix and right hand side after every solve
-                  "dumpFilename":               "",                           # dump disabled
-                  "dumpFormat":                 "default",                     # default, ascii, matlab
-                  
-                  #"loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],   # load factors for every timestep
-                  #"loadFactors":                [0.5, 1.0],                   # load factors for every timestep
-                  "loadFactors":                [],                           # no load factors, solve problem directly
-                  "loadFactorGiveUpThreshold":    0.1,                        # if the adaptive time stepping produces a load factor smaller than this value, the solution will be accepted for the current timestep, even if it did not converge fully to the tolerance
-                  "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
-                  
-                  # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_left,             # the initial Dirichlet boundary conditions that define values for displacements u
-                  "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_left_contraction,               # Neumann boundary conditions that define traction forces on surfaces of elements
-                  "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_1,
-                  "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
-                  "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
-                  "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
-                  "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
-                  
-                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
-                  "constantBodyForce":           variables.constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
-                  
-                  "dirichletOutputFilename":      "out/"+scenario_name+"/contraction_boundary_conditions1",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-        
-                
-                  "OutputWriter": 
-                  [
-                    {"format": "Paraview", "outputInterval": 1, "filename": "out/"+scenario_name+"/contraction1", "binary": True, "fixedFormat": False, "onlyNodalValues":True, "combineFiles":True, "fileNumbering": "incremental"},
-                    {
-                      "format": "PythonCallback",
-                      "callback": callback_function_contraction_1,
-                      "outputInterval": 1,
-                    }
-                  ],
-                  "pressure":       { "OutputWriter": [] },
-                  "dynamic":        { "OutputWriter": [] },
-                  "LoadIncrements": { "OutputWriter": [] }
+            "DynamicHyperelasticitySolver": {
+              "durationLogKey":         "duration_3D",
+              "logTimeStepWidthAsKey":  "dt_3D",
+              "numberTimeSteps":        1,
+              "materialParameters":     variables.material_parameters,
+              "density":                variables.rho,
+              "timeStepOutputInterval": 1,
+
+              "meshName":                   "3Dmesh_quadratic_1",
+              "inputMeshIsGlobal":          True,
+              "fiberDirection":             [0,0,1],
+              "solverName":                 "mechanicsSolver",
+              "displacementsScalingFactor":  1.0,
+              "useAnalyticJacobian":        True,
+              "useNumericJacobian":         False,
+              "dumpDenseMatlabVariables":   False,
+              "loadFactorGiveUpThreshold":  1,
+              "loadFactors":                [],
+              "scaleInitialGuess":          False,
+              "extrapolateInitialGuess":    True,
+              "nNonlinearSolveCalls":       1,
+
+              "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_left,
+              "neumannBoundaryConditions":                              elasticity_neumann_bc_left_contraction,
+              "updateDirichletBoundaryConditionsFunction":              None,
+              "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_1,
+              "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
+              "divideNeumannBoundaryConditionValuesByTotalArea":        True,
+
+              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "constantBodyForce":          (0, 0, 0),
+
+              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_1",
+              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log_1.txt",
+              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_1.txt",
+
+              "OutputWriter": [
+                {
+                  "format": "PythonCallback",
+                  "callback": callback_function_contraction_1,
+                  "outputInterval": 1,
                 }
+              ],
+              "pressure":       { "OutputWriter": [] },
+              "dynamic":        { "OutputWriter": [] },
+              "LoadIncrements": { "OutputWriter": [] }
+            }
               }
             }
           }
@@ -1084,7 +1020,7 @@ config = {
 
                 "Term1": { # reaction term
                   "MultipleInstances": {
-                    "nInstances":   variables.fb_x * variables.fb_y,
+                    "nInstances":   variables.n_fibers_right,
 
                     "instances": [{
                       "ranks": [0],
@@ -1106,7 +1042,7 @@ config = {
 
                         "CellML": {
                           "modelFilename":          variables.input_dir + "hodgkin_huxley-razumova.cellml",
-                          "meshName":               "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)), 
+                          "meshName":               "fiber{}_2".format(fiber), 
                           "stimulationLogFilename": "out/" + scenario_name + "stimulation_2.log",
 
                           "statesInitialValues":                        [],
@@ -1138,13 +1074,13 @@ config = {
                           "parametersInitialValues": [0.0, 1.0, 0.0],
                         },
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)], 
+                    } for fiber in range(variables.n_fibers_right)], 
                   }
                 },
 
                 "Term2": { # diffusion term
                   "MultipleInstances": {
-                    "nInstances": variables.fb_x * variables.fb_y, 
+                    "nInstances": variables.n_fibers_right, 
 
                     "instances": [{
                       "ranks": [0],
@@ -1168,14 +1104,14 @@ config = {
                         "OutputWriter":                     [],
 
                         "FiniteElementMethod": {
-                          "meshName":           "fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)),
+                          "meshName":           "fiber{}_2".format(fiber),
                           "inputMeshIsGlobal":  True,
                           "solverName":         "diffusionSolver",
                           "prefactor":          variables.diffusion_prefactor,
                           "slotName":           "vm2"
                         }
                       }
-                    } for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+                    } for fiber in range(variables.n_fibers_right)],
                     "OutputWriter": [
                       {
                         "format":             "Paraview",
@@ -1215,90 +1151,69 @@ config = {
             "timeStepOutputInterval":       100,
             "lambdaDotScalingFactor":       1,
             "enableForceLengthRelation":    True,
-            "mapGeometryToMeshes":          ["fiber{}_2".format(variables.get_fiber_no(fiber_x, fiber_y)) for fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)],
+            "mapGeometryToMeshes":          ["fiber{}_2".format(fiber) for fiber in range(variables.n_fibers_right)],
+
+            "OutputWriter": [
+              {
+                "format":             "Paraview",
+                "outputInterval":     int(1.0 / variables.dt_3D * variables.output_interval),
+                "filename":           "out/" + scenario_name + "/contraction_mechanics_2",
+                "fileNumbering":      "incremental",
+                "binary":             True,
+                "fixedFormat":        False,
+                "onlyNodalValues":    True,
+                "combineFiles":       True
+              }
+            ],
 
             "DynamicHyperelasticitySolver": {
-                  "numberTimeSteps":        1,
-                  "durationLogKey":             "duration_mechanics",         # key to find duration of this solver in the log file
-                  
-                  "materialParameters":         variables.material_parameters,          # material parameters of the Mooney-Rivlin material
-                  "displacementsScalingFactor": 1.0,                          # scaling factor for displacements, only set to sth. other than 1 only to increase visual appearance for very small displacements
-                  "residualNormLogFilename":    "log_residual_norm.txt",      # lofor fiber_x in range(variables.fb_x) for fiber_y in range(variables.fb_y)]g file where residual norm values of the nonlinear solver will be written
-                  "useAnalyticJacobian":        True,                         # whether to use the analytically computed jacobian matrix in the nonlinear solver (fast)
-                  "useNumericJacobian":         False,                        # whether to use the numerically computed jacobian matrix in the nonlinear solver (slow), only works with non-nested matrices, if both numeric and analytic are enable, it uses the analytic for the preconditioner and the numeric as normal jacobian
-                    
-                  "dumpDenseMatlabVariables":   False,                        # whether to have extra output of matlab vectors, x,r, jacobian matrix (very slow)
-                  # if useAnalyticJacobian,useNumericJacobian and dumpDenseMatlabVariables all all three true, the analytic and numeric jacobian matrices will get compared to see if there are programming errors for the analytic jacobian
-                  
-                  # mesh
-                  "meshName":                   "3Dmesh_quadratic_2",           # mesh with quadratic Lagrange ansatz functions
-                  "inputMeshIsGlobal":          True,                         # boundary conditions are specified in global numberings, whereas the mesh is given in local numberings
-                  
-                  #"fiberMeshNames":             [],                           # fiber meshes that will be used to determine the fiber direction
-                  #"fiberDirection":             [0,0,1],                      # if fiberMeshNames is empty, directly set the constant fiber direction, in element coordinate system
-                  
-                  # nonlinear solver
-                  "relativeTolerance":          1e-5,                         # 1e-10 relative tolerance of the linear solver
-                  "absoluteTolerance":          1e-10,                        # 1e-10 absolute tolerance of the residual of the linear solver       
-                  "solverType":                 "preonly",                    # type of the linear solver: cg groppcg pipecg pipecgrr cgne nash stcg gltr richardson chebyshev gmres tcqmr fcg pipefcg bcgs ibcgs fbcgs fbcgsr bcgsl cgs tfqmr cr pipecr lsqr preonly qcg bicg fgmres pipefgmres minres symmlq lgmres lcd gcr pipegcr pgmres dgmres tsirm cgls
-                  "preconditionerType":         "lu",                         # type of the preconditioner
-                  "maxIterations":              1e4,                          # maximum number of iterations in the linear solver
-                  "snesMaxFunctionEvaluations": 1e8,                          # maximum number of function iterations
-                  "snesMaxIterations":          100,                           # maximum number of iterations in the nonlinear solver
-                  "snesRelativeTolerance":      1e-5,                         # relative tolerance of the nonlinear solver
-                  "snesLineSearchType":         "l2",                         # type of linesearch, possible values: "bt" "nleqerr" "basic" "l2" "cp" "ncglinear"
-                  "snesAbsoluteTolerance":      1e-5,                         # absolute tolerance of the nonlinear solver
-                  "snesRebuildJacobianFrequency": 1,                          # how often the jacobian should be recomputed, -1 indicates NEVER rebuild, 1 means rebuild every time the Jacobian is computed within a single nonlinear solve, 2 means every second time the Jacobian is built etc. -2 means rebuild at next chance but then never again 
-                  
-                  #"dumpFilename": "out/r{}/m".format(sys.argv[-1]),          # dump system matrix and right hand side after every solve
-                  "dumpFilename":               "",                           # dump disabled
-                  "dumpFormat":                 "default",                     # default, ascii, matlab
-                  
-                  #"loadFactors":                [0.1, 0.2, 0.35, 0.5, 1.0],   # load factors for every timestep
-                  #"loadFactors":                [0.5, 1.0],                   # load factors for every timestep
-                  "loadFactors":                [],                           # no load factors, solve problem directly
-                  "loadFactorGiveUpThreshold":    0.1,                        # if the adaptive time stepping produces a load factor smaller than this value, the solution will be accepted for the current timestep, even if it did not converge fully to the tolerance
-                  "nNonlinearSolveCalls":       1,                            # how often the nonlinear solve should be called
-                  
-                  # boundary and initial conditions
-                  "dirichletBoundaryConditions": elasticity_dirichlet_bc_right,             # the initial Dirichlet boundary conditions that define values for displacements u
-                  "dirichletOutputFilename":     None,                                # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-                  "neumannBoundaryConditions":   elasticity_neumann_bc_right_contraction,               # Neumann boundary conditions that define traction forces on surfaces of elements
-                  "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_2,
-                  "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
-                  "divideNeumannBoundaryConditionValuesByTotalArea": True,            # if the given Neumann boundary condition values under "neumannBoundaryConditions" are total forces instead of surface loads and therefore should be scaled by the surface area of all elements where Neumann BC are applied
-                  "updateDirichletBoundaryConditionsFunction": None,                  # function that updates the dirichlet BCs while the simulation is running
-                  "updateDirichletBoundaryConditionsFunctionCallInterval": 1,         # every which step the update function should be called, 1 means every time step
-                  
-                  "initialValuesDisplacements":  [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the displacements, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "initialValuesVelocities":     [[0.0,0.0,0.0] for _ in range(variables.bs_x*variables.bs_y*variables.bs_z)],     # the initial values for the velocities, vector of values for every node [[node1-x,y,z], [node2-x,y,z], ...]
-                  "extrapolateInitialGuess":     True,                                # if the initial values for the dynamic nonlinear problem should be computed by extrapolating the previous displacements and velocities
-                  "constantBodyForce":           variables.constant_body_force,                 # a constant force that acts on the whole body, e.g. for gravity
-                  
-                  "dirichletOutputFilename":      "out/"+scenario_name+"/contraction_boundary_conditions2",           # filename for a vtp file that contains the Dirichlet boundary condition nodes and their values, set to None to disable
-        
-                
-                  "OutputWriter": 
-                  [
-                    {"format": "Paraview", 
-                     "outputInterval": 1, 
-                     "filename": "out/"+scenario_name+"/contraction2", 
-                     "binary": True, 
-                     "fixedFormat": False, 
-                     "onlyNodalValues":True, 
-                     "combineFiles":True, 
-                     "fileNumbering": "incremental",
-                    },
-                    {
-                      "format": "PythonCallback",
-                      "callback": callback_function_contraction_2,
-                      "outputInterval": 1,
-                    }
-                  ],
-                  "pressure":       { "OutputWriter": [] },
-                  "dynamic":        { "OutputWriter": [] },
-                  "LoadIncrements": { "OutputWriter": [] }
+              "durationLogKey":         "duration_3D",
+              "logTimeStepWidthAsKey":  "dt_3D",
+              "numberTimeSteps":        1,
+              "materialParameters":     variables.material_parameters,
+              "density":                variables.rho,
+              "timeStepOutputInterval": 1,
+
+              "meshName":                   "3Dmesh_quadratic_2",
+              "inputMeshIsGlobal":          True,
+              "fiberDirection":             [0,0,1],
+              "solverName":                 "mechanicsSolver",
+              "displacementsScalingFactor":  1.0,
+              "useAnalyticJacobian":        True,
+              "useNumericJacobian":         False,
+              "dumpDenseMatlabVariables":   False,
+              "loadFactorGiveUpThreshold":  1,
+              "loadFactors":                [],
+              "scaleInitialGuess":          False,
+              "extrapolateInitialGuess":    True,
+              "nNonlinearSolveCalls":       1,
+
+              "dirichletBoundaryConditions":                            elasticity_dirichlet_bc_right,
+              "neumannBoundaryConditions":                              elasticity_neumann_bc_right_contraction,
+              "updateDirichletBoundaryConditionsFunction":              None,
+              "updateNeumannBoundaryConditionsFunction":                updateNeumannContraction_2,
+              "updateDirichletBoundaryConditionsFunctionCallInterval":  1,
+              "divideNeumannBoundaryConditionValuesByTotalArea":        True,
+
+              "initialValuesDisplacements": [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "initialValuesVelocities":    [[0, 0, 0] for _ in range(variables.bs_x * variables.bs_y * variables.bs_z)],
+              "constantBodyForce":          (0, 0, 0),
+
+              "dirichletOutputFilename":    "out/" + scenario_name + "/dirichlet_output_2",
+              "residualNormLogFilename":    "out/" + scenario_name + "/residual_norm_log_2.txt",
+              "totalForceLogFilename":      "out/" + scenario_name + "/total_force_log_2.txt",
+
+              "OutputWriter": [
+                {
+                  "format": "PythonCallback",
+                  "callback": callback_function_contraction_2,
+                  "outputInterval": 1,
                 }
+              ],
+              "pressure":       { "OutputWriter": [] },
+              "dynamic":        { "OutputWriter": [] },
+              "LoadIncrements": { "OutputWriter": [] }
+            }
               }
             }
           }
