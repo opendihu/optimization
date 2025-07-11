@@ -13,7 +13,7 @@ def target_function(x):
 def simulation(force1, force2):
     force1 = force1.numpy()[0]
     force2 = force2.numpy()[0]
-    """
+
     print("start simulation with forces"+ str(force1) + " and ",force2)
     individuality_parameter = str(int(time.time()))+str(force1)+str(force2)
     command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {individuality_parameter} {force1} {force2}")
@@ -50,8 +50,6 @@ def simulation(force1, force2):
     f.close()
 
     return contraction1 + contraction2
-    """
-    return force1 + force2
 
 
 #Major changes:

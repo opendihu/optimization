@@ -254,10 +254,8 @@ for i in range(num_iterations):
     initial_x = torch.cat([initial_x, candidate])
     initial_y = torch.cat([initial_y, new_y])
     initial_yvar = torch.cat([initial_yvar, new_yvar])
-    print(candidate)
 
     candidate2 = torch.tensor([[candidate[0,1],candidate[0,0]]])
-    print(candidate2)
     initial_x = torch.cat([initial_x, candidate2])
     initial_y = torch.cat([initial_y, new_y])
     initial_yvar = torch.cat([initial_yvar, new_yvar])
@@ -271,7 +269,7 @@ for i in range(num_iterations):
     mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
     fit_gpytorch_mll(mll)
 
-    counter += 1
+    counter += 2
 
     if stopping_y:
         current_value = new_y.item()
@@ -282,10 +280,10 @@ for i in range(num_iterations):
             no_improvement_trials += 1
         if no_improvement_trials >= num_consecutive_trials:
             scaled_candidate = candidate * (bounds[1] - bounds[0]) + bounds[0]
-            print(f"Trial {i + 1 + num_initial_trials}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
+            print(f"Trial {counter-1}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
             print("Stopping criterion met. No significant improvement for consecutive trials.")
             print(global_individuality_parameter)
-            print("Number of total trials: ", i+1+num_initial_trials)
+            print("Number of total trials: ", counter)
             break
     elif stopping_xy:
         max_index = torch.argmax(initial_y)
@@ -294,13 +292,14 @@ for i in range(num_iterations):
             breaking = False
             max_y_in_range = False
             for j in range(len(initial_x)):
-                if np.abs(initial_x[k,0].numpy() - initial_x[j,0].numpy()) < x_range:
+                if np.linalg.norm(initial_x[k].numpy() - initial_x[j].numpy()) < x_range:
                     number_x_in_epsilon_neighborhood += 1
-                    if initial_x[max_index,0].numpy() == initial_x[k,0].numpy() or initial_x[max_index,0].numpy() == initial_x[j,0].numpy():
+                    if initial_x[max_index].numpy().all() == initial_x[k].numpy().all() or initial_x[max_index].numpy().all() == initial_x[j].numpy().all():
                         max_y_in_range = True
             if number_x_in_epsilon_neighborhood >= num_consecutive_trials and max_y_in_range:
+                print(f"Trial {counter-1}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
                 print("Stopping criterion met. No significant improvement for consecutive trials.")
-                print("Number of total trials: ", i+1+num_initial_trials)
+                print("Number of total trials: ", counter)
                 breaking = True
                 break
         if breaking:
@@ -314,7 +313,7 @@ for i in range(num_iterations):
         best_value = current_value
 
     scaled_candidate = candidate * (bounds[1] - bounds[0]) + bounds[0]
-    print(f"Trial {i + 1 + num_initial_trials}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
+    print(f"Trial {counter-1}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
 
 
 if add_points:
@@ -350,9 +349,9 @@ while continuing == "y":
     mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
     fit_gpytorch_mll(mll)
 
-    counter += 1
+    counter += 2
 
-    print(f"Trial {i + 1 + num_initial_trials}: x = {candidate.item()}, Value = {current_value}, Best Value = {best_value}")
+    print(f"Trial {counter-1}: x = {candidate.item()}, Value = {current_value}, Best Value = {best_value}")
 
     continuing = input("Do you want to add another query point? (y/n)")
 
