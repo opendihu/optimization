@@ -21,6 +21,7 @@ n_ranks = (int)(sys.argv[-1])
 force_1 = variables.force
 force_2 = variables.force
 scenario_name = variables.scenario_name                                                          
+parameter = str(int(time.time()))
 
 if len(sys.argv) > 4:                                                                           
   scenario_name = sys.argv[0]
@@ -127,12 +128,14 @@ def callback_function_prestretch_1(raw_data):
 
   number_of_nodes = variables.bs_x * variables.bs_y
   average_length = 0
+  average_start = 0
 
   z_data = data["data"][0]["components"][2]["values"]
 
   for i in range(number_of_nodes):
+    average_start += z_data[i]
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
-  average_length = average_length/number_of_nodes
+  average_length = average_length/number_of_nodes - average_start/number_of_nodes
 
   f = open("length_after_prestretch_1_" + str(force_1) + "N.csv", "w")
   f.write(str(average_length))
@@ -155,12 +158,14 @@ def callback_function_prestretch_2(raw_data):
 
   number_of_nodes = variables.bs_x * variables.bs_y
   average_length = 0
+  average_start = 0
 
   z_data = data["data"][0]["components"][2]["values"]
 
   for i in range(number_of_nodes):
+    average_start += z_data[i]
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
-  average_length = average_length/number_of_nodes
+  average_length = average_length/number_of_nodes - average_start/number_of_nodes
 
   f = open("length_after_prestretch_2_" + str(force_2) + "N.csv", "w")
   f.write(str(average_length))
@@ -200,12 +205,12 @@ def callback_function_contraction_1(raw_data):
   print("length of muscle 1 (contraction): ", length_of_muscle)
 
   if t == variables.dt_3D:
-    f = open("muscle_length_contraction_1.csv", "w")
+    f = open("muscle_length_contraction_1_"+parameter+".csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
   else:
-    f = open("muscle_length_contraction_1.csv", "a")
+    f = open("muscle_length_contraction_1_"+parameter+".csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
@@ -233,12 +238,12 @@ def callback_function_contraction_2(raw_data):
   print("length of muscle 2 (contraction): ", length_of_muscle)
 
   if t == variables.dt_3D:
-    f = open("muscle_length_contraction_2.csv", "w")
+    f = open("muscle_length_contraction_2_"+parameter+".csv", "w")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
   else:
-    f = open("muscle_length_contraction_2.csv", "a")
+    f = open("muscle_length_contraction_2_"+parameter+".csv", "a")
     f.write(str(length_of_muscle))
     f.write(",")
     f.close()
