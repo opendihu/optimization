@@ -106,7 +106,7 @@ def handle_result_prestretch(result):
 
 
 def callback_function_contraction_1(raw_data):
-  global tendon_start_t, force_data_muscle_1
+  global tendon_start_t
   t = raw_data[0]["currentTime"]
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
@@ -138,7 +138,7 @@ def callback_function_contraction_1(raw_data):
 
       
 def callback_function_contraction_2(raw_data):
-  global tendon_end_t, force_data_muscle_2
+  global tendon_end_t
   t = raw_data[0]["currentTime"]
   number_of_nodes = variables.bs_x * variables.bs_y
   average_z_start = 0
