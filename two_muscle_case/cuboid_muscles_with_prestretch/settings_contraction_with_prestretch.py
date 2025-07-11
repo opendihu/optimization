@@ -16,7 +16,7 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-
+print(sys.argv)
 # parameters
 force_1 = variables.force
 force_2 = variables.force
@@ -36,6 +36,8 @@ elif len(sys.argv) > 3:
   print("scenario_name: {}".format(scenario_name))
   print("force 1: {}".format(force_1))
   print("force 2: {}".format(force_2))
+if len(sys.argv) > 5:
+  parameter = sys.argv[3]
 
 meshes = { # create 3D mechanics mesh
     "3Dmesh_quadratic_1": { 
