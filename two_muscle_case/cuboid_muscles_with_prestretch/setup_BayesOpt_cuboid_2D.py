@@ -5,18 +5,13 @@ import shlex
 import subprocess
 import csv
 
-def target_function(x):
-    x = x.numpy()
-    y = np.sum(x)
-    return y
+def target_function(forces):
+    force1 = forces.numpy()[0]
+    force2 = forces.numpy()[1]
 
-def simulation(force1, force2):
-    force1 = force1.numpy()[0]
-    force2 = force2.numpy()[0]
-
-    print("start simulation with forces"+ str(force1) + " and ",force2)
-    individuality_parameter = str(int(time.time()))+str(force1)+str(force2)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {individuality_parameter} {force1} {force2}")
+    print("start simulation with forces "+ str(force1) + " and",force2)
+    individuality_parameter = str(force1)+str(force2)
+    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force1} {force2} {individuality_parameter}")
     subprocess.run(command)
 
     print("end simulation")
