@@ -297,6 +297,7 @@ for i in range(num_iterations):
                     if initial_x[max_index].numpy().all() == initial_x[k].numpy().all() or initial_x[max_index].numpy().all() == initial_x[j].numpy().all():
                         max_y_in_range = True
             if number_x_in_epsilon_neighborhood >= num_consecutive_trials and max_y_in_range:
+                scaled_candidate = candidate * (bounds[1] - bounds[0]) + bounds[0]
                 print(f"Trial {counter-1}: x = {scaled_candidate.numpy()}, Value = {current_value}, Best Value = {best_value}")
                 print("Stopping criterion met. No significant improvement for consecutive trials.")
                 print("Number of total trials: ", counter)
@@ -355,12 +356,24 @@ while continuing == "y":
 
     continuing = input("Do you want to add another query point? (y/n)")
 
+x_1 = np.linspace(bounds[0,0], bounds[1,0], 100)
+x_2 = np.linspace(bounds[0,1], bounds[1,1], 100)
+X, Y = np.meshgrid(x_1, x_2)
+XY = np.stack([X, Y], axis=-1)
+XY = XY.reshape(-1, 2)
+XY_torch = torch.tensor(XY, dtype=torch.float32)
+posterior = gp.posterior(XY_torch)
+
+mean = posterior.mean.squeeze(-1).detach().numpy()
+
 max_index = torch.argmax(initial_y)
 maximizer = initial_x[max_index]
 best_y = initial_y[max_index]
 
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
     writer = csv.writer(f)
+    writer.writerow(XY)
+    writer.writerow(mean)
     writer.writerow(["Number of trials",counter])
     writer.writerow(["Optimizer and Optimum",(maximizer[0]*(bounds[1,0]-bounds[0,0])+bounds[0,0]).numpy(), (maximizer[1]*(bounds[1,1]-bounds[0,1])+bounds[0,1]).numpy(), best_y.numpy()[0]])
     writer.writerow(["Time",time.time()-starting_time])

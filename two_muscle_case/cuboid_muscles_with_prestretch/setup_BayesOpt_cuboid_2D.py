@@ -22,8 +22,10 @@ def target_function(forces):
     for row in reader:
         for j in row:
             muscle_length_process1.append(j)
-        
-    contraction1 = float(muscle_length_process1[0]) - float(muscle_length_process1[-2])
+
+    muscle_length_process1 = list(map(float, muscle_length_process1[:-2]))
+    min_index_1 = np.argmin(muscle_length_process1)
+    contraction1 = float(muscle_length_process1[0]) - float(muscle_length_process1[min_index_1])
     print("The muscle contracted ", contraction1)
     f.close()
 
@@ -40,7 +42,10 @@ def target_function(forces):
     for row in reader:
         for j in row:
             muscle_length_process2.append(j)
-    contraction2 = float(muscle_length_process2[0]) - float(muscle_length_process2[-2])
+
+    muscle_length_process2 = list(map(float, muscle_length_process2[:-2]))
+    min_index_2 = np.argmin(muscle_length_process2)
+    contraction2 = float(muscle_length_process2[0]) - float(muscle_length_process2[min_index_2])
     print("The muscle contracted ", contraction2)
     f.close()
 
