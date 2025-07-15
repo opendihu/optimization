@@ -29,7 +29,7 @@ def target_function(forces):
 
     print("start simulation with forces"+ str(force2) + " and ",force1)
     individuality_parameter = str(int(time.time()))+str(force2)+str(force1)
-    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {individuality_parameter} {force2} {force1}")
+    command = shlex.split(f"./muscle_contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin {force2} {force1} {individuality_parameter}")
     subprocess.run(command)
 
     print("end simulation")
@@ -50,7 +50,7 @@ def target_function(forces):
 #Major changes:
 dimension = 2
 
-bounds = torch.tensor([[0.0, 0.0], [1.0, 1.0]], dtype=torch.double)
+bounds = torch.tensor([[0.0, 0.0], [30.0, 30.0]], dtype=torch.double)
 
 nu = 0.5
 matern = True
