@@ -12,9 +12,6 @@ with open(data_file_name, "r") as f:
     reader = csv.reader(f, delimiter=",")
     rows = [row for row in reader]
 
-#for i in range(len(rows) - 6):
-#    plt.scatter(float(rows[i][0]), float(rows[i][1]), color="red", label="Trials" if i == 0 else "", zorder=3)
-
 XY = rows[-5]
 XY = [list(map(float, row.strip("[]").split())) for row in XY]
 XY = np.array(XY, dtype=float)
@@ -38,6 +35,13 @@ Y_grid = XY[:, 1].reshape(ny, nx)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(X_grid, Y_grid, mean, cmap='viridis')
+
+for i in range(len(rows) - 5):
+    if rows[i][0] != "Force 1":
+        x = float(rows[i][0])
+        y = float(rows[i][1])
+        z = float(rows[i][2])
+        ax.scatter(x, y, z, color="red", label="Trials" if i == 0 else "", s=20)
 
 # 5. Optional: Achsentitel
 ax.set_xlabel('x')
