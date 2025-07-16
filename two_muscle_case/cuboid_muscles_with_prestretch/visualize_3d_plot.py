@@ -18,9 +18,15 @@ XY = np.array(XY, dtype=float)
 
 mean = list(map(float, rows[-4]))
 number_of_trials = float(rows[-3][1])
-maximizer = float(rows[-2][1])
-best_f = float(rows[-2][1])
+maximizer_x = float(rows[-2][1])
+maximizer_y = float(rows[-2][2])
+best_f = float(rows[-2][3])
 time_elapsed = float(rows[-1][1])
+
+print("Time elapsed: ", time_elapsed, " seconds")
+print("Number of trials: ", number_of_trials)
+print("Best value: ", best_f)
+print("Maximizer: ", maximizer_x, ", ", maximizer_y)
 
 x_unique = np.unique(XY[:, 0])
 y_unique = np.unique(XY[:, 1])
@@ -42,6 +48,7 @@ for i in range(len(rows) - 5):
         y = float(rows[i][1])
         z = float(rows[i][2])
         ax.scatter(x, y, z, color="red", label="Trials" if i == 0 else "", s=20)
+ax.scatter(maximizer_x, maximizer_y, best_f, color="green", label="Maximum", s=20)
 
 # 5. Optional: Achsentitel
 ax.set_xlabel('x')
