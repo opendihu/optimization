@@ -16,3 +16,10 @@ To run a single simulation of only prestretch, go to build_release and run:
 ./muscle_prestretch ../settings_prestretch.py incompressible_mooney_rivlin 2 5
 ```
 To modify the prestretch forces, change the input parameters `2` and `5`. The first parameter corresponds to muscle 1, the second one to muscle 2. If only one force parameter is given, both muscles use the same prestretch force.
+
+## Optimization
+For the optimization process we use the following target function: For an input (force_1, force_2) we simulate muscle 1 being stretched with force_1 and muscle 2 with force_2, then muscle 1 contracts. Muscle 2 is not being activated during the contraction process. We measure how much muscle 1 can contract in this process. Afterwards we do the same with switched roles: We stretch muscle 1 with force_2 and muscle 2 with force_1, activate muscle 1 and measure how much muscle 1 can contract. The output of our function is the sum of the contraction in process 1 and the contraction in process 2. 
+The parameters of the optimization process and the target function can be found in the file `setup_BayesOpt_cuboid_2D.py`. To run the optimization process, run:
+```
+python BayesOpt_cuboid_2D.py
+```

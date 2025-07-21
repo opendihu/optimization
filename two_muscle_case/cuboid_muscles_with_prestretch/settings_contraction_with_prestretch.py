@@ -16,7 +16,6 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-
 # parameters
 force_1 = variables.force
 force_2 = variables.force
@@ -37,6 +36,8 @@ elif len(sys.argv) > 3:
   print("scenario_name: {}".format(scenario_name))
   print("force 1: {}".format(force_1))
   print("force 2: {}".format(force_2))
+if len(sys.argv) > 5:
+  parameter = sys.argv[3]
 
 tendon_start_t = variables.physical_extent_1[2] + variables.physical_offset_1[2]
 tendon_end_t = variables.physical_offset_2[2]
