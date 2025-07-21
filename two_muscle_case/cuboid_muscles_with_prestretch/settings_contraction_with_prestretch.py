@@ -16,7 +16,6 @@ sys.path.insert(0, var_path)
 import variables
 
 n_ranks = (int)(sys.argv[-1])
-print(sys.argv)
 # parameters
 force_1 = variables.force
 force_2 = variables.force
