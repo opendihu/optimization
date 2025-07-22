@@ -11,6 +11,10 @@ To run a single simulation of contracting the muscles, go to build_release and r
 ```
 ./two_muscles_contraction ../settings_contraction.py
 ```
+To run a single simulation of prestretch with contraction of the muscles, go to build_release and run:
+```
+./contraction_with_prestretch ../settings_contraction_with_prestretch.py
+```
 
 ## Results
 To answer the question how coupled ellipsoid muscles behave we have a few results.

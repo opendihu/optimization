@@ -114,3 +114,5 @@ specific_states_call_enable_begin_1 = end_time
 specific_states_call_frequency = 1e-5                       # frequency of fiber activation
 
 tendon_spring_constant = 500
+
+constant_body_force = (0,0,0)
