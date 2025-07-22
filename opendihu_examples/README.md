@@ -1,10 +1,18 @@
 # Bayesian Optimization for a cuboid muscle model
 
 ## Description
-In this folder are several examples of different muscles with different solvers and boundary conditions. Inside each example is a short ReadMe file that summarizes its setup. This is a general explanation on how to build and run an example.
+In this folder are several examples of different muscles with different solvers and boundary conditions. This is a general explanation on the differences of the different cases and on how to build and run an example.
+
+In "isotonic_contraction" we take a muscle and simulate its contraction after activation with one end fixed and one end free. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes the muscle's contraction length. 
+
+In "isometric_contraction" we take a muscle and simulate its behaviour and the generated forces with the muscle being activated, but fixed in place on both ends. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes its contraction force. 
+
+In "paired_muscles" we are not looking at a single muscle, but two muscles that are connected via a simplified tendon that behaves like a spring. We can use 2D Bayesian Optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
+
+In "prestretch_force_for_given_length" we use a bisection method to find the prestretch force that is required to stretch a muscle to a given length. 
 
 ## How to build?
-Follow OpenDiHu's documentation (https://opendihu.readthedocs.io/en/latest/index.html) for installation, go to the corresponding folder and run 
+Follow OpenDiHu's documentation for [installation](https://opendihu.readthedocs.io/en/latest/user/installation.html#), go to the corresponding folder and run 
 ```
 mkorn && sr
 ```
@@ -29,4 +37,3 @@ To run an optimization process with Bayesian Optimization, choose the BO model y
 python BayesOpt_{example_name}.py
 ```
 More detailed instructions can be found inside the respective files.
-
