@@ -31,3 +31,12 @@ To run an optimization process with Bayesian Optimization to optimize a test fun
 python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
 ```
 
+## Results
+
+### The optimal Bayesian Optimization model over all test functions
+This was discussed in the mentioned [Bachelor Thesis](https://elib.uni-stuttgart.de/handle/11682/16797). The word "optimal" is very subjective. In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models averaged over all test functions, we find the following model as the best one:
+- Kernel: Mátern kernel with smoothness parameter 0.5
+- Mean: Constant mean
+- Acquisition function: Entropy search
+
+It takes on average 7.352 evaluations and finds local maxima in 85.2% and global maxima in 79.8% of cases. There are other models with a higher accuracy and models with a lower number of evaluations, but no model balaces it as well as this one does.

@@ -23,12 +23,12 @@ The solid orange line is the length over time of an ellipsoid muscle that contra
 
 If we now look at two connected ellipsoid muscles with a spring constant $k=500$, we get the following plot for the lengths over time of the connected muscles:
 
-![](../../figures/1ms_k_500_ellipsoid.png)
+![](../../../figures/1ms_k_500_ellipsoid.png)
 
 The orange line here is the same as the solid orange line in the plot before. The blue line here is the coupled muscle that is not being activated and only stretched by muscle 2. The small oscillations starting at $t=50$ms are unphysical. Reducing the timestep does not eliminate the oscillations.
 
 If we now look at two coupled muscles with the smaller constant $k=10$, we get the following plot:
 
-![](../../figures/k_tendon_10_ellipsoid.png)
+![](../../../figures/k_tendon_10_ellipsoid.png)
 
 We do not get these oscillations as before, but with a small constant the muscles bounce much more after the contraction than with a larger constant. We can also see that the muscle can contract much more in comparison to the case in the plot before.
