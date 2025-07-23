@@ -356,13 +356,20 @@ while continuing == "y":
 
     continuing = input("Do you want to add another query point? (y/n)")
 
-x_1 = np.linspace(bounds[0,0], bounds[1,0], 100)
-x_2 = np.linspace(bounds[0,1], bounds[1,1], 100)
+x_1 = np.linspace(0, 1, 100)
+x_2 = np.linspace(0, 1, 100)
 X, Y = np.meshgrid(x_1, x_2)
 XY = np.stack([X, Y], axis=-1)
 XY = XY.reshape(-1, 2)
 XY_torch = torch.tensor(XY, dtype=torch.float32)
 posterior = gp.posterior(XY_torch)
+
+x_1_real = np.linspace(bounds[0,0], bounds[1,0], 100)
+x_2_real = np.linspace(bounds[0,1], bounds[1,1], 100)
+X_real, Y_real = np.meshgrid(x_1_real, x_2_real)
+XY_real = np.stack([X_real, Y_real], axis=-1)
+XY_real = XY_real.reshape(-1, 2)
+XY_torch_real = torch.tensor(XY_real, dtype=torch.float32)
 
 mean = posterior.mean.squeeze(-1).detach().numpy()
 
@@ -372,7 +379,7 @@ best_y = initial_y[max_index]
 
 with open("BayesOpt_outputs"+global_individuality_parameter+".csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(XY)
+    writer.writerow(XY_real)
     writer.writerow(mean)
     writer.writerow(["Number of trials",counter])
     writer.writerow(["Optimizer and Optimum",(maximizer[0]*(bounds[1,0]-bounds[0,0])+bounds[0,0]).numpy(), (maximizer[1]*(bounds[1,1]-bounds[0,1])+bounds[0,1]).numpy(), best_y.numpy()[0]])
