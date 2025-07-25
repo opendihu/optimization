@@ -15,7 +15,7 @@ OpenDiHu (if used): Version [1.5](https://github.com/opendihu/opendihu/tree/v1.5
 ## Setup
 Inside "BayesianOptimization" is the setup for a 1D Bayesian Optimization that is set up to optimize an easy dummy function. In the subfolder "nD" is a similar setup for a function from R^n to R.
 
-Inside "opendihu_examples" are the categories "isotonic_contraction", "isometric_contraction", "paired_muscles" and "prestretch_force_for_given_length". The details about these different categories can be found [here](opendihu_examples/README.md).
+Inside "opendihu_examples" you can find the examples "isotonic_contraction", "isometric_contraction", "paired_muscles" and "prestretch_force_for_given_length". The details about these different cases can be found [here](opendihu_examples/README.md).
 
 Inside "BayesOpt_examples" is the example "test_functions" which can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
 
