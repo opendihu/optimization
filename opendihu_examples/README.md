@@ -1,7 +1,9 @@
 # Bayesian Optimization for a cuboid muscle model
 
 ## Description
-In this folder are several examples of different muscles with different solvers and boundary conditions. This is a general explanation on the differences of the different cases and on how to build and run an example.
+In this folder there are several examples of different muscles with different solvers and boundary conditions. Here we provide a general explanation on the differences of the different cases and on how to build and run OpenDiHu cases.
+
+## Case Overview
 
 In "isotonic_contraction" we take a muscle and simulate its contraction after activation with one end fixed and one end free. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes the muscle's contraction length. 
 
