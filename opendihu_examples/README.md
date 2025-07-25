@@ -5,7 +5,7 @@ In this folder there are several examples of different muscles with different so
 
 ## Case Overview
 
-In "isotonic_contraction" we take a muscle and simulate its contraction after activation with one end fixed and one end free. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes the muscle's contraction length. 
+In "isotonic_contraction" we take a single muscle and simulate its contraction after activation with one end fixed and one end free. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes the muscle's contraction length. 
 
 In "isometric_contraction" we take a muscle and simulate its behaviour and the generated forces with the muscle being activated, but fixed in place on both ends. With this simulation we can use Bayesian Optimization to look for parameters like the prestretch force that maximizes its contraction force. 
 
