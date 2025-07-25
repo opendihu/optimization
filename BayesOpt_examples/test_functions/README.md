@@ -34,7 +34,7 @@ python BayesOpt_test_functions.py matern 0.5 const fixed_noise es stopping_xy 1
 ## Results
 
 ### The optimal Bayesian Optimization model over all test functions
-This was discussed in the mentioned [Bachelor Thesis](https://elib.uni-stuttgart.de/handle/11682/16797). The word "optimal" is very subjective. In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models averaged over all test functions, we find the following model as the best one:
+This was discussed in the mentioned [Bachelor Thesis](https://elib.uni-stuttgart.de/handle/11682/16797). Firstly, we should clarify what we mean by "optimal". In this case we are looking for a model that balances high accuracy with a low number of evaluations. Comparing all optional models that botorch has to offer, averaged over all test functions, we find the following model as the best one:
 - Kernel: Mátern kernel with smoothness parameter 0.5
 - Mean: Constant mean
 - Acquisition function: Entropy search
