@@ -9,7 +9,7 @@ In "isotonic_contraction" we take a single muscle and simulate its contraction a
 
 In "isometric_contraction" we take a single muscle and simulate its contraction after activation. The difference to "isotonic_contraction" is that the muscle is fixed on both ends. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes force generation within the muscle. 
 
-In "paired_muscles" we are not looking at a single muscle, but two muscles that are connected via a simplified tendon that behaves like a spring. We can use 2D Bayesian Optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
+In "paired_muscles" we simulate a two-muscle example. The user can choose whether to activate only one muscle or both of them. The boundary conditions of the muscles are chosen to imitate the behavior of an agonist-antagonist muscle pair connected by a tendon. We can use 2D Bayesian Optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
 
 In "prestretch_force_for_given_length" we use a bisection method to find the prestretch force that is required to stretch a muscle to a given length. 
 
