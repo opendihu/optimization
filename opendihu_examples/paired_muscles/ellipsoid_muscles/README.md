@@ -13,8 +13,9 @@ To run a single simulation of contracting the muscles, go to build_release and r
 ```
 To run a single simulation of prestretch with contraction of the muscles, go to build_release and run:
 ```
-./contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 10.0
+./contraction_with_prestretch ../settings_contraction_with_prestretch.py incompressible_mooney_rivlin 10.0 5.0
 ```
+The first of the two force parameters `10` is the prestretch force for the first muscle, the second one `5` is for the second muscle. If only one force parameter is given, both muscles use the same prestretch force. If no force parameter is given, both muscles use the prestretch force `10`.
 
 ## Results
 To answer the question how coupled ellipsoid muscles behave we have a few results.

@@ -2,7 +2,7 @@
 # - Isotropic hyperelastic material
 # - Linear elasticity
 #
-# arguments: <scenario_name> <force>
+# arguments: <scenario_name> <force_1> <force_2>
 
 
 import numpy as np
@@ -18,14 +18,21 @@ import variables
 n_ranks = (int)(sys.argv[-1])
 
 # parameters
-force = variables.force
+force_left = variables.force
+force_right = variables.force
 scenario_name = variables.scenario_name
 
 if len(sys.argv) > 3:                                                                           
   scenario_name = sys.argv[0]
-  force = float(sys.argv[1])
+  force_left = float(sys.argv[1])
+  force_right = float(sys.argv[1])
   print("scenario_name: {}".format(scenario_name))
-  print("force: {}".format(force))
+  print("force 1: {}".format(force_left))
+if len(sys.argv) > 4:
+  force_right = float(sys.argv[2])
+  print("force 2: {}".format(force_right))
+elif len(sys.argv)==4:
+  print("force 2: {}".format(force_right))
 
 tendon_length_0 = variables.physical_offset[2] + variables.zmin - variables.zmax
 tendon_length_t = tendon_length_0
@@ -59,8 +66,8 @@ for i in range(variables.bs_x):
 # set Neumann BC, set traction at the top
 k_left = 0
 k_right = variables.el_z-1
-traction_vector_1 = [0, 0, -force]     # the traction force in specified in the reference configuration
-traction_vector_2 = [0, 0, force]
+traction_vector_1 = [0, 0, -force_left]     # the traction force in specified in the reference configuration
+traction_vector_2 = [0, 0, force_right]
 
 elasticity_neumann_bc_left_prestretch = [{"element": k_left*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_1, "face": "2-"} for j in range(variables.el_y) for i in range(variables.el_x)]
 elasticity_neumann_bc_right_prestretch = [{"element": k_right*variables.el_x*variables.el_y + j*variables.el_x + i, "constantVector": traction_vector_2, "face": "2+"} for j in range(variables.el_y) for i in range(variables.el_x)]
@@ -83,7 +90,7 @@ def callback_function_prestretch_1(raw_data):
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
   average_length = average_length/number_of_nodes
 
-  f = open("length_after_prestretch_1_" + str(force) + "N.csv", "w")
+  f = open("length_after_prestretch_1_" + str(force_left) + "N.csv", "w")
   f.write(str(average_length))
   f.close()
   
@@ -111,7 +118,7 @@ def callback_function_prestretch_2(raw_data):
     average_length += z_data[number_of_nodes*(variables.bs_z -1) + i]
   average_length = average_length/number_of_nodes
 
-  f = open("length_after_prestretch_2_" + str(force) + "N.csv", "w")
+  f = open("length_after_prestretch_2_" + str(force_right) + "N.csv", "w")
   f.write(str(average_length))
   f.close()
   
