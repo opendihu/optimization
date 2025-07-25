@@ -1,6 +1,5 @@
 # Bayesian Optimization for a cuboid muscle model
 
-## Description
 In this folder there are several examples of different muscles with different solvers and boundary conditions. Here we provide a general explanation on the differences of the different cases and on how to build and run OpenDiHu cases.
 
 ## Case Overview
