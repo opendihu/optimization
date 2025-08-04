@@ -10,4 +10,5 @@ Import('env')     # import Environment object from calling SConstruct
 # if the option no_tests was given, quit the script
 if not env['no_examples']:
   # create the main executable
-  env.Program(target = 'two_muscles_contraction', source = "src/two_muscles_contraction.cpp")
+  env.Program(target = 'contraction', source = "src/contraction.cpp")
+  env.Program(target = 'contraction_with_prestretch', source = "src/contraction_with_prestretch.cpp")
