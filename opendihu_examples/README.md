@@ -1,10 +1,19 @@
 # Bayesian Optimization for a cuboid muscle model
 
-## Description
-In this folder are several examples of different muscles with different solvers and boundary conditions. Inside each example is a short ReadMe file that summarizes its setup. This is a general explanation on how to build and run an example.
+In this folder there are several examples of different muscles with different solvers and boundary conditions. Here we provide a general explanation on the differences of the different cases and on how to build and run OpenDiHu cases.
+
+## Case Overview
+
+In "isotonic_contraction" we take a single muscle and simulate its contraction after activation with one end fixed and one end free. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes the muscle's contraction length. 
+
+In "isometric_contraction" we take a single muscle and simulate its contraction after activation. The difference to "isotonic_contraction" is that the muscle is fixed on both ends. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes force generation within the muscle. 
+
+In "paired_muscles" we simulate a two-muscle example. The user can choose whether to activate only one muscle or both of them. The boundary conditions of the muscles are chosen to imitate the behavior of an agonist-antagonist muscle pair connected by a tendon. We can use 2D Bayesian Optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
+
+In "prestretch_force_for_given_length" we use a bisection method to find the prestretch force that is required to stretch a muscle to a given length. 
 
 ## How to build?
-Follow OpenDiHu's documentation (https://opendihu.readthedocs.io/en/latest/index.html) for installation, go to the corresponding folder and run 
+Follow OpenDiHu's documentation for [installation](https://opendihu.readthedocs.io/en/latest/user/installation.html#), go to the corresponding folder and run 
 ```
 mkorn && sr
 ```
@@ -29,4 +38,3 @@ To run an optimization process with Bayesian Optimization, choose the BO model y
 python BayesOpt_{example_name}.py
 ```
 More detailed instructions can be found inside the respective files.
-
