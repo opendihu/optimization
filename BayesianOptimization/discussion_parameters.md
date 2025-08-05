@@ -11,7 +11,7 @@ These parameters can be adjusted in the file ```setup_BayesOpt_general_1D.py```.
 
 ## General recommendation
 The optimal parameter setup is different for every case, and it is difficult to provide a general recommendation. 
-A tentative recommendation is provided in  Lukas Bauer's bachelor thesis (see [tag](https://github.com/opendihu/optimization/releases/tag/Bachelor-thesis)): Matérn kernel with $\nu$=0.5, the constant mean function, fixed noise, the ES acquisition function and the xy-stopping criterion. 
+A tentative recommendation is provided in  Lukas Bauer's [bachelor thesis](https://elib.uni-stuttgart.de/handle/11682/16797): Matérn kernel with $\nu$=0.5, the constant mean function, fixed noise, the ES acquisition function and the xy-stopping criterion. 
 
 ## Biceps case
 Next we discuss the parameters setup for the [isometric biceps case](../opendihu_examples/isometric_contraction/biceps_muscle/). If we use the parameters according to the general recommendation, we get the following optimization plot: 
