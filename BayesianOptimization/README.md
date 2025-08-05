@@ -1,9 +1,9 @@
 # General 1D Bayesian Optimization
 
 ## Description
-Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This folder contains the files to maximize a continuous function from R to R. Because infinity is hard to compute, the function actually has to be from an interval [a,b] to R. The resulting optimization process can then also be visualized afterwards.
+Bayesian Optimization is a method to find maxima of blackbox functions with a relatively low number of function evaluations. This folder contains the files to maximize a continuous function from $\mathbb{R}$ to $\mathbb{R}$. Because infinity is hard to compute, the function actually has to be from an interval $[a,b]$ to $\mathbb{R}$. The resulting optimization process can then also be visualized afterwards.
 
-## Dependendcies
+## Dependencies
 Python: Python 3.10.12
 
 Required Python libraries: botorch, torch, numpy, matplotlib, os, csv, time
@@ -26,4 +26,4 @@ To modify the visualization file, open "visualize_BayesOpt_general_1D.py" and ch
 ```
 python visualize_BayesOpt_general_1D.py {relative_path_to_data} {data_file_name} {x_label} {y_label}
 ```
-If this optimization setup is being used in a new case, copy the visualization file in the same folder and modify the file correspondingly. 
+If this optimization setup is being used in a new case, copy the visualization file in the same folder and modify the file accordingly. 
