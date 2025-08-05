@@ -10,7 +10,7 @@ Required Python libraries: botorch, torch, numpy, matplotlib, subprocess, sys, o
 This is the setup for Bayesian optimization for different test functions. These functions are:
 - $-3x(x-1.3) + 0.3$
 - $e^{(-(5x-3)^2)} + 0.2 e^{(-(30x-22)^2)}$
-- exp(-(5x-5)^2) n sin(5x-1.5) +x
+- $e^{-(5x-5)^2} \cdot sin(5x-1.5) +x$
 - $e^{(-(10x -2)^2 )} + e^{-\frac{(10x-6)^2}{10}} + \frac{1}{((10x)^2 +1)}$
 - $0.5 - 3x(x-1)\cdot sin(5x)$
 - $sin(5x)^2$
