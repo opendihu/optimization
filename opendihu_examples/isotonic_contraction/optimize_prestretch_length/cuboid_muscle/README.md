@@ -17,7 +17,7 @@ To run an optimization process, choose the optimization model, modify the parame
 ```
 python BayesOpt_cuboid_muscle.py
 ```
-With this case we can use Bayesian Optimization to optimize the contraction length (length of the muscle before contraction process - length of the muscle after contraction process). Our function f: R -> R maps a prestretch length (increase of muscle length by stretching) to the contraction length of a muscle, that has been stretched until it has reached the prestretch length before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch length that leads to the greatest contraction length of our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
+With this case we can use Bayesian Optimization to optimize the contraction length (length of the muscle before contraction process - length of the muscle after contraction process). Our function f: $\mathbb{R}$ -> $\mathbb{R}$ maps a prestretch length (increase of muscle length by stretching) to the contraction length of a muscle, that has been stretched until it has reached the prestretch length before contracting. One function evaluation is one simulation of the muscle. This way the optimization process outputs the prestretch length that leads to the greatest contraction length of our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
 
 
 ![](../../../../figures/isotonic_length_1.png)

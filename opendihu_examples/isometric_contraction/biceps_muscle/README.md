@@ -22,7 +22,7 @@ To run an optimization process, choose the optimization model, modify the parame
 ```
 python BayesOpt_biceps_muscle.py
 ```
-In this case we can use Bayesian Optimization to optimize the contraction force. This contraction force is measured by the average traction in the direction of the fibers (here approximated as [0,0,1]) at the left end of the muscle. Our function f: R -> R maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. Each function evaluation requires simulation of the muscle contraction. This way the optimization process outputs the prestretch force that leads to the greatest contraction force for our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
+In this case we can use Bayesian Optimization to optimize the contraction force. This contraction force is measured by the average traction in the direction of the fibers (here approximated as [0,0,1]) at the left end of the muscle. Our function f: $\mathbb{R}$ -> $\mathbb{R}$ maps a prestretch force to the maximal contraction force of a muscle, that has been stretched with the prestretch force before contracting. Each function evaluation requires simulation of the muscle contraction. This way the optimization process outputs the prestretch force that leads to the greatest contraction force for our given muscle. Using the Matern kernel with nu=0.5, the constant mean function and the entropy search acquisition function, the plot of the optimization process looks like the following:
 
 ![](../../../figures/isometric_biceps.png)
 

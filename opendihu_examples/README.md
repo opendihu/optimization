@@ -1,16 +1,16 @@
-# Bayesian Optimization for a cuboid muscle model
+# Bayesian optimization for OpenDiHu simulations
 
-In this folder there are several examples of different muscles with different solvers and boundary conditions. Here we provide a general explanation on the differences of the different cases and on how to build and run OpenDiHu cases.
+In this folder there are several examples of different muscle simulations with different solvers and boundary conditions. Here we provide a general explanation on the differences of the different cases and on how to build and run OpenDiHu cases.
 
-## Case Overview
+## Case overview
 
-In "isotonic_contraction" we take a single muscle and simulate its contraction after activation with one end fixed and one end free. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes the muscle's contraction length. 
+In [isotonic_contraction](https://github.com/opendihu/optimization/tree/main/opendihu_examples/isotonic_contraction) we take a single muscle and simulate its contraction after activation with one end fixed and one end free. We can use Bayesian optimization to look for optimal parameters like the prestretch force that maximizes the muscle's contraction length. 
 
-In "isometric_contraction" we take a single muscle and simulate its contraction after activation. The difference to "isotonic_contraction" is that the muscle is fixed on both ends. We can use Bayesian Optimization to look for optimal parameters like the prestretch force that maximizes force generation within the muscle. 
+In [isometric_contraction](https://github.com/opendihu/optimization/tree/main/opendihu_examples/isometric_contraction) we take a single muscle and simulate its contraction after activation. The difference to "isotonic_contraction" is that the muscle is fixed on both ends. We can use Bayesian optimization to look for optimal parameters like the prestretch force that maximizes force generation within the muscle. 
 
-In "paired_muscles" we simulate a two-muscle example. The user can choose whether to activate only one muscle or both of them. The boundary conditions of the muscles are chosen to imitate the behavior of an agonist-antagonist muscle pair connected by a tendon. We can use 2D Bayesian Optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
+In [paired_muscles](https://github.com/opendihu/optimization/tree/main/opendihu_examples/paired_muscles) we simulate a two-muscle example. The user can choose whether to activate only one muscle or both of them. The boundary conditions of the muscles are chosen to imitate the behavior of an agonist-antagonist muscle pair connected by a tendon as proposed by [Homs-Pons et al](https://onlinelibrary.wiley.com/doi/full/10.1002/gamm.202370009). We can use 2D Bayesian optimization to look for parameters like the prestretch forces that maximize the contraction lengths of the paired muscles.
 
-In "prestretch_force_for_given_length" we use a bisection method to find the prestretch force that is required to stretch a muscle to a given length. 
+In [prestretch_force_for_given_length](https://github.com/opendihu/optimization/tree/main/opendihu_examples/prestretch_force_for_given_length) we use a bisection method to find the prestretch force that is required to stretch a muscle to a given length. 
 
 ## How to build?
 Follow OpenDiHu's documentation for [installation](https://opendihu.readthedocs.io/en/latest/user/installation.html#), go to the corresponding folder and run 
