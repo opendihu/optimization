@@ -18,7 +18,7 @@ Inside [BayesianOptimization](https://github.com/opendihu/optimization/tree/main
 
 Inside [opendihu_examples](https://github.com/opendihu/optimization/tree/main/opendihu_examples) you can find the examples "isotonic_contraction", "isometric_contraction", "paired_muscles" and "prestretch_force_for_given_length". An overview of the different cases described is provided in the [ReadMe](opendihu_examples/README.md) file.
 
-Inside [BayesOpt_examples](https://github.com/opendihu/optimization/tree/main/BayesOpt_examples/test_functions) is the example "test_functions" which can be used to test different Bayesian Optimization models on several test functions. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
+Inside [test_functions](https://github.com/opendihu/optimization/tree/main/test_functions) there are several made-up functions which can be used to test different Bayesian Optimization models. These functions have different characteristics, so that you can choose a model that works best for the kind of functions you are looking for.
 
 ## Results
 The results of the mentioned Bachelor Thesis are in the [test_functions](BayesOpt_examples/test_functions/README.md) and [isotonic_cuboid_contraction](opendihu_examples/isotonic_contraction/optimize_prestretch_force/cuboid_muscle/README.md) files. A discussion of when to use which parameter setup can be found [here](BayesianOptimization/discussion_parameters.md). Other results can be found in the corresponding ReadMes of the different cases.
